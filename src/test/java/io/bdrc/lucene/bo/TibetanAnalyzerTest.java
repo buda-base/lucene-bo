@@ -42,8 +42,8 @@ public class TibetanAnalyzerTest
 			CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
 			while (tokenStream.incrementToken()) {
 			    termList.add(charTermAttribute.toString());
-			assertThat(termList, is(expected));
 			}
+			assertThat(termList, is(expected));
 		} catch (IOException e) {
 			assertTrue(false);
 		}
