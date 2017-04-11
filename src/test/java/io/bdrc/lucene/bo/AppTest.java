@@ -1,38 +1,38 @@
 package io.bdrc.lucene.bo;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest 
-    extends TestCase
 {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
+	@BeforeClass
+	public static void init() {
+	    System.out.println("before the test sequence");
+	}
+	
+	@Test
+    public void test1()
     {
-        super( testName );
+		System.out.println("test 1");
+		assertTrue(false);
     }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
+	
+	@Test
+    public void test2()
     {
-        return new TestSuite( AppTest.class );
+		System.out.println("test 2");
+		assertFalse(false);
     }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+	
+	@AfterClass
+	public static void finish() {
+	    System.out.println("after the test sequence");
+	}
+	
 }
