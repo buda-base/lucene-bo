@@ -11,8 +11,22 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
+	<dependency>
+   		<groupId>org.apache.lucene</groupId>
+   		<artifactId>lucene-core</artifactId>
+   		<version>6.4.1</version>
+	</dependency>
   </dependencies>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>junit</groupId>
+  			<artifactId>junit</artifactId>
+  			<version>4.12</version>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
 </project>
