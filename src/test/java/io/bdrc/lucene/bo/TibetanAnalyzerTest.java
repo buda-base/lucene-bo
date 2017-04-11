@@ -16,6 +16,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
 
 /**
  * Unit test for simple App.
@@ -31,7 +32,7 @@ public class TibetanAnalyzerTest
 	      return tokenizer;
 	}
 	
-	private void assertTokenStream(String string, List<String> asList) {
+	private void assertTokenStream(String string, List<String> expected) {
 		Tokenizer tokenizr = new WhitespaceTokenizer();
 		TokenStream tokenStream = null;
 		try {
@@ -41,6 +42,7 @@ public class TibetanAnalyzerTest
 			CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
 			while (tokenStream.incrementToken()) {
 			    termList.add(charTermAttribute.toString());
+			assertThat(termList, is(expected));
 			}
 		} catch (IOException e) {
 			assertTrue(false);
