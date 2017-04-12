@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,7 +32,7 @@ public class TibetanAnalyzerTest
 	}
 	
 	private void assertTokenStream(String string, List<String> expected) {
-		Tokenizer tokenizr = new WhitespaceTokenizer();
+		Tokenizer tokenizr = new TibetanPunctuationTokenizer();
 		TokenStream tokenStream = null;
 		try {
 			tokenStream = tokenize(string, tokenizr);
@@ -57,7 +56,9 @@ public class TibetanAnalyzerTest
 	@Test
     public void test1() throws IOException
     {
-		assertTokenStream("Hello World", Arrays.asList("Hello", "World"));
+		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས།", "བདེ་ལེགས།");
+		assertTokenStream(input, expected);
     }
 
 	@Test
