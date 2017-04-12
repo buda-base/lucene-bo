@@ -32,10 +32,12 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  */
 
 public class TibEndingFilter extends TokenFilter {
-	static char APOSTROPHE = '\u0F60';
-	static char TIB_I = '\u0F72';
-	static char TIB_O = '\u0F7C';
-	static char TIB_S = '\u0F66';
+	static char AA = '\u0F60';
+	static char GIGU = '\u0F72';
+	static char NARO = '\u0F7C';
+	static char SA = '\u0F66';
+	static char NGA = '\u0F94';
+	static char MA = '\u0FA8';
 
 	public TibEndingFilter(TokenStream input) {
 		super(input);
@@ -61,7 +63,7 @@ public class TibEndingFilter extends TokenFilter {
 
 		// if the token ends with "'is" then decrement token length by 3
 		if (len > 3) {
-			if (buffer[len - 3] == APOSTROPHE && buffer[len - 2] == TIB_I && buffer[len - 1] == TIB_S) {
+			if (buffer[len - 3] == AA && buffer[len - 2] == GIGU && buffer[len - 1] == SA) {
 				termAtt.setLength(len - 3);
 				return true;
 			}
@@ -69,7 +71,7 @@ public class TibEndingFilter extends TokenFilter {
 
 		// if the token ends with "'i" or "'o" then decrement token length by 2
 		if (len > 2) {
-			if (buffer[len - 2] == APOSTROPHE && (buffer[len - 1] == TIB_I || buffer[len - 1] == TIB_O)) {
+			if (buffer[len - 2] == AA && (buffer[len - 1] == GIGU || buffer[len - 1] == NARO || buffer[len - 1] == MA || buffer[len - 1] == NGA)) {
 				termAtt.setLength(len - 2);
 			}
 		}
