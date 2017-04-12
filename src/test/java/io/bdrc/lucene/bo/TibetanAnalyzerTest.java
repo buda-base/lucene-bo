@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -39,7 +40,7 @@ public class TibetanAnalyzerTest
 			    termList.add(charTermAttribute.toString());
 			}
 			/** prints out the list of terms */
-			System.out.println(" => " + String.join(" ", termList));
+			System.out.println(String.join(" ", termList));
 			assertThat(termList, is(expected));
 		} catch (IOException e) {
 			assertTrue(false);
@@ -56,17 +57,24 @@ public class TibetanAnalyzerTest
     {
 		System.out.println("Test1: TibSyllableTokenizer()");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
-		System.out.print(input);
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
-		TokenStream tokenizer = tokenize(input, new TibSyllableTokenizer());
-		assertTokenStream(tokenizer, expected);
+		
+		System.out.print(input + " => ");
+		TokenStream res = tokenize(input, new TibSyllableTokenizer());
+		assertTokenStream(res, expected);
     }
 
 	@Test
-    public void test2()
+    public void test2() throws IOException
     {
-		System.out.println("test 2");
-		assertFalse(false);
+		System.out.println("Test2: TibEndingFilter()");
+		String input = "དགའ། དགའི། དགའོ། དགའིས། དག།";
+		List<String> expected = Arrays.asList("དགའ", "དག", "དག", "དག", "དག");
+		
+		System.out.print(input + " => ");
+		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
+		TokenFilter res = new TibEndingFilter(syllables);
+		assertTokenStream(res, expected);
     }
 	
 	@AfterClass

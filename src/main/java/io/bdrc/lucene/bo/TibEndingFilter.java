@@ -37,8 +37,8 @@ public class TibEndingFilter extends TokenFilter {
 	static char TIB_O = '\u0F7C';
 	static char TIB_S = '\u0F66';
 
-	public TibEndingFilter(TokenStream in) {
-		super(in);
+	public TibEndingFilter(TokenStream input) {
+		super(input);
 	}
 
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
@@ -61,7 +61,7 @@ public class TibEndingFilter extends TokenFilter {
 
 		// if the token ends with "'is" then decrement token length by 3
 		if (len > 3) {
-			if (buffer[len - 3] == APOSTROPHE && buffer[len - 1] == TIB_I && buffer[len - 1] == TIB_S) {
+			if (buffer[len - 3] == APOSTROPHE && buffer[len - 2] == TIB_I && buffer[len - 1] == TIB_S) {
 				termAtt.setLength(len - 3);
 				return true;
 			}
