@@ -24,14 +24,14 @@ import org.apache.lucene.analysis.Analyzer;
  **/
 public final class TibetanAnalyzer extends Analyzer {
   
-  /**
-   * Creates a new {@link TibetanAnalyzer}
-   */
-  public TibetanAnalyzer() {
-  }
+	/**
+	 * Creates a new {@link TibetanAnalyzer}
+	 */
+	public TibetanAnalyzer() {
+	}
   
-  @Override
-  protected TokenStreamComponents createComponents(final String fieldName) {
-    return new TokenStreamComponents(new TibSyllableTokenizer());
-  }
+	@Override
+	protected TokenStreamComponents createComponents(final String fieldName) {
+		return new TokenStreamComponents(new TibSyllableTokenizer());
+	}
 }

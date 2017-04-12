@@ -58,7 +58,7 @@ public class TibetanAnalyzerTest
 	@Test
     public void test1() throws IOException
     {
-		System.out.println("Test 1: output syllables, ignoring the punctuation");
+		System.out.println("Test 1: Tokenizes into syllables");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
 		assertTokenStream(input, expected);

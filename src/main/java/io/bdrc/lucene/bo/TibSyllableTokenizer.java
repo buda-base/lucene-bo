@@ -30,31 +30,31 @@ import org.apache.lucene.util.AttributeFactory;
  */
 public final class TibSyllableTokenizer extends CharTokenizer {
   
-  /**
-   * Construct a new WhitespaceTokenizer.
-   */
-  public TibSyllableTokenizer() {
-  }
+	/**
+	 * Construct a new WhitespaceTokenizer.
+	 */
+	public TibSyllableTokenizer() {
+	}
 
-  protected boolean isTibLetterOrDigit(int c) {
-	  return ('\u0F40' <= c && c <= '\u0F83') || ('\u0F90' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
-  }
+	protected boolean isTibLetterOrDigit(int c) {
+		return ('\u0F40' <= c && c <= '\u0F83') || ('\u0F90' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
+	}
   
-  /**
-   * Construct a new WhitespaceTokenizer using a given
-   * {@link org.apache.lucene.util.AttributeFactory}.
-   *
-   * @param factory
-   *          the attribute factory to use for this {@link Tokenizer}
-   */
-  public TibSyllableTokenizer(AttributeFactory factory) {
-    super(factory);
-  }
+	/**
+	 * Construct a new WhitespaceTokenizer using a given
+	 * {@link org.apache.lucene.util.AttributeFactory}.
+	 *
+	 * @param factory
+	 *          the attribute factory to use for this {@link Tokenizer}
+	 */
+	public TibSyllableTokenizer(AttributeFactory factory) {
+		super(factory);
+	}
   
-  /** Collects only characters which do not satisfy
-   * {@link Character#isWhitespace(int)}.*/
-  @Override
-  protected boolean isTokenChar(int c) {
-    return isTibLetterOrDigit(c);
-  }
+	/** Collects only characters which do not satisfy
+	 * {@link Character#isWhitespace(int)}.*/
+	@Override
+	protected boolean isTokenChar(int c) {
+		return isTibLetterOrDigit(c);
+	}
 }
