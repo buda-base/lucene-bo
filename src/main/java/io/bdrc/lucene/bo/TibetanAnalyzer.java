@@ -22,16 +22,16 @@ import org.apache.lucene.analysis.Analyzer;
 /**
  * An Analyzer that uses {@link WhitespaceTokenizer}.
  **/
-public final class TibetanPunctuationAnalyzer extends Analyzer {
+public final class TibetanAnalyzer extends Analyzer {
   
   /**
-   * Creates a new {@link TibetanPunctuationAnalyzer}
+   * Creates a new {@link TibetanAnalyzer}
    */
-  public TibetanPunctuationAnalyzer() {
+  public TibetanAnalyzer() {
   }
   
   @Override
   protected TokenStreamComponents createComponents(final String fieldName) {
-    return new TokenStreamComponents(new TibetanPunctuationTokenizer());
+    return new TokenStreamComponents(new TibSyllableTokenizer());
   }
 }

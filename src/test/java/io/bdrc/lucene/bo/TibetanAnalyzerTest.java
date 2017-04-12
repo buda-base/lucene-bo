@@ -32,7 +32,7 @@ public class TibetanAnalyzerTest
 	}
 	
 	private void assertTokenStream(String string, List<String> expected) {
-		Tokenizer tokenizr = new TibetanPunctuationTokenizer();
+		Tokenizer tokenizr = new TibSyllableTokenizer();
 		TokenStream tokenStream = null;
 		try {
 			tokenStream = tokenize(string, tokenizr);
@@ -42,6 +42,8 @@ public class TibetanAnalyzerTest
 			while (tokenStream.incrementToken()) {
 			    termList.add(charTermAttribute.toString());
 			}
+			/** prints out the list of terms */
+			System.out.println(string + " => " + String.join(" ", termList));
 			assertThat(termList, is(expected));
 		} catch (IOException e) {
 			assertTrue(false);
@@ -56,8 +58,9 @@ public class TibetanAnalyzerTest
 	@Test
     public void test1() throws IOException
     {
+		System.out.println("Test 1: output syllables, ignoring the punctuation");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས།", "བདེ་ལེགས།");
+		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
 		assertTokenStream(input, expected);
     }
 

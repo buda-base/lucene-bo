@@ -28,14 +28,18 @@ import org.apache.lucene.util.AttributeFactory;
  *
  * @see UnicodeWhitespaceTokenizer
  */
-public final class TibetanPunctuationTokenizer extends CharTokenizer {
+public final class TibSyllableTokenizer extends CharTokenizer {
   
   /**
    * Construct a new WhitespaceTokenizer.
    */
-  public TibetanPunctuationTokenizer() {
+  public TibSyllableTokenizer() {
   }
 
+  protected boolean isTibLetterOrDigit(int c) {
+	  return ('\u0F40' <= c && c <= '\u0F83') || ('\u0F90' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
+  }
+  
   /**
    * Construct a new WhitespaceTokenizer using a given
    * {@link org.apache.lucene.util.AttributeFactory}.
@@ -43,7 +47,7 @@ public final class TibetanPunctuationTokenizer extends CharTokenizer {
    * @param factory
    *          the attribute factory to use for this {@link Tokenizer}
    */
-  public TibetanPunctuationTokenizer(AttributeFactory factory) {
+  public TibSyllableTokenizer(AttributeFactory factory) {
     super(factory);
   }
   
@@ -51,6 +55,6 @@ public final class TibetanPunctuationTokenizer extends CharTokenizer {
    * {@link Character#isWhitespace(int)}.*/
   @Override
   protected boolean isTokenChar(int c) {
-    return !Character.isWhitespace(c);
+    return isTibLetterOrDigit(c);
   }
 }
