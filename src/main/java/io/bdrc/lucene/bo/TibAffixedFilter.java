@@ -23,21 +23,21 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 
 /**
- * Removes <tt>'i</tt>, <tt>'o</tt> and <tt>'is</tt> characters at end of token for use in the ChunkAnalyzer or WylieAnalyzer.
+ * Removes <tt>འི</tt>, <tt>འོ</tt> and <tt>འིས</tt> characters at end of token for use in the ChunkAnalyzer or WylieAnalyzer.
  * <p>
- * The <tt>'i</tt> in Wylie at the end is a modifer that can be usefully ignored in search and indexing so that "po" and "po'i" will match. This should help
+ * The <tt>འི</tt> in Wylie at the end is a modifer that can be usefully ignored in search and indexing so that "པོ" and "པོའི" will match. This should help
  * searches to be more lenient.
  * <p>
  * Derived from Lucene 4.4.0 analysis.standard.ClassicFilter
  */
 
 public class TibAffixedFilter extends TokenFilter {
-	static char AA = '\u0F60';
-	static char GIGU = '\u0F72';
-	static char NARO = '\u0F7C';
-	static char SA = '\u0F66';
-	static char NGA = '\u0F44';
-	static char MA = '\u0F58';
+	static char AA = 'འ';
+	static char GIGU = 'ི';
+	static char NARO = 'ོ';
+	static char SA = 'ས';
+	static char NGA = 'ང';
+	static char MA = 'མ';
 
 	public TibAffixedFilter(TokenStream input) {
 		super(input);
@@ -48,7 +48,7 @@ public class TibAffixedFilter extends TokenFilter {
 	/**
 	 * Returns the next token in the stream, or null at EOS.
 	 * <p>
-	 * Removes <tt>'s</tt> from the end of words.
+	 * Removes <tt>འས</tt> from the end of words.
 	 * <p>
 	 * Removes dots from acronyms.
 	 */
@@ -61,7 +61,7 @@ public class TibAffixedFilter extends TokenFilter {
 		final char[] buffer = termAtt.buffer();
 		final int len = termAtt.length();
 
-		// if the token ends with "'is" then decrement token length by 3
+		// if the token ends with "འིས" then decrement token length by 3
 		if (len > 3) {
 			if (buffer[len - 3] == AA && buffer[len - 2] == GIGU && buffer[len - 1] == SA) {
 				termAtt.setLength(len - 3);
@@ -69,7 +69,7 @@ public class TibAffixedFilter extends TokenFilter {
 			}
 		}
 
-		// if the token ends with "'i" or "'o" then decrement token length by 2
+		// if the token ends with "འི" or "འོ" or "འང" or "འམ" then decrement token length by 2
 		if (len > 2) {
 			if (buffer[len - 2] == AA && (buffer[len - 1] == GIGU || buffer[len - 1] == NARO
 					|| buffer[len - 1] == MA || buffer[len - 1] == NGA)) {
