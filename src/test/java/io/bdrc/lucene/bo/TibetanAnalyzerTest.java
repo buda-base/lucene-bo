@@ -31,11 +31,11 @@ public class TibetanAnalyzerTest
 	      return tokenizer;
 	}
 		
-	static private void assertTokenStream(TokenStream tokenizer, List<String> expected) {
+	static private void assertTokenStream(TokenStream tokenStream, List<String> expected) {
 		try {
 			List<String> termList = new ArrayList<String>();
-			CharTermAttribute charTermAttribute = tokenizer.addAttribute(CharTermAttribute.class);
-			while (tokenizer.incrementToken()) {
+			CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
+			while (tokenStream.incrementToken()) {
 			    termList.add(charTermAttribute.toString());
 			}
 			/** prints out the list of terms */
@@ -58,8 +58,8 @@ public class TibetanAnalyzerTest
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
 		System.out.print(input);
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
-		TokenStream tokenizr = tokenize(input, new TibSyllableTokenizer());
-		assertTokenStream(tokenizr, expected);
+		TokenStream tokenizer = tokenize(input, new TibSyllableTokenizer());
+		assertTokenStream(tokenizer, expected);
     }
 
 	@Test
