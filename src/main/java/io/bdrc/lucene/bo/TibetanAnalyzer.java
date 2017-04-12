@@ -18,6 +18,8 @@ package io.bdrc.lucene.bo;
 
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenFilter;
+import org.apache.lucene.analysis.Tokenizer;
 
 /**
  * An Analyzer that uses {@link WhitespaceTokenizer}.
@@ -32,6 +34,8 @@ public final class TibetanAnalyzer extends Analyzer {
   
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
-		return new TokenStreamComponents(new TibSyllableTokenizer());
+		Tokenizer source = new TibSyllableTokenizer();
+		TokenFilter filter = new TibEndingFilter(source);
+		return new TokenStreamComponents(source, filter);
 	}
 }
