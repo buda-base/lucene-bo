@@ -31,12 +31,10 @@ public class TibetanAnalyzerTest
 	      return tokenizer;
 	}
 	
-	private void assertTokenStream(String string, List<String> expected) {
-		Tokenizer tokenizr = new TibSyllableTokenizer();
+	private void assertTokenStream(String string, List<String> expected, Tokenizer tokenizer) {
 		TokenStream tokenStream = null;
 		try {
-			tokenStream = tokenize(string, tokenizr);
-			
+			tokenStream = tokenize(string, tokenizer);
 			List<String> termList = new ArrayList<String>();
 			CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
 			while (tokenStream.incrementToken()) {
@@ -58,10 +56,10 @@ public class TibetanAnalyzerTest
 	@Test
     public void test1() throws IOException
     {
-		System.out.println("Test 1: Tokenizes into syllables");
+		System.out.println("Test1: TibSyllableTokenizer()");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
-		assertTokenStream(input, expected);
+		assertTokenStream(input, expected, new TibSyllableTokenizer());
     }
 
 	@Test
