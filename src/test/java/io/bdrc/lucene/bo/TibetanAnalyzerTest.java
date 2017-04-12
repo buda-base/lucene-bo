@@ -66,13 +66,13 @@ public class TibetanAnalyzerTest
 	@Test
 	public void test2() throws IOException
 	{
-		System.out.println("Test2: TibEndingFilter()");
-		String input = "དགའ། དགའི། དགའོ། དགའིས། དག།";
-		List<String> expected = Arrays.asList("དགའ", "དག", "དག", "དག", "དག");
+		System.out.println("Test2: TibAffixedFilter()");
+		String input = "དག། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ།";
+		List<String> expected = Arrays.asList("དག", "དགའ", "དག", "དག", "དག", "དག", "དག");
 
 		System.out.print(input + " => ");
 		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
-		TokenFilter res = new TibEndingFilter(syllables);
+		TokenFilter res = new TibAffixedFilter(syllables);
 		assertTokenStream(res, expected);
 	}
 

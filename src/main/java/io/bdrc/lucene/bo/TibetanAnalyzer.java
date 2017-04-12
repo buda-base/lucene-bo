@@ -35,7 +35,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
 		Tokenizer source = new TibSyllableTokenizer();
-		TokenFilter filter = new TibEndingFilter(source);
+		TokenFilter filter = new TibAffixedFilter(source);
 		return new TokenStreamComponents(source, filter);
 	}
 }

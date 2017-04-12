@@ -31,15 +31,15 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  * Derived from Lucene 4.4.0 analysis.standard.ClassicFilter
  */
 
-public class TibEndingFilter extends TokenFilter {
+public class TibAffixedFilter extends TokenFilter {
 	static char AA = '\u0F60';
 	static char GIGU = '\u0F72';
 	static char NARO = '\u0F7C';
 	static char SA = '\u0F66';
-	static char NGA = '\u0F94';
-	static char MA = '\u0FA8';
+	static char NGA = '\u0F44';
+	static char MA = '\u0F58';
 
-	public TibEndingFilter(TokenStream input) {
+	public TibAffixedFilter(TokenStream input) {
 		super(input);
 	}
 
@@ -71,7 +71,8 @@ public class TibEndingFilter extends TokenFilter {
 
 		// if the token ends with "'i" or "'o" then decrement token length by 2
 		if (len > 2) {
-			if (buffer[len - 2] == AA && (buffer[len - 1] == GIGU || buffer[len - 1] == NARO || buffer[len - 1] == MA || buffer[len - 1] == NGA)) {
+			if (buffer[len - 2] == AA && (buffer[len - 1] == GIGU || buffer[len - 1] == NARO
+					|| buffer[len - 1] == MA || buffer[len - 1] == NGA)) {
 				termAtt.setLength(len - 2);
 			}
 		}
