@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -73,6 +74,19 @@ public class TibetanAnalyzerTest
 		System.out.print(input + " => ");
 		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
 		TokenFilter res = new TibAffixedFilter(syllables);
+		assertTokenStream(res, expected);
+	}
+
+	@Test
+	public void test3() throws IOException
+	{
+		System.out.println("Test3: filter tibStopWords");
+		String input = "གི་ཀྱི་གྱི་ཡི་གིས་ཀྱིས་ཧ་གྱིས་ཡིས་ན་སུ་ར་རུ་དུ་ལ་ཏུ་གོ་ངོ་དོ་ཧ་ནོ་པོ་མོ་རོ་ལོ་སོ་ཏོ་དང་།";
+		List<String> expected = Arrays.asList("ཧ", "ཧ");
+
+		System.out.print(input + " => ");
+		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
+		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
 		assertTokenStream(res, expected);
 	}
 

@@ -17,7 +17,12 @@
 package io.bdrc.lucene.bo;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
 
@@ -25,7 +30,16 @@ import org.apache.lucene.analysis.Tokenizer;
  * An Analyzer that uses {@link WhitespaceTokenizer}.
  **/
 public final class TibetanAnalyzer extends Analyzer {
-  
+	static final List<String> tibStopWords = Arrays.asList(
+			"གི", "ཀྱི", "གྱི", "ཡི",
+			"གིས", "ཀྱིས", "གྱིས", "ཡིས", "ན",
+			"སུ", "ར", "རུ", "དུ", "ལ", "ཏུ",
+			"གོ", "ངོ", "དོ", "ནོ", "པོ",
+			"མོ", "རོ", "ལོ", "སོ", "ཏོ",
+			"དང"
+			);
+	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
+
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
 	 */
@@ -35,7 +49,8 @@ public final class TibetanAnalyzer extends Analyzer {
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
 		Tokenizer source = new TibSyllableTokenizer();
-		TokenFilter filter = new TibAffixedFilter(source);
-		return new TokenStreamComponents(source, filter);
+		TokenFilter filter1 = new TibAffixedFilter(source);
+		StopFilter filter2 = new StopFilter(filter1, tibStopSet);
+		return new TokenStreamComponents(source, filter2);
 	}
 }
