@@ -39,7 +39,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.*;
 
 /**
- * Unit test for simple App.
+ * Unit tests for the Tibetan tokenizers and filters.
  */
 public class TibetanAnalyzerTest
 {
