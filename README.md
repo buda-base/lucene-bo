@@ -4,7 +4,7 @@ This repository contains an upgrade from Lucene 4.4 to Lucene 6.4.1 of the Lucen
 
 ## Compiling and running
 
-
+(to come)
 
 ## License
 
