@@ -77,7 +77,11 @@ local.properties
 # Code Recommenders
 .recommenders/
 
+# Eclipse Scrapbook
+.jpage
+
 #
 # Protege
 #
 catalog-v001.xml
+/scrapbook.jpage
