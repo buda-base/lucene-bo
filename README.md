@@ -1,6 +1,6 @@
 # Lucene Analyzers for Tibetan
 
-This repository contains an upgrade from Lucene 4.4 to Lucene 6.4.1 of the Lucene analyzers that are found in [these lucene-analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
+This repository contains an upgrade from Lucene 4.4 to Lucene 6.4.1 of [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
 
 ## Compiling and running
 
