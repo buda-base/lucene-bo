@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Tibetan Buddhist Resource Center (TBRC)
+ * Copyright (c) 2017 Buddhist Digital Resource Center (BDRC)
  * 
  * If this file is a derivation of another work the license header will appear 
  * below; otherwise, this work is licensed under the Apache License, Version 2.0 
@@ -26,7 +26,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 
 /**
- * Removes <tt>འི</tt>, <tt>འོ</tt> and <tt>འིས</tt> characters at end of token for use in the ChunkAnalyzer or WylieAnalyzer.
+ * Removes <tt>འི</tt>, <tt>འོ</tt> and <tt>འིས</tt> characters at end of token.
  * <p>
  * The <tt>འི</tt> is an affixed particle that can be usefully ignored in search and indexing so that "པོ" and "པོའི" will match. This should help
  * searches to be more lenient.

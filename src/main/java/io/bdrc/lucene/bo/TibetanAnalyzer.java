@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Tibetan Buddhist Resource Center (TBRC)
+ * Copyright (c) 2017 Buddhist Digital Resource Center (BDRC)
  * 
  * If this file is a derivation of another work the license header will appear 
  * below; otherwise, this work is licensed under the Apache License, Version 2.0 
@@ -30,7 +30,9 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
 
 /**
- * An Analyzer that uses {@link WhitespaceTokenizer}.
+ * An Analyzer that uses {@link TibSyllableTokenizer} and filters with StopFilter
+ * 
+ * Derived from Lucene 6.4.1 analysis.core.WhitespaceAnalyzer.java
  **/
 public final class TibetanAnalyzer extends Analyzer {
 	static final List<String> tibStopWords = Arrays.asList(

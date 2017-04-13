@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Tibetan Buddhist Resource Center (TBRC)
+ * Copyright (c) 2017 Buddhist Digital Resource Center (BDRC)
  * 
  * If this file is a derivation of another work the license header will appear 
  * below; otherwise, this work is licensed under the Apache License, Version 2.0 
@@ -99,7 +99,7 @@ public class TibetanAnalyzerTest
 	@Test
 	public void test3() throws IOException
 	{
-		System.out.println("Test3: filter tibStopWords");
+		System.out.println("Test3: filter TibetanAnalyzer.tibStopWords");
 		String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་བོ་ཏོ་གིན་ཀྱིན་གྱིན་ཡིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
 		List<String> expected = Arrays.asList("ཧ", "ཧ");
 

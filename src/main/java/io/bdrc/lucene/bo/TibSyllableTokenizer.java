@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Tibetan Buddhist Resource Center (TBRC)
+ * Copyright (c) 2017 Buddhist Digital Resource Center (BDRC)
  * 
  * If this file is a derivation of another work the license header will appear 
  * below; otherwise, this work is licensed under the Apache License, Version 2.0 
@@ -24,8 +24,15 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.util.AttributeFactory;
 
-/**
- * A tokenizer that divides Tibetan text into syllables
+/** 
+ * A TibSyllableTokenizer divides text between sequences of Tibetan Letter and/or Digit 
+ * characters and sequences of all other characters - typically some sort of white space 
+ * but other punctuation and characters from other language code-pages are not considered
+ * as constituents of tokens for the purpose of search and indexing.
+ * <p>
+ * Adjacent sequences of Tibetan Letter and/or Digit characters form tokens.
+ * <p>
+ * Derived from Lucene 6.4.1 analysis.core.WhitespaceTokenizer.java
  */
 public final class TibSyllableTokenizer extends CharTokenizer {
   
@@ -41,7 +48,7 @@ public final class TibSyllableTokenizer extends CharTokenizer {
 	}
   
 	/**
-	 * Construct a new WhitespaceTokenizer using a given
+	 * Construct a new TibSyllableTokenizer using a given
 	 * {@link org.apache.lucene.util.AttributeFactory}.
 	 *
 	 * @param factory
@@ -51,8 +58,9 @@ public final class TibSyllableTokenizer extends CharTokenizer {
 		super(factory);
 	}
   
-	/** Collects only characters which do not satisfy
-	 * {@link Character#isWhitespace(int)}.*/
+	/** 
+	 * Collects only characters which satisfy isTibetanLetterOrDigit()
+	 */
 	@Override
 	protected boolean isTokenChar(int c) {
 		return isTibLetterOrDigit(c);
