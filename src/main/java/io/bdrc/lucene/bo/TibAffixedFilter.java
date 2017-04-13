@@ -39,7 +39,97 @@ public class TibAffixedFilter extends TokenFilter {
 	public TibAffixedFilter(TokenStream input) {
 		super(input);
 	}
-
+	
+	/**
+	 * Decides whether the syllable had a final འ before being affixed.
+	 * @param p the prefix
+	 * @param m the main stack
+	 * @return true if this syllable configuration requires an final འ to be legal.
+	 */
+	final boolean needsAASuffix (char p, char m) {
+		switch(p) {
+		case 'ག':
+			switch(m) {
+			case 'ཅ':
+			case 'ཉ':
+			case 'ཏ':
+			case 'ད':
+			case 'ན':
+			case 'ཙ':
+			case 'ཞ':
+			case 'ཟ':
+			case 'ཡ':
+			case 'ཤ':
+			case 'ས':
+				return true;
+			default:
+				return false;
+			}
+		case 'ད':
+			switch(m) {
+			case 'ཀ':
+			case 'ག':
+			case 'ང':
+			case 'པ':
+			case 'བ':
+			case 'མ':
+				return true;
+			default:
+				return false;
+			}
+		case 'བ':
+			switch(m) {
+			case 'ཀ':
+			case 'ག':
+			case 'ཅ':
+			case 'ཏ':
+			case 'ད':
+			case 'ཙ':
+			case 'ཞ':
+			case 'ཟ':
+			case 'ཤ':
+			case 'ས':
+				return true;
+			default:
+				return false;
+			}
+		case 'མ':
+			switch(m) {
+			case 'ཁ':
+			case 'ག':
+			case 'ང':
+			case 'ཆ':
+			case 'ཇ':
+			case 'ཉ':
+			case 'ཐ':
+			case 'ད':
+			case 'ན':
+			case 'ཚ':
+			case 'ཛ':
+				return true;
+			default:
+				return false;
+			}
+		case 'འ':
+			switch(m) {
+			case 'ཁ':
+			case 'ག':
+			case 'ཆ':
+			case 'ཇ':
+			case 'ཐ':
+			case 'ད':
+			case 'ཕ':
+			case 'བ':
+			case 'ཚ':
+			case 'ཛ':
+				return true;
+			default:
+				return false;
+			}
+		default:
+			return false;
+		}
+	}
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
 	/**
@@ -60,7 +150,12 @@ public class TibAffixedFilter extends TokenFilter {
 		// if the token ends with "འིས" then decrement token length by 3
 		if (len > 3) {
 			if (buffer[len - 3] == '\u0F60' && buffer[len - 2] == '\u0F72' && buffer[len - 1] == '\u0F66') {
-				termAtt.setLength(len - 3);
+				// if the host syllable had a འ before the particle was affixed, do not remove it.
+				if (len - 5 == 0 && needsAASuffix(buffer[len - 5], buffer[len - 4])) {
+					termAtt.setLength(len - 2);
+				} else {
+					termAtt.setLength(len - 3);
+				}
 				return true;
 			}
 		}
@@ -69,10 +164,18 @@ public class TibAffixedFilter extends TokenFilter {
 		if (len > 2) {
 			if (buffer[len - 2] == '\u0F60' && (buffer[len - 1] == '\u0F72' || buffer[len - 1] == '\u0F7C'  
 					|| buffer[len - 1] == '\u0F58' || buffer[len - 1] == '\u0F44')) {
-				termAtt.setLength(len - 2);
+				// if the host syllable had a འ before the particle was affixed, do not remove it.
+				if (len - 4 == 0 && needsAASuffix(buffer[len - 4], buffer[len - 3])) {
+					termAtt.setLength(len - 1);
+				} else {
+					termAtt.setLength(len - 2);
+				}
+			}
+			// if the token ends with "ས" hiding a "འ" suffix
+			if (buffer[len - 1] == '\u0F66' && needsAASuffix(buffer[len - 3], buffer[len - 2])) {
+				buffer[len - 1] = 'འ';
 			}
 		}
-
 		return true;
 	}
 }
