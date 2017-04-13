@@ -43,7 +43,7 @@ public final class TibetanAnalyzer extends Analyzer {
 			"སྟེ", "ཏེ", 
 			"མམ", "རམ", "སམ", "ཏམ", 
 			"ནོ", "བོ", "ཏོ", 
-			"གིན", "ཀྱིན", "གྱིན", "ཡིན", 
+			"གིན", "ཀྱིན", "གྱིན", 
 			"ཅིང", "ཅིག", 
 //			"ཅེ་ན", "ཞེ་ན", // will be useful when on the word-level
 //			"ཅེའོ", "ཞེའོ", "ཤེའོ", // not useful after TibEndingFilter 
