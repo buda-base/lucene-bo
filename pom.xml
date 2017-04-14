@@ -4,39 +4,104 @@
   <groupId>io.bdrc.lucene.bo</groupId>
   <artifactId>lucene-bo</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>lucene-bo</name>
-  <url>http://maven.apache.org</url>
+  <description>Tibetan Lucene analyzer and components</description>
+  <url>https://github.com/BuddhistDigitalResourceCenter/lucene-bo</url>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+   <developers>
+    <developer>
+      <name>Chris Tomlinson</name>
+      <email>chris.j.tomlinson@gmail.com</email>
+      <organization>Buddhist Digital Resource Center</organization>
+      <organizationUrl>https://tbrc.org</organizationUrl>
+    </developer>
+    <developer>
+      <name>Hélios Hildt</name>
+      <email>hhdrupchen@gmail.com</email>
+      <organization>Buddhist Digital Resource Center</organization>
+      <organizationUrl>https://tbrc.org</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/BuddhistDigitalResourceCenter/lucene-bo.git</connection>
+    <developerConnection>scm:git:ssh://github.com:BuddhistDigitalResourceCenter/lucene-bo.git</developerConnection>
+    <url>http://github.com/BuddhistDigitalResourceCenter/lucene-bo/tree/master</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
-	<dependency>
-   		<groupId>org.apache.lucene</groupId>
-   		<artifactId>lucene-core</artifactId>
-   		<version>6.4.1</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.lucene</groupId>
-		<artifactId>lucene-test-framework</artifactId>
-		<version>6.4.1</version>
-	</dependency>
-	<dependency>
-    	<groupId>org.apache.lucene</groupId>
-    	<artifactId>lucene-analyzers-common</artifactId>
-    	<version>6.4.1</version>
-	</dependency>
+  	<dependency>
+     		<groupId>org.apache.lucene</groupId>
+     		<artifactId>lucene-core</artifactId>
+     		<version>6.4.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-test-framework</artifactId>
+  		<version>6.4.1</version>
+  	</dependency>
+  	<dependency>
+      	<groupId>org.apache.lucene</groupId>
+      	<artifactId>lucene-analyzers-common</artifactId>
+      	<version>6.4.1</version>
+  	</dependency>
   </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>junit</groupId>
-  			<artifactId>junit</artifactId>
-  			<version>4.12</version>
-  		</dependency>
-  	</dependencies>
-  </dependencyManagement>
+  <build>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-source-plugin</artifactId>
+    <version>2.2.1</version>
+    <executions>
+     <execution>
+      <id>attach-sources</id>
+      <goals>
+       <goal>jar-no-fork</goal>
+      </goals>
+     </execution>
+    </executions>
+   </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-javadoc-plugin</artifactId>
+    <version>2.9.1</version>
+    <executions>
+     <execution>
+      <id>attach-javadocs</id>
+      <goals>
+       <goal>jar</goal>
+      </goals>
+     </execution>
+    </executions>
+   </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-gpg-plugin</artifactId>
+    <version>1.5</version>
+    <executions>
+     <execution>
+      <id>sign-artifacts</id>
+      <phase>verify</phase>
+      <goals>
+       <goal>sign</goal>
+      </goals>
+     </execution>
+    </executions>
+   </plugin>
+  </plugins>
+ </build>
 </project>
