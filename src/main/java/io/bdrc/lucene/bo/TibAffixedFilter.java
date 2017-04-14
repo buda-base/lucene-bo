@@ -171,10 +171,6 @@ public class TibAffixedFilter extends TokenFilter {
 					termAtt.setLength(len - 2);
 				}
 			}
-			// if the token ends with "ས" hiding a "འ" suffix
-			if (buffer[len - 1] == '\u0F66' && needsAASuffix(buffer[len - 3], buffer[len - 2])) {
-				buffer[len - 1] = 'འ';
-			}
 		}
 		return true;
 	}
