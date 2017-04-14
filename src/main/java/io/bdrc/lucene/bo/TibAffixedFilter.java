@@ -147,11 +147,25 @@ public class TibAffixedFilter extends TokenFilter {
 		final char[] buffer = termAtt.buffer();
 		final int len = termAtt.length();
 
+		// if the token ends with "འིའོ" then decrement token length by 4
+		if (len > 4) {
+			if (buffer[len - 4] == '\u0F60' && (buffer[len - 3] == '\u0F72' && 
+					buffer[len - 2] == '\u0F60' && buffer[len - 1] == '\u0F7C')) {
+				// if the host syllable had a འ before the particle was affixed, do not remove it.
+				if (len == 6 && needsAASuffix(buffer[len - 6], buffer[len - 5])) {
+					termAtt.setLength(len - 3);
+				} else {
+					termAtt.setLength(len - 4);
+				}
+				return true;
+			}
+		}
+		
 		// if the token ends with "འིས" then decrement token length by 3
 		if (len > 3) {
 			if (buffer[len - 3] == '\u0F60' && buffer[len - 2] == '\u0F72' && buffer[len - 1] == '\u0F66') {
 				// if the host syllable had a འ before the particle was affixed, do not remove it.
-				if (len - 5 == 0 && needsAASuffix(buffer[len - 5], buffer[len - 4])) {
+				if (len == 5 && needsAASuffix(buffer[len - 5], buffer[len - 4])) {
 					termAtt.setLength(len - 2);
 				} else {
 					termAtt.setLength(len - 3);
@@ -165,7 +179,7 @@ public class TibAffixedFilter extends TokenFilter {
 			if (buffer[len - 2] == '\u0F60' && (buffer[len - 1] == '\u0F72' || buffer[len - 1] == '\u0F7C'  
 					|| buffer[len - 1] == '\u0F58' || buffer[len - 1] == '\u0F44')) {
 				// if the host syllable had a འ before the particle was affixed, do not remove it.
-				if (len - 4 == 0 && needsAASuffix(buffer[len - 4], buffer[len - 3])) {
+				if (len == 4 && needsAASuffix(buffer[len - 4], buffer[len - 3])) {
 					termAtt.setLength(len - 1);
 				} else {
 					termAtt.setLength(len - 2);
