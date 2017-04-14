@@ -19,21 +19,22 @@
  ******************************************************************************/
 package io.bdrc.lucene.bo;
 
-
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
-
 /**
- * Removes <tt>འི</tt>, <tt>འོ</tt> and <tt>འིས</tt> characters at end of token.
+ * Removes <tt>འི</tt>, <tt>འོ</tt>, <tt>འིའོ</tt>,  <tt>འམ</tt>, <tt>འང</tt> and <tt>འིས</tt> characters at end of token.
  * <p>
  * The <tt>འི</tt> is an affixed particle that can be usefully ignored in search and indexing so that "པོ" and "པོའི" will match. This should help
  * searches to be more lenient.
- * <p>
+ * </p><p>
  * Derived from Lucene 6.4.1 analysis.standard.ClassicFilter
+ * </p>
+ * 
+ * @author Chris Tomlinson
+ * @author Hélios Hildt
  */
-
 public class TibAffixedFilter extends TokenFilter {
 
 	public TibAffixedFilter(TokenStream input) {
@@ -46,7 +47,7 @@ public class TibAffixedFilter extends TokenFilter {
 	 * @param m the main stack
 	 * @return true if this syllable configuration requires an final འ to be legal.
 	 */
-	final boolean needsAASuffix (char p, char m) {
+	final private static boolean needsAASuffix (char p, char m) {
 		switch(p) {
 		case 'ག':
 			switch(m) {
@@ -135,8 +136,8 @@ public class TibAffixedFilter extends TokenFilter {
 	/**
 	 * Returns the next token in the stream, or null at EOS.
 	 * <p>
-	 * Removes <tt>འི</tt>, <tt>འོ</tt>, <tt>འམ</tt>, <tt>འང</tt> and <tt>འིས</tt> from the end of words.
-	 * <p>
+	 * Removes <tt>འི</tt>, <tt>འོ</tt>, <tt>འིའོ</tt>,  <tt>འམ</tt>, <tt>འང</tt> and <tt>འིས</tt> from the end of words.
+	 * </p>
 	 */
 	@Override
 	public final boolean incrementToken() throws java.io.IOException {

@@ -17,12 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package io.bdrc.lucene.bo;
 
+package io.bdrc.lucene.bo;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
@@ -33,8 +32,13 @@ import org.apache.lucene.analysis.Tokenizer;
  * An Analyzer that uses {@link TibSyllableTokenizer} and filters with StopFilter
  * 
  * Derived from Lucene 6.4.1 analysis.core.WhitespaceAnalyzer.java
+ * 
+ * @author Chris Tomlinson
+ * @author Hélios Hildt
  **/
 public final class TibetanAnalyzer extends Analyzer {
+	
+	// non-ambiguous particles
 	static final List<String> tibStopWords = Arrays.asList(
 			"ཏུ", 
 			"གི", "ཀྱི", 
