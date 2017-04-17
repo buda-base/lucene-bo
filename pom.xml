@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.bdrc.lucene.bo</groupId>
+  <groupId>io.bdrc.lucene</groupId>
   <artifactId>lucene-bo</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
@@ -31,6 +31,16 @@
       <organizationUrl>https://tbrc.org</organizationUrl>
     </developer>
   </developers>
+  <distributionManagement>
+    <snapshotRepository>
+       <id>ossrh</id>
+       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+       <id>ossrh</id>
+       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
   <scm>
     <connection>scm:git:git://github.com/BuddhistDigitalResourceCenter/lucene-bo.git</connection>
     <developerConnection>scm:git:ssh://github.com:BuddhistDigitalResourceCenter/lucene-bo.git</developerConnection>
@@ -48,11 +58,6 @@
      		<groupId>org.apache.lucene</groupId>
      		<artifactId>lucene-core</artifactId>
      		<version>6.4.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.lucene</groupId>
-  		<artifactId>lucene-test-framework</artifactId>
-  		<version>6.4.1</version>
   	</dependency>
   	<dependency>
       	<groupId>org.apache.lucene</groupId>
