@@ -31,7 +31,10 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.pl.PolishAnalyzer;
+import org.apache.lucene.analysis.stempel.StempelStemmer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.egothor.stemmer.Trie;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -106,6 +109,14 @@ public class TibetanAnalyzerTest
 		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
 		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
 		assertTokenStream(res, expected);
+	}
+
+	@Test
+	public void test4() throws IOException
+	{
+		System.out.println("Test4: Testing Egothor Trie");
+		Trie test = new Trie(null);
+		System.out.print(test.toString());
 	}
 
 	@AfterClass
