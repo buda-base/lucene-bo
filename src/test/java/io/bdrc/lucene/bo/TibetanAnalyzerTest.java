@@ -34,6 +34,7 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.pl.PolishAnalyzer;
 import org.apache.lucene.analysis.stempel.StempelStemmer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.egothor.stemmer.Diff;
 import org.egothor.stemmer.Trie;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -115,7 +116,12 @@ public class TibetanAnalyzerTest
 	public void test4() throws IOException
 	{
 		System.out.println("Test4: Testing Egothor Trie");
-		Trie test = new Trie(null);
+		Diff diff = new Diff(2, 1, 4, 4);
+		String cmd1 = diff.exec("དགའི"," དགའ");
+		System.out.println("diff1: "+cmd1);
+		String cmd2 = diff.exec("དྲོའི"," དྲོ");
+		System.out.println("diff2: "+cmd2);
+		Trie test = new Trie(true);
 		System.out.print(test.toString());
 	}
 
