@@ -1,26 +1,31 @@
 # Lucene Analyzers for Tibetan
 
-This repository contains an upgrade from Lucene 4.4 to Lucene 6.4.1 of [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
+This repository contains Lucene tools (analysers, tokenizers and filters) for the Tibetan Language. They are based on [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
+
+Installation through maven:
+
+```xml
+    <dependency>
+      <groupId>io.bdrc.lucene</groupId>
+      <artifactId>lucene-bo</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+```
 
 ## Components
 
 #### TibetanAnalyzer
 
 The main Analyzer. 
-It tokenizes the input text using TibSyllableTokenizer, then applies TibAffixedFilter and uses StopFilter with using tibStopWords, the list of non-ambiguous non-affixed particles.
-Ex: ལོ, སོ and ཞིང are not in the list.
+It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffixedFilter* and *StopFilter* with a predefined list of stop words.
 
 #### TibSyllableTokenizer
 
-This Tokenizer produces syllabe tokens (with no tshek) from the input Tibetan text.
+This tokenizer produces syllabe tokens (with no tshek) from the input Tibetan text.
 
 #### TibAffixedFilter
 
-<<<<<<< WordTokenizer
-This Filter removes non-ambiguous affixed particles (འི འོ འིའོ འམ འང འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག)
-=======
 This filter removes non-ambiguous affixed particles (འི, འོ, འིའོ, འམ, འང and འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
->>>>>>> 41f20de cosmetic
 
 ## License
 
