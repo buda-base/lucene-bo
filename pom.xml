@@ -46,35 +46,11 @@
     <developerConnection>scm:git:ssh://github.com:BuddhistDigitalResourceCenter/lucene-bo.git</developerConnection>
     <url>http://github.com/BuddhistDigitalResourceCenter/lucene-bo/tree/master</url>
   </scm>
-  <repositories>
-    <repository>
-      <id>oracle-repo</id>
-      <name>oracle repo</name>
-      <url>http://download.oracle.com/maven</url>
-    </repository>
-    <repository>
-        <id>egothor.org</id>
-        <name>Egothor.org repository</name>
-        <url>http://www.egothor.org/download/release/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <layout>default</layout>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
-      <groupId>com.sleepycat</groupId>
-      <artifactId>je</artifactId>
-      <version>5.0.58</version>
-    </dependency>
-    <dependency>
-      <groupId>egothor</groupId>
-      <artifactId>egothor2</artifactId>
-      <version>4.0.0</version>
+      <groupId>io.bdrc.lucene</groupId>
+      <artifactId>stemmer</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

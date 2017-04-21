@@ -34,11 +34,15 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.pl.PolishAnalyzer;
 import org.apache.lucene.analysis.stempel.StempelStemmer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.egothor.stemmer.Diff;
-import org.egothor.stemmer.Trie;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.bdrc.lucene.stemmer.Diff;
+import io.bdrc.lucene.stemmer.Optimizer;
+import io.bdrc.lucene.stemmer.Row;
+import io.bdrc.lucene.stemmer.Trie;
+
 import static org.hamcrest.CoreMatchers.*;
 
 /**
@@ -112,18 +116,67 @@ public class TibetanAnalyzerTest
 		assertTokenStream(res, expected);
 	}
 
+	/**
+	 *  this function is inspired from getLastOnPath() in stemmer's Trie.java
+	 * @param toAnalyze the string to analyse
+	 * @param startCharIndex the index from which we want to analyze
+	 * @param t the Trie containing the data
+	 */
+	// 
+	public void produceOneToken(String toAnalyze, int startCharIndex, Trie t) {
+		// getting the root of the tree
+		Row now = t.getRow(t.getRoot());
+		int w; // temporary index variable
+		int lastCharIndex = -1; // the index of the last match in the string we analyze
+		int lastCmdIndex = -1; // the index (inside the Trie) of the cmd corresponding to the last match
+		
+		int i = startCharIndex; // the current index in the string
+		while (i < toAnalyze.length()) {
+			Character ch = toAnalyze.charAt(i); // get the current character
+			System.out.println("moving to index "+i+": "+ch);
+			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
+			if (w >= 0) {
+				System.out.println("current row has an command for it, so it's a match");
+                lastCmdIndex = w;
+                lastCharIndex = i;
+            } else {
+            	System.out.println("current row does not have a command for it, no match");
+            }
+			w = now.getRef(ch); // get the next row if there is one
+			if (w >= 0) {
+				System.out.println("current row does have a reference for this char, further matches are possible, moving one row forward in the Trie");
+                now = t.getRow(w);
+            } else {
+            	System.out.println("current row does not have a reference to this char, so there's no further possible match, breaking the loop");
+                break; // no more steps possible in our research
+            }
+			i++;
+		}
+		//w = now.getCmd(toAnalyze.charAt(i));
+		if (lastCharIndex == -1) {
+			System.out.println("I have found nothing");
+			return;
+		}
+		System.out.println("I have found a token that goes from "+startCharIndex+" to "
+				+ lastCharIndex);
+		System.out.println("the substring is: "+toAnalyze.substring(startCharIndex, lastCharIndex+1));
+		System.out.println("the command associated with this token in the Trie is: "+t.getCommandVal(lastCmdIndex));
+	}
+	
 	@Test
 	public void test4() throws IOException
 	{
-		System.out.println("Test4: Testing Egothor Trie");
-		Diff diff = new Diff(2, 1, 4, 4);
-		String cmd1 = diff.exec("དགའི"," དགའ");
-		System.out.println("diff1: "+cmd1);
-		String cmd2 = diff.exec("དྲོའི"," དྲོ");
-		System.out.println("diff2: "+cmd2);
+		System.out.println("Test4: Testing Stemmer Trie");
 		Trie test = new Trie(true);
-		System.out.print(test.toString());
+		test.add("དྲོའི"," 2");
+		test.add("དྲོ","0");
+		test.add("དགའི", " 1");
+		test.add("དགའ"," 0");
+		Optimizer opt = new Optimizer();
+		test.reduce(opt);
+		produceOneToken("དགའི", 0, test);
 	}
+	
 
 	@AfterClass
 	public static void finish() {
