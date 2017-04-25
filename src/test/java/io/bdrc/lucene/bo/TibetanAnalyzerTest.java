@@ -125,6 +125,7 @@ public class TibetanAnalyzerTest
 	// 
 	public void produceOneToken(String toAnalyze, int startCharIndex, Trie t) {
 		// getting the root of the tree
+		System.out.println(toAnalyze);
 		Row now = t.getRow(t.getRoot());
 		int w; // temporary index variable
 		int lastCharIndex = -1; // the index of the last match in the string we analyze
@@ -136,18 +137,26 @@ public class TibetanAnalyzerTest
 			System.out.println("moving to index "+i+": "+ch);
 			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
 			if (w >= 0) {
-				System.out.println("current row has an command for it, so it's a match");
-                lastCmdIndex = w;
-                lastCharIndex = i;
+				if (i < toAnalyze.length()-1) {
+					if (!TibSyllableTokenizer.isTibLetterOrDigit(toAnalyze.charAt(i+1))) {
+						System.out.println("current row has an command for it, so it's a match");
+						lastCmdIndex = w;
+						lastCharIndex = i;
+					}
+				} else {
+					System.out.println("current row has an command for it, so it's a match");
+					lastCmdIndex = w;
+					lastCharIndex = i;
+				}
             } else {
-            	System.out.println("current row does not have a command for it, no match");
+//            	System.out.println("current row does not have a command for it, no match");
             }
 			w = now.getRef(ch); // get the next row if there is one
 			if (w >= 0) {
-				System.out.println("current row does have a reference for this char, further matches are possible, moving one row forward in the Trie");
+//				System.out.println("current row does have a reference for this char, further matches are possible, moving one row forward in the Trie");
                 now = t.getRow(w);
             } else {
-            	System.out.println("current row does not have a reference to this char, so there's no further possible match, breaking the loop");
+//            	System.out.println("current row does not have a reference to this char, so there's no further possible match, breaking the loop");
                 break; // no more steps possible in our research
             }
 			i++;
@@ -169,14 +178,21 @@ public class TibetanAnalyzerTest
 		System.out.println("Test4: Testing Stemmer Trie");
 		Trie test = new Trie(true);
 		test.add("དྲོའི"," 2");
-		test.add("དྲོ","0");
+		test.add("བདེ་ལེགས"," ");
+		test.add("བདེ", " 0");
+		test.add("བཀྲ་ཤིས"," ");
+		test.add("བཀྲ", " 0");
+		test.add("དྲོ"," 0");
 		test.add("དགའི", " 1");
 		test.add("དགའ"," 0");
 		Optimizer opt = new Optimizer();
 		test.reduce(opt);
+		produceOneToken("དག", 0, test);
 		produceOneToken("དགའི", 0, test);
+		produceOneToken("བཀྲ་", 0, test);
+		produceOneToken("བཀྲད", 0, test);
+		produceOneToken("བདེ་ལེགས", 0, test);
 	}
-	
 
 	@AfterClass
 	public static void finish() {
