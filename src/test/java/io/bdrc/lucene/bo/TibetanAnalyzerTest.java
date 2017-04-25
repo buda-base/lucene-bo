@@ -115,6 +115,10 @@ public class TibetanAnalyzerTest
 		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
 		assertTokenStream(res, expected);
 	}
+	
+	public boolean isTibLetter(int c) {
+		return ('\u0F40' <= c && c <= '\u0FBC');
+	}
 
 	/**
 	 *  this function is inspired from getLastOnPath() in stemmer's Trie.java
@@ -137,17 +141,11 @@ public class TibetanAnalyzerTest
 			System.out.println("moving to index "+i+": "+ch);
 			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
 			if (w >= 0) {
-				if (i < toAnalyze.length()-1) {
-					if (!TibSyllableTokenizer.isTibLetterOrDigit(toAnalyze.charAt(i+1))) {
+				if (i >= toAnalyze.length()-1 || !isTibLetter(toAnalyze.charAt(i+1))) {
 						System.out.println("current row has an command for it, so it's a match");
 						lastCmdIndex = w;
 						lastCharIndex = i;
 					}
-				} else {
-					System.out.println("current row has an command for it, so it's a match");
-					lastCmdIndex = w;
-					lastCharIndex = i;
-				}
             } else {
 //            	System.out.println("current row does not have a command for it, no match");
             }
