@@ -20,10 +20,23 @@ package io.bdrc.lucene.bo;
 import java.io.IOException;
 
 import org.apache.lucene.analysis.Tokenizer;
+import io.bdrc.lucene.stemmer.Trie;
 
 public final class TibWordTokenizer extends Tokenizer {
 
+	private Trie scanner;
+
+	public TibWordTokenizer() {
+		init();
+	}
 	
+	
+	private void init() {
+		this.scanner = new Trie(true);
+		
+	}
+
+
 	@Override
 	public boolean incrementToken() throws IOException {
 		// TODO Auto-generated method stub
