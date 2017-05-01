@@ -45,24 +45,31 @@ public final class TibWordTokenizer extends Tokenizer {
 	private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
 	private final TypeAttribute typeAtt = addAttribute(TypeAttribute.class);
 		
-	public TibWordTokenizer() throws FileNotFoundException, IOException {
-		init();
+	public TibWordTokenizer(String filename) throws FileNotFoundException, IOException {
+		init(filename);
 	}
 	
+	public TibWordTokenizer() throws FileNotFoundException, IOException {
+		init("resource/output/total_lexicon.txt");
+	}
 	
-	private void init() throws FileNotFoundException, IOException {
+	private void init(String filename) throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
 		
 //		currently only adds the entries without any diff
-		String file = "./resource/output/total_lexicon.txt";
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
-		        String[] parts = line.split(" ");
-		        this.scanner.add(parts[0], "X");
+		    	int spaceIndex = line.indexOf(' ');
+		    	if (spaceIndex == -1) {
+		    		// error!
+		    	} else {
+		    		System.out.println("adding "+line.substring(0, spaceIndex));
+		    		//this.scanner.add(line.substring(0, spaceIndex), "X");
+		    	}
 		    }
-			Optimizer opt = new Optimizer();
-			this.scanner.reduce(opt);
+			//Optimizer opt = new Optimizer();
+			//this.scanner.reduce(opt);
 		}
 	}
 	
@@ -74,16 +81,7 @@ public final class TibWordTokenizer extends Tokenizer {
 //	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 	  
 	  private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
-	
-	  /**
-	   * Returns true iff a codepoint should be included in a token. This tokenizer
-	   * generates as tokens adjacent sequences of codepoints which satisfy this
-	   * predicate. Codepoints for which this is false are used to define token
-	   * boundaries and are not included in tokens.
-	   */
-	  protected boolean isTokenChar(int c) {
-		return false;
-	}
+
 	  /**
 	   * Called on each token character to normalize it before it is added to the
 	   * token. The default implementation does nothing. Subclasses may use this to,
@@ -93,12 +91,22 @@ public final class TibWordTokenizer extends Tokenizer {
 	    return c;
 	  }
 	  
+	public boolean isTibLetter(int c) {
+		return ('\u0F40' <= c && c <= '\u0FBC');
+	}
+	
 	@Override
 	public final boolean incrementToken() throws IOException {
 		clearAttributes();
 		int length = 0;
 	    int start = -1; // this variable is always initialized
 	    int end = -1;
+	    int confirmedEnd = -1;
+	    int confirmedEndIndex = -1;
+	    int w = -1;
+	    boolean potentialEnd = false;
+	    boolean passedFirstSyllable = false;
+	    Row now = null;
 	    char[] buffer = termAtt.buffer();
 	    while (true) {
 	      if (bufferIndex >= dataLen) {
@@ -121,15 +129,47 @@ public final class TibWordTokenizer extends Tokenizer {
 	      final int charCount = Character.charCount(c);
 	      bufferIndex += charCount;
 
-	      if (isTokenChar(c)) {               // if it's a token char
+	      if (isTibLetter(c) || (c == '\u0F0B' && length > 0)) {  // if it's a token char
+	    	System.out.println("loop on "+ (char) c); 
 	        if (length == 0) {                // start of token
-	          assert start == -1;
+	          assert(start == -1);
+	          now = scanner.getRow(scanner.getRoot());
 	          start = offset + bufferIndex - charCount;
-	          end = start;
-	        } else if (length >= buffer.length-1) { // check if a supplementary could run out of bounds
-	          buffer = termAtt.resizeBuffer(2+length); // make sure a supplementary fits in the buffer
+	          end = start + charCount;
+	        } else {
+	        	if (length >= buffer.length-1) { // check if a supplementary could run out of bounds
+	        		buffer = termAtt.resizeBuffer(2+length); // make sure a supplementary fits in the buffer
+	        	}
+	        	if (now == null) {
+	        		System.out.println("now is null");
+	        		if (!passedFirstSyllable) {
+	        			// we're in a broken state (in the first syllable and no match)
+		        		// we just want to go to the end of the syllable
+		        		if (c == '\u0F0B') {
+		        			confirmedEnd = end;
+		        			confirmedEndIndex = bufferIndex;
+		        			break;
+		        		}
+	        		} else {
+	        			break;
+	        		}
+	        	} else {
+	        		if (c == '\u0F0B') {
+	        			passedFirstSyllable = true;
+	        			if (potentialEnd) {
+	        				confirmedEnd = end;
+	        				confirmedEndIndex = bufferIndex;
+	        				System.out.println("confirming end at previous character");
+	        			}
+	        		}
+		        	end += charCount;
+		        	w = now.getCmd((char) c); // TODO: problems ahead if c is > 16 bit
+		        	potentialEnd = (w >= 0); // we may have caught the end, but we must check if next character is a tsheg
+		        	w = now.getRef((char) c);
+		        	now = (w >= 0) ? scanner.getRow(w) : null;
+	        	}
 	        }
-	        end += charCount;
+	        
 	        length += Character.toChars(normalize(c), buffer, length); // buffer it, normalized
 	        if (length >= MAX_WORD_LEN) { // buffer overflow! make sure to check for >= surrogate pair could break == test
 	          break;
@@ -138,10 +178,20 @@ public final class TibWordTokenizer extends Tokenizer {
 	        break;                           // return 'em
 	      }
 	    }
-
-	    termAtt.setLength(length);
-	    assert start != -1;
-	    offsetAtt.setOffset(correctOffset(start), finalOffset = correctOffset(end));
+    	if (potentialEnd) {
+    		confirmedEnd = end;
+    		confirmedEndIndex = bufferIndex;
+    	}
+	    System.out.println("confirmed end: "+confirmedEnd);
+	    System.out.println("start: "+start);
+	    if (confirmedEnd > 0) {
+	    	bufferIndex = confirmedEndIndex;
+	    	end = confirmedEnd;
+	    }
+	    termAtt.setLength(end - start);
+	    assert(start != -1);
+    	finalOffset = correctOffset(end);
+	    offsetAtt.setOffset(correctOffset(start), finalOffset);
 	    return true;
 	    
 	  }

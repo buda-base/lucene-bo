@@ -89,19 +89,6 @@ public class TibetanAnalyzerTest
 		TokenStream res = tokenize(input, new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
-
-	@Test
-	public void test22() throws IOException
-	{
-		System.out.println("Test2: TibAffixedFilter()");
-		String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ།";
-		List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ");
-
-		System.out.print(input + " => ");
-		TokenStream syllables = tokenize(input, new TibWordTokenizer());
-		TokenFilter res = new TibAffixedFilter(syllables);
-		assertTokenStream(res, expected);
-	}
 	
 	@Test
 	public void test2() throws IOException
@@ -205,6 +192,17 @@ public class TibetanAnalyzerTest
 		produceOneToken("བདེ་ལེགས", 0, test);
 	}
 
+	@Test
+	public void test5() throws IOException
+	{
+		System.out.println("Test5: TibWordTokenizer()");
+		String input = "བཀྲ་ཤིས་བདེ་";
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
+		TokenStream syllables = tokenize(input, tibWordTokenizer);
+		//TokenFilter res = new TibAffixedFilter(syllables);
+		assertTokenStream(syllables, expected);
+	}
 	@AfterClass
 	public static void finish() {
 		System.out.println("after the test sequence");
