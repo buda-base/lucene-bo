@@ -22,7 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.CharacterUtils.CharacterBuffer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
@@ -63,52 +65,103 @@ public final class TibWordTokenizer extends Tokenizer {
 			this.scanner.reduce(opt);
 		}
 	}
-
-
-	@Override
-	public boolean incrementToken() throws IOException {
-		Row row = scanner.getRow(scanner.getRoot());
-		while (offsetAtt < this.setReader.length()) {
-			Character ch = toAnalyze.charAt(i); // get the current character
-			System.out.println("moving to index "+i+": "+ch);
-			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
-			if (w >= 0) {
-				if (i >= toAnalyze.length()-1 || !isTibLetter(toAnalyze.charAt(i+1))) {
-						System.out.println("current row has an command for it, so it's a match");
-						lastCmdIndex = w;
-						lastCharIndex = i;
-					}
-            } else {
-//            	System.out.println("current row does not have a command for it, no match");
-            }
-			w = now.getRef(ch); // get the next row if there is one
-			if (w >= 0) {
-//				System.out.println("current row does have a reference for this char, further matches are possible, moving one row forward in the Trie");
-                now = t.getRow(w);
-            } else {
-//            	System.out.println("current row does not have a reference to this char, so there's no further possible match, breaking the loop");
-                break; // no more steps possible in our research
-            }
-			i++;
-		}
-		//w = now.getCmd(toAnalyze.charAt(i));
-		if (lastCharIndex == -1) {
-			System.out.println("I have found nothing");
-			return;
-		}
-		System.out.println("I have found a token that goes from "+startCharIndex+" to "
-				+ lastCharIndex);
-		System.out.println("the substring is: "+toAnalyze.substring(startCharIndex, lastCharIndex+1));
-		System.out.println("the command associated with this token in the Trie is: "+t.getCommandVal(lastCmdIndex));
-		
-		OffsetAttribute i = offsetAtt;
-		
+	
+	  private int offset = 0, bufferIndex = 0, dataLen = 0, finalOffset = 0;
+	  private static final int MAX_WORD_LEN = 255;
+	  private static final int IO_BUFFER_SIZE = 4096;
+	  
+//	  private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+//	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
+	  
+	  private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
+	
+	  /**
+	   * Returns true iff a codepoint should be included in a token. This tokenizer
+	   * generates as tokens adjacent sequences of codepoints which satisfy this
+	   * predicate. Codepoints for which this is false are used to define token
+	   * boundaries and are not included in tokens.
+	   */
+	  protected boolean isTokenChar(int c) {
 		return false;
 	}
-	
+	  /**
+	   * Called on each token character to normalize it before it is added to the
+	   * token. The default implementation does nothing. Subclasses may use this to,
+	   * e.g., lowercase tokens.
+	   */
+	  protected int normalize(int c) {
+	    return c;
+	  }
+	  
 	@Override
-	public void reset() throws IOException {
-		super.reset();
-	}
+	public final boolean incrementToken() throws IOException {
+		clearAttributes();
+		int length = 0;
+	    int start = -1; // this variable is always initialized
+	    int end = -1;
+	    char[] buffer = termAtt.buffer();
+	    while (true) {
+	      if (bufferIndex >= dataLen) {
+	        offset += dataLen;
+	        CharacterUtils.fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
+	        if (ioBuffer.getLength() == 0) {
+	          dataLen = 0; // so next offset += dataLen won't decrement offset
+	          if (length > 0) {
+	            break;
+	          } else {
+	            finalOffset = correctOffset(offset);
+	            return false;
+	          }
+	        }
+	        dataLen = ioBuffer.getLength();
+	        bufferIndex = 0;
+	      }
+	      // use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone
+	      final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
+	      final int charCount = Character.charCount(c);
+	      bufferIndex += charCount;
+
+	      if (isTokenChar(c)) {               // if it's a token char
+	        if (length == 0) {                // start of token
+	          assert start == -1;
+	          start = offset + bufferIndex - charCount;
+	          end = start;
+	        } else if (length >= buffer.length-1) { // check if a supplementary could run out of bounds
+	          buffer = termAtt.resizeBuffer(2+length); // make sure a supplementary fits in the buffer
+	        }
+	        end += charCount;
+	        length += Character.toChars(normalize(c), buffer, length); // buffer it, normalized
+	        if (length >= MAX_WORD_LEN) { // buffer overflow! make sure to check for >= surrogate pair could break == test
+	          break;
+	        }
+	      } else if (length > 0) {           // at non-Letter w/ chars
+	        break;                           // return 'em
+	      }
+	    }
+
+	    termAtt.setLength(length);
+	    assert start != -1;
+	    offsetAtt.setOffset(correctOffset(start), finalOffset = correctOffset(end));
+	    return true;
+	    
+	  }
+	  
+	  @Override
+	  public final void end() throws IOException {
+	    super.end();
+	    // set final offset
+	    offsetAtt.setOffset(finalOffset, finalOffset);
+	  }
+
+	  @Override
+	  public void reset() throws IOException {
+	    super.reset();
+	    bufferIndex = 0;
+	    offset = 0;
+	    dataLen = 0;
+	    finalOffset = 0;
+	    ioBuffer.reset(); // make sure to reset the IO buffer!!
+	  }
+
 
 }
