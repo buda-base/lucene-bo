@@ -17,23 +17,47 @@
 
 package io.bdrc.lucene.bo;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
+
 import io.bdrc.lucene.stemmer.Trie;
 
 public final class TibWordTokenizer extends Tokenizer {
-
 	private Trie scanner;
 
-	public TibWordTokenizer() {
+	// this tokenizer generates three attributes:
+	// term offset, positionIncrement and type
+	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
+	private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
+	private final TypeAttribute typeAtt = addAttribute(TypeAttribute.class);
+		
+	public TibWordTokenizer() throws FileNotFoundException, IOException {
 		init();
 	}
 	
 	
-	private void init() {
+	private void init() throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
 		
+		String file = "./resource/output/total_lexicon.txt";
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		        String[] parts = line.split(" ");
+		        
+		    	System.out.println(line);
+		    }
+		}
+
 	}
 
 
