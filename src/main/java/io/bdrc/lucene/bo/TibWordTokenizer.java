@@ -32,6 +32,25 @@ import io.bdrc.lucene.stemmer.Optimizer;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
 
+/**
+ * A maximal-matching word tokenizer for Tibetan that uses a {@link Trie}.
+ * 
+ * <p>
+ * Takes a syllable at a time and returns the longest sequence of syllable that form a word within the Trie.<br>
+ * {@link #isTibLetter(int)} is used to distinguish clusters of letters forming syllables and {@code u\0F0B}(tsek) to distinguish syllables within a word.
+ * <br> 
+ *  - Unknown syllables are tokenized as separate words.
+ * <br>
+ *  - All the punctuation is discarded from the produced tokens, including the tsek that usually follows "ང". 
+ * <p>
+ * Due to its design, this tokenizer doesn't deal with contextual ambiguities.<br>
+ * For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
+ * The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected).   
+ * 
+ * @author Élie Roux
+ * @author Drupchen
+ *
+ */
 public final class TibWordTokenizer extends Tokenizer {
 	private Trie scanner;
 
@@ -40,14 +59,33 @@ public final class TibWordTokenizer extends Tokenizer {
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
+	/**
+	 * Constructs a TibWordTokenizer using the file designed by filename
+	 * @param filename
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public TibWordTokenizer(String filename) throws FileNotFoundException, IOException {
 		init(filename);
 	}
 
+	/**
+	 * Constructs a TibWordTokenizer using a default lexicon file (here "resource/output/total_lexicon.txt") 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public TibWordTokenizer() throws FileNotFoundException, IOException {
 		init("resource/output/total_lexicon.txt");
 	}
 
+	/**
+	 * Initializes and populates {@see #scanner} 
+	 * 
+	 * The format of each line in filename must be as follows: inflected-form + space + lemma
+	 * @param filename the file containing the entries to be added
+	 * @throws FileNotFoundException 
+	 * @throws IOException
+	 */
 	private void init(String filename) throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
 
@@ -62,8 +100,8 @@ public final class TibWordTokenizer extends Tokenizer {
 					this.scanner.add(line.substring(0, spaceIndex), "X");
 				}
 			}
-			//Optimizer opt = new Optimizer();
-			//this.scanner.reduce(opt);
+			Optimizer opt = new Optimizer();
+			this.scanner.reduce(opt);
 		}
 	}
 
@@ -84,10 +122,16 @@ public final class TibWordTokenizer extends Tokenizer {
 	protected int normalize(int c) {
 		return c;
 	}
-
+	
+	/**
+	 * Finds whether the given character is a Tibetan letter or not.
+	 * @param c a unicode code-point
+	 * @return true if {@code c} in the specified range; false otherwise
+	 */
 	public boolean isTibLetter(int c) {
 		return ('\u0F40' <= c && c <= '\u0FBC');
 	}
+
 
 	@Override
 	public final boolean incrementToken() throws IOException {
@@ -120,6 +164,7 @@ public final class TibWordTokenizer extends Tokenizer {
 			}
 			// use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone
 			final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
+//			System.out.println("\t" +  + bufferIndex + " \"" + Character.toString((char) c) + "\"");
 			final int charCount = Character.charCount(c);
 			bufferIndex += charCount;
 
@@ -143,10 +188,12 @@ public final class TibWordTokenizer extends Tokenizer {
 							if (c == '\u0F0B') {
 								confirmedEnd = end;
 								confirmedEndIndex = bufferIndex;
+//								System.out.println("the end is reached");
 								break;
 							}
 							end += charCount; // else we're just passing
 						} else {
+							System.out.println("\t  too far");
 							break;
 						}
 					} else {
@@ -155,6 +202,7 @@ public final class TibWordTokenizer extends Tokenizer {
 							if (potentialEnd) {
 								confirmedEnd = end;
 								confirmedEndIndex = bufferIndex;
+//								System.out.println("\t  confirmed end");
 							}
 						}
 						end += charCount;
@@ -178,6 +226,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		if (confirmedEnd > 0) {
 			bufferIndex = confirmedEndIndex;
 			end = confirmedEnd;
+//			System.out.println("End of word");
 		}
 		termAtt.setLength(end - start);
 		assert(start != -1);

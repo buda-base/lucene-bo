@@ -79,9 +79,9 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void test1() throws IOException
+	public void sylTokenizerTest() throws IOException
 	{
-		System.out.println("Test1: TibSyllableTokenizer()");
+		System.out.println("Testing TibSyllableTokenizer()");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
 
@@ -91,9 +91,9 @@ public class TibetanAnalyzerTest
 	}
 	
 	@Test
-	public void test2() throws IOException
+	public void affixedFilterTest() throws IOException
 	{
-		System.out.println("Test2: TibAffixedFilter()");
+		System.out.println("Testing TibAffixedFilter()");
 		String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ།";
 		List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ");
 
@@ -104,9 +104,9 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void test3() throws IOException
+	public void stopwordFilterTest() throws IOException
 	{
-		System.out.println("Test3: filter TibetanAnalyzer.tibStopWords");
+		System.out.println("Testing TibetanAnalyzer.tibStopWords");
 		String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་བོ་ཏོ་གིན་ཀྱིན་གྱིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
 		List<String> expected = Arrays.asList("ཧ", "ཧ");
 
@@ -171,9 +171,9 @@ public class TibetanAnalyzerTest
 	}
 	
 	@Test
-	public void test4() throws IOException
+	public void produceOneTokenTest() throws IOException
 	{
-		System.out.println("Test4: Testing Stemmer Trie");
+		System.out.println("Testing Stemmer Trie (produceOneToken() )");
 		Trie test = new Trie(true);
 		test.add("དྲོའི"," 2");
 		test.add("བདེ་ལེགས"," ");
@@ -193,16 +193,27 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void test5() throws IOException
+	public void wordTokenizerTest() throws IOException
 	{
-		System.out.println("Test5: TibWordTokenizer()");
-		String input = "བཀྲ་ཤིས་བདེ་";
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
+		System.out.println("Testing TibWordTokenizer()");
+		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(); //"src/test/resources/dict-file.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
-		//TokenFilter res = new TibAffixedFilter(syllables);
 		assertTokenStream(syllables, expected);
 	}
+	
+	@Test
+	public void bugEatenSyllable() throws IOException
+	{
+		System.out.println("Testing TibWordTokenizer()");
+		String input = "པ་ཁའི་ཚོད་ལྟ།";
+		List<String> expected = Arrays.asList("པ", "ཁའི", "ཚོད", "ལྟ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(); //"src/test/resources/dict-file.txt");
+		TokenStream syllables = tokenize(input, tibWordTokenizer);
+		assertTokenStream(syllables, expected);
+	}
+	
 	@AfterClass
 	public static void finish() {
 		System.out.println("after the test sequence");
