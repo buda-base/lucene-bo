@@ -31,14 +31,11 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.pl.PolishAnalyzer;
-import org.apache.lucene.analysis.stempel.StempelStemmer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.bdrc.lucene.stemmer.Diff;
 import io.bdrc.lucene.stemmer.Optimizer;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
@@ -129,7 +126,7 @@ public class TibetanAnalyzerTest
 	// 
 	public void produceOneToken(String toAnalyze, int startCharIndex, Trie t) {
 		// getting the root of the tree
-		System.out.println(toAnalyze);
+//		System.out.println(toAnalyze);
 		Row now = t.getRow(t.getRoot());
 		int w; // temporary index variable
 		int lastCharIndex = -1; // the index of the last match in the string we analyze
@@ -138,11 +135,11 @@ public class TibetanAnalyzerTest
 		int i = startCharIndex; // the current index in the string
 		while (i < toAnalyze.length()) {
 			Character ch = toAnalyze.charAt(i); // get the current character
-			System.out.println("moving to index "+i+": "+ch);
+//			System.out.println("moving to index "+i+": "+ch);
 			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
 			if (w >= 0) {
 				if (i >= toAnalyze.length()-1 || !isTibLetter(toAnalyze.charAt(i+1))) {
-						System.out.println("current row has an command for it, so it's a match");
+//						System.out.println("current row has an command for it, so it's a match");
 						lastCmdIndex = w;
 						lastCharIndex = i;
 					}
@@ -161,13 +158,13 @@ public class TibetanAnalyzerTest
 		}
 		//w = now.getCmd(toAnalyze.charAt(i));
 		if (lastCharIndex == -1) {
-			System.out.println("I have found nothing");
+//			System.out.println("I have found nothing");
 			return;
 		}
-		System.out.println("I have found a token that goes from "+startCharIndex+" to "
-				+ lastCharIndex);
-		System.out.println("the substring is: "+toAnalyze.substring(startCharIndex, lastCharIndex+1));
-		System.out.println("the command associated with this token in the Trie is: "+t.getCommandVal(lastCmdIndex));
+//		System.out.println("I have found a token that goes from "+startCharIndex+" to "
+//				+ lastCharIndex);
+//		System.out.println("the substring is: "+toAnalyze.substring(startCharIndex, lastCharIndex+1));
+//		System.out.println("the command associated with this token in the Trie is: "+t.getCommandVal(lastCmdIndex));
 	}
 	
 	@Test
@@ -198,7 +195,7 @@ public class TibetanAnalyzerTest
 		System.out.println("Testing TibWordTokenizer()");
 		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(); //"src/test/resources/dict-file.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -207,9 +204,10 @@ public class TibetanAnalyzerTest
 	public void bugEatenSyllable() throws IOException
 	{
 		System.out.println("Testing TibWordTokenizer()");
-		String input = "པ་ཁའི་ཚོད་ལྟ།";
-		List<String> expected = Arrays.asList("པ", "ཁའི", "ཚོད", "ལྟ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(); //"src/test/resources/dict-file.txt");
+		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
+		System.out.println(expected.toString());
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
