@@ -195,7 +195,7 @@ public class TibetanAnalyzerTest
 		System.out.println("Testing TibWordTokenizer()");
 		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(); //"src/test/resources/dict-file.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -206,6 +206,7 @@ public class TibetanAnalyzerTest
 		System.out.println("Testing TibWordTokenizer()");
 		String input = "པ་ཁའི་ཚོད་ལྟ།";
 		List<String> expected = Arrays.asList("པ", "ཁའི", "ཚོད་ལྟ");
+		System.out.println(expected.toString());
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
