@@ -193,7 +193,7 @@ public final class TibWordTokenizer extends Tokenizer {
 							}
 							end += charCount; // else we're just passing
 						} else {
-							System.out.println("\t  too far");
+//							System.out.println("\t  too far");
 							break;
 						}
 					} else {
