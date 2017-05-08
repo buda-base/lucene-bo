@@ -135,6 +135,7 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	@Override
 	public final boolean incrementToken() throws IOException {
+		//System.out.println("\nincrement token\n");
 		clearAttributes();
 		int length = 0;
 		int start = -1; // this variable is always initialized
@@ -188,22 +189,17 @@ public final class TibWordTokenizer extends Tokenizer {
 							if (c == '\u0F0B') {
 								confirmedEnd = end;
 								confirmedEndIndex = bufferIndex;
-//								System.out.println("the end is reached");
 								break;
 							}
 							end += charCount; // else we're just passing
 						} else {
-							System.out.println("\t  too far");
 							break;
 						}
 					} else {
 						if (c == '\u0F0B') {
 							passedFirstSyllable = true;
-							if (potentialEnd) {
-								confirmedEnd = end;
-								confirmedEndIndex = bufferIndex;
-//								System.out.println("\t  confirmed end");
-							}
+							confirmedEnd = end;
+							confirmedEndIndex = bufferIndex;
 						}
 						end += charCount;
 						potentialEnd = (now.getCmd((char) c) >= 0); // we may have caught the end, but we must check if next character is a tsheg
@@ -226,7 +222,6 @@ public final class TibWordTokenizer extends Tokenizer {
 		if (confirmedEnd > 0) {
 			bufferIndex = confirmedEndIndex;
 			end = confirmedEnd;
-//			System.out.println("End of word");
 		}
 		termAtt.setLength(end - start);
 		assert(start != -1);
