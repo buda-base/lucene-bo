@@ -204,8 +204,8 @@ public class TibetanAnalyzerTest
 	public void bugEatenSyllable() throws IOException
 	{
 		System.out.println("Testing TibWordTokenizer()");
-		String input = "པ་ཁའི་ཚོད་ལྟ།";
-		List<String> expected = Arrays.asList("པ", "ཁའི", "ཚོད་ལྟ");
+		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
 		System.out.println(expected.toString());
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(input, tibWordTokenizer);
