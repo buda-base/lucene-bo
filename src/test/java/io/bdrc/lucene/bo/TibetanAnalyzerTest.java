@@ -208,9 +208,9 @@ public class TibetanAnalyzerTest
 	public void mappingCharFilterTest() throws IOException
 	{
 		System.out.println("Testing TibWordTokenizer()");
-		String input = "ༀ";
+		String input = "ༀ་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
 		Reader reader = new StringReader(input);
-		List<String> expected = Arrays.asList("ཨོཾ");
+		List<String> expected = Arrays.asList("ཨོཾ", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
 		TibetanAnalyzer tibAn = new TibetanAnalyzer();
 		MappingCharFilter charFilter = new MappingCharFilter(tibAn.getTibNormalizeCharMap(), reader);
 		TokenStream res = tokenize(charFilter, new TibSyllableTokenizer());

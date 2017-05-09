@@ -54,7 +54,7 @@ public final class TibetanAnalyzer extends Analyzer {
 			);
 	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
 
-	public NormalizeCharMap getTibNormalizeCharMap() {
+	public final NormalizeCharMap getTibNormalizeCharMap() {
 		NormalizeCharMap.Builder builder  = new NormalizeCharMap.Builder();	
 		// The non-breaking tsheg is replaced by the normal one
 		builder.add("\u0f0C", "\u0F0B");
