@@ -50,8 +50,6 @@ public final class TibetanAnalyzer extends Analyzer {
 			"ནོ", "བོ", "ཏོ", 
 			"གིན", "ཀྱིན", "གྱིན", 
 			"ཅིང", "ཅིག", 
-//			"ཅེ་ན", "ཞེ་ན", // will be useful when on the word-level
-//			"ཅེའོ", "ཞེའོ", "ཤེའོ", // not useful after TibEndingFilter 
 			"ཅེས", "ཞེས"
 			);
 	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
