@@ -211,7 +211,7 @@ public class TibetanAnalyzerTest
 		String input = "\u0F00་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("\u0F68\u0F7C\u0F7E", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
-		MappingCharFilter charFilter = new MappingCharFilter(TibetanAnalyzer.getTibNormalizeCharMap(), reader);
+		MappingCharFilter charFilter = new MappingCharFilter(TibCharFilter.getTibNormalizeCharMap(), reader);
 		TokenStream res = tokenize(charFilter, new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
