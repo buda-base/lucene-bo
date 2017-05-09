@@ -55,33 +55,61 @@ public final class TibetanAnalyzer extends Analyzer {
 			"ཅེས", "ཞེས"
 			);
 	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
+	boolean segmentInWords = false; 
+	boolean filterAffixes = false;
+	boolean filterChars = false;
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
 	 */
+	public TibetanAnalyzer(boolean segmentInWords, boolean filterAffixes, boolean filterChars) {
+		this.segmentInWords = segmentInWords;
+		this.filterAffixes = filterAffixes;
+		this.filterChars = filterChars;
+	}
+	
+	/**
+	 * Creates a new {@link TibetanAnalyzer} with the default values
+	 */
 	public TibetanAnalyzer() {
+		this.segmentInWords = true;
+		this.filterAffixes = true;
+		this.filterChars = true;
 	}
   
 	@Override
 	protected Reader initReader(String fieldName, Reader reader) {
-		TibCharFilter charFilter = new TibCharFilter(reader);
-		return super.initReader(fieldName, charFilter);
+		if (filterChars) {
+			TibCharFilter charFilter = new TibCharFilter(reader);
+			return super.initReader(fieldName, charFilter);
+		} else {
+			return super.initReader(fieldName, reader);
+		}
 	}
 	
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
 		Tokenizer source = null;
-		try {
-			source = new TibWordTokenizer();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (segmentInWords) {
+			try {
+				source = new TibWordTokenizer();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			source = new TibSyllableTokenizer();
 		}
-		TokenFilter filter1 = new TibAffixedFilter(source);
-		StopFilter filter2 = new StopFilter(filter1, tibStopSet);
-		return new TokenStreamComponents(source, filter2);
+		
+		TokenFilter filter = null;
+		if (filterAffixes) {
+			 filter = (TibAffixedFilter) new TibAffixedFilter(source);
+		}
+		
+		filter = new StopFilter(filter, tibStopSet);
+		return new TokenStreamComponents(source, filter);
 	}
 }
