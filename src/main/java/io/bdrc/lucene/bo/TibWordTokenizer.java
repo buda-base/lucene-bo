@@ -247,6 +247,4 @@ public final class TibWordTokenizer extends Tokenizer {
 		finalOffset = 0;
 		ioBuffer.reset(); // make sure to reset the IO buffer!!
 	}
-
-
 }
