@@ -208,11 +208,10 @@ public class TibetanAnalyzerTest
 	public void mappingCharFilterTest() throws IOException
 	{
 		System.out.println("Testing TibWordTokenizer()");
-		String input = "ༀ་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
+		String input = "\u0F00་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
 		Reader reader = new StringReader(input);
-		List<String> expected = Arrays.asList("ཨོཾ", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
-		TibetanAnalyzer tibAn = new TibetanAnalyzer();
-		MappingCharFilter charFilter = new MappingCharFilter(tibAn.getTibNormalizeCharMap(), reader);
+		List<String> expected = Arrays.asList("\u0F68\u0F7C\u0F7E", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
+		MappingCharFilter charFilter = new MappingCharFilter(TibetanAnalyzer.getTibNormalizeCharMap(), reader);
 		TokenStream res = tokenize(charFilter, new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
