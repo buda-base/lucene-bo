@@ -31,6 +31,8 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.charfilter.MappingCharFilter;
+import org.apache.lucene.analysis.charfilter.NormalizeCharMap;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -47,10 +49,9 @@ import static org.hamcrest.CoreMatchers.*;
  */
 public class TibetanAnalyzerTest
 {
-	static TokenStream tokenize(String input, Tokenizer tokenizer) throws IOException {
+	static TokenStream tokenize(Reader reader, Tokenizer tokenizer) throws IOException {
 		tokenizer.close();
 		tokenizer.end();
-		Reader reader = new StringReader(input);
 		tokenizer.setReader(reader);
 		tokenizer.reset();
 		return tokenizer;
@@ -80,10 +81,11 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing TibSyllableTokenizer()");
 		String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
+		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ" ,"ལེགས");
 
 		System.out.print(input + " => ");
-		TokenStream res = tokenize(input, new TibSyllableTokenizer());
+		TokenStream res = tokenize(reader, new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
 	
@@ -92,10 +94,11 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing TibAffixedFilter()");
 		String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ།";
+		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ");
 
 		System.out.print(input + " => ");
-		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
+		TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
 		TokenFilter res = new TibAffixedFilter(syllables);
 		assertTokenStream(res, expected);
 	}
@@ -105,10 +108,11 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing TibetanAnalyzer.tibStopWords");
 		String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་བོ་ཏོ་གིན་ཀྱིན་གྱིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
+		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("ཧ", "ཧ");
 
 		System.out.print(input + " => ");
-		TokenStream syllables = tokenize(input, new TibSyllableTokenizer());
+		TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
 		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
 		assertTokenStream(res, expected);
 	}
@@ -172,14 +176,14 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing Stemmer Trie (produceOneToken() )");
 		Trie test = new Trie(true);
-		test.add("དྲོའི"," 2");
-		test.add("བདེ་ལེགས"," ");
-		test.add("བདེ", " 0");
-		test.add("བཀྲ་ཤིས"," ");
-		test.add("བཀྲ", " 0");
-		test.add("དྲོ"," 0");
-		test.add("དགའི", " 1");
-		test.add("དགའ"," 0");
+		test.add("དྲོའི",">a");
+		test.add("བདེ་ལེགས","=");
+		test.add("བདེ", "=");
+		test.add("བཀྲ་ཤིས","=");
+		test.add("བཀྲ", "=");
+		test.add("དྲོ","=");
+		test.add("དགའི", ">A");
+		test.add("དགའ","=");
 		Optimizer opt = new Optimizer();
 		test.reduce(opt);
 		produceOneToken("དག", 0, test);
@@ -194,10 +198,25 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing TibWordTokenizer()");
 		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
-		TokenStream syllables = tokenize(input, tibWordTokenizer);
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
+	}
+	
+	@Test
+	public void mappingCharFilterTest() throws IOException
+	{
+		System.out.println("Testing TibWordTokenizer()");
+		String input = "ༀ";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("ཨོཾ");
+		NormalizeCharMap.Builder builder  = new NormalizeCharMap.Builder();
+		builder.add("\u0F00", "\u0F68\u0F7C\u0F7E"); //  ༀ 
+		MappingCharFilter charFilter = new MappingCharFilter(builder.build(), reader);
+		TokenStream res = tokenize(charFilter, new TibSyllableTokenizer());
+		assertTokenStream(res, expected);
 	}
 	
 	@Test
@@ -205,10 +224,10 @@ public class TibetanAnalyzerTest
 	{
 		System.out.println("Testing TibWordTokenizer()");
 		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
-		System.out.println(expected.toString());
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ", "བ", "ཐོབ", "པར", "ཤོག");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
-		TokenStream syllables = tokenize(input, tibWordTokenizer);
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
 	
