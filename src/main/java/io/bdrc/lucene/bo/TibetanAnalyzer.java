@@ -56,6 +56,12 @@ public final class TibetanAnalyzer extends Analyzer {
 
 	public NormalizeCharMap getTibNormalizeCharMap() {
 		NormalizeCharMap.Builder builder  = new NormalizeCharMap.Builder();	
+		// The non-breaking tsheg is replaced by the normal one
+		builder.add("\u0f0C", "\u0F0B");
+		// Characters to delete: the markers found under selected syllables
+		builder.add("\u0F35", ""); //  ༵
+		builder.add("\u0F37", ""); //  ༷
+		// Characters to decompose
 		builder.add("\u0F00", "\u0F68\u0F7C\u0F7E"); //  ༀ 
 		builder.add("\u0F02", "\u0F60\u0F70\u0F82"); // ༂
 		builder.add("\u0F03", "\u0F60\u0F70\u0F14"); //  ༃
