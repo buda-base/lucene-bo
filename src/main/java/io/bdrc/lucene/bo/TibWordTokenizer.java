@@ -178,6 +178,9 @@ public final class TibWordTokenizer extends Tokenizer {
 					now = scanner.getRow(scanner.getRoot());
 					cmdIndex = now.getCmd((char) c);
 					potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
+					if (potentialEnd) {
+						potentialEndCmdIndex = cmdIndex;
+					}
 					w = now.getRef((char) c);
 					now = (w >= 0) ? scanner.getRow(w) : null;
 					start = offset + bufferIndex - charCount;
