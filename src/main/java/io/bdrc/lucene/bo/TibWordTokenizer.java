@@ -146,6 +146,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		String cmd = null;
 		int w = -1;
 		int cmdIndex = -1;
+		int potentialEndCmdIndex = -1;
 		boolean potentialEnd = false;
 		boolean passedFirstSyllable = false;
 		Row now = null;
@@ -208,7 +209,7 @@ public final class TibWordTokenizer extends Tokenizer {
 						cmdIndex = now.getCmd((char) c);
 						potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
 						if (potentialEnd) {
-							cmd = scanner.getCommandVal(cmdIndex);
+							potentialEndCmdIndex = cmdIndex;
 						}
 						w = now.getRef((char) c);
 						now = (w >= 0) ? scanner.getRow(w) : null;
@@ -232,6 +233,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		}
 		
 		termAtt.setLength(end - start);
+		cmd = scanner.getCommandVal(potentialEndCmdIndex);
 		if (lemmatize && cmd != null) {
 			applyCmdToTermAtt(cmd);
 		}
