@@ -193,25 +193,41 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void wordTokenizerTest() throws IOException
+	public void wordTokenizerLemmatizeTest() throws IOException
 	{
-		System.out.println("Testing TibWordTokenizer()");
-		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		System.out.println("Testing TibWordTokenizer() with lemmatization");
+		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག ནམ་མཁའི་མཐས་ཐུག་པར་ཤོག";
 		Reader reader = new StringReader(input);
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "དུ", "བདེ་བ", "ཐོབ་པ", "ཤོག", "ནམ་མཁའ", "མཐའ", "ཐུག་པ", "ཤོག");
+		System.out.print(input + " => ");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
-		tibWordTokenizer.setLemmatize(true); // we want to lemmatize
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
+
+	@Test
+	public void wordTokenizerNoLemmatizeTest() throws IOException
+	{
+		System.out.println("Testing TibWordTokenizer() without lemmatization");
+		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག ནམ་མཁའི་མཐས་ཐུག་པར་ཤོག";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག", "ནམ་མཁའི", "མཐས", "ཐུག་པར", "ཤོག");
+		System.out.print(input + " => ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
+		tibWordTokenizer.setLemmatize(false); // we don't want to lemmatize
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
+		assertTokenStream(syllables, expected);
+	}
+
 	
 	@Test
 	public void mappingCharFilterTest() throws IOException
 	{
-		System.out.println("Testing TibWordTokenizer()");
+		System.out.println("Testing TibCharFilter()");
 		String input = "\u0F00་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("\u0F68\u0F7C\u0F7E", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
+		System.out.print(input + " => ");
 		TokenStream res = tokenize(new TibCharFilter(reader), new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
@@ -219,10 +235,11 @@ public class TibetanAnalyzerTest
 	@Test
 	public void bugEatenSyllable() throws IOException
 	{
-		System.out.println("Testing TibWordTokenizer()");
+		System.out.println("Bug testing in TibWordTokenizer()");
 		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ", "བ", "ཐོབ", "པར", "ཤོག");
+		System.out.print(input + " => ");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);

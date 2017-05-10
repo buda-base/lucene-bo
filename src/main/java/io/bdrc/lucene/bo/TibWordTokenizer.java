@@ -58,7 +58,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	// term offset, positionIncrement and type
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
-	private boolean lemmatize = false;
+	private boolean lemmatize = true;
 
 	/**
 	 * Constructs a TibWordTokenizer using the file designed by filename
@@ -96,8 +96,7 @@ public final class TibWordTokenizer extends Tokenizer {
 			while ((line = br.readLine()) != null) {
 				int spaceIndex = line.indexOf(' ');
 				if (spaceIndex == -1) {
-					System.out.println("The dictionary file is corrupted in the following line.");
-					System.out.println(line);					
+					throw new IllegalArgumentException("The dictionary file is corrupted in the following line.\n" + line);
 				} else {
 					this.scanner.add(line.substring(0, spaceIndex), line.substring(spaceIndex+1));
 				}
@@ -116,6 +115,7 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
 
+//	applyCmdToTermAtt(String cmd)
 
 	/**
 	 * Called on each token character to normalize it before it is added to the
@@ -145,7 +145,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		int end = -1;
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
-		String cmd = "";
+		String cmd = " ";  // if set to "", it produces an IndexOutOfBoundsError in line 246
 		int w = -1;
 		boolean potentialEnd = false;
 		boolean passedFirstSyllable = false;
@@ -231,37 +231,47 @@ public final class TibWordTokenizer extends Tokenizer {
 			end = confirmedEnd;
 		}
 		
-		if (cmd.substring(0, 1).toString() == ">") {
-			// resize buffer
-			String operation = cmd.substring(1, cmd.length());
-			switch(operation) {
-			case "A": {
-				termAtt.setLength(termAtt.length() - 1);
-			}
-			case "B": {
-				termAtt.setLength(termAtt.length() - 2);
-			}
-			case "C": {
-				termAtt.setLength(termAtt.length() - 3);
-			}
-			case "D": {
-				termAtt.setLength(termAtt.length() - 2);
-				// add འ
-			}
-			}
-
-			
-		} else if (cmd.substring(0, 1) == "/") {
-			// replace content
-			termAtt.setEmpty().append(cmd.substring(1, cmd.length()));
-		} else {
-			termAtt.setLength(end - start);
+		termAtt.setLength(end - start);
+		if (lemmatize) {
+			applyCmdToTermAtt(cmd);
 		}
-		
 		assert(start != -1);
 		finalOffset = correctOffset(end);
 		offsetAtt.setOffset(correctOffset(start), finalOffset);
 		return true;
+
+	}
+
+	private void applyCmdToTermAtt(String cmd) {
+		// TODO Auto-generated method stub
+		if (cmd.charAt(0) == '>') {
+			// resize buffer
+			char operation = cmd.charAt(1);
+			switch(operation) {
+			case 'A':
+				termAtt.setLength(termAtt.length() - 1);
+				break;
+			case 'B':
+				termAtt.setLength(termAtt.length() - 2);
+				break;
+			case 'C':
+				termAtt.setLength(termAtt.length() - 3);
+				break;
+			case 'D':
+				// replaces the last character by a འ
+				char[] buffer = termAtt.buffer();
+				buffer[termAtt.length()-1] = 'འ';
+				break;
+			default:
+				throw new IllegalArgumentException("the operation should be A, B, C or D.");
+			}
+			
+		} else if (cmd.charAt(0) == '/') {
+			// replace content
+			termAtt.setEmpty().append(cmd.substring(1, cmd.length()));
+		} else {
+			
+		}
 
 	}
 
