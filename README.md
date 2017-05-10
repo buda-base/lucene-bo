@@ -25,11 +25,7 @@ This tokenizer produces syllabe tokens (with no tshek) from the input Tibetan te
 
 #### TibAffixedFilter
 
-<<<<<<< WordTokenizer
 This filter removes non-ambiguous affixed particles (འི, འོ, འིའོ, འམ, འང and འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
-=======
-This filter removes non-ambiguous affixed particles (འི འོ འིའོ འམ འང འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
->>>>>>> 816ba33 preparing for release of 1.0.0
 
 ## License
 
