@@ -96,9 +96,10 @@ public final class TibWordTokenizer extends Tokenizer {
 			while ((line = br.readLine()) != null) {
 				int spaceIndex = line.indexOf(' ');
 				if (spaceIndex == -1) {
-					// error!
+					System.out.println("The dictionary file is corrupted in the following line.");
+					System.out.println(line);					
 				} else {
-					this.scanner.add(line.substring(0, spaceIndex), "X");
+					this.scanner.add(line.substring(0, spaceIndex), line.substring(spaceIndex+1));
 				}
 			}
 			Optimizer opt = new Optimizer();
@@ -114,6 +115,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	//	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
 	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
+
 
 	/**
 	 * Called on each token character to normalize it before it is added to the
@@ -143,6 +145,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		int end = -1;
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
+		String cmd = "";
 		int w = -1;
 		boolean potentialEnd = false;
 		boolean passedFirstSyllable = false;
@@ -204,6 +207,9 @@ public final class TibWordTokenizer extends Tokenizer {
 						}
 						end += charCount;
 						potentialEnd = (now.getCmd((char) c) >= 0); // we may have caught the end, but we must check if next character is a tsheg
+						if (now.getCmd((char) c) >= 0) {
+							cmd = scanner.getCommandVal(now.getCmd((char) c));
+						}
 						w = now.getRef((char) c);
 						now = (w >= 0) ? scanner.getRow(w) : null;
 					}
@@ -224,7 +230,34 @@ public final class TibWordTokenizer extends Tokenizer {
 			bufferIndex = confirmedEndIndex;
 			end = confirmedEnd;
 		}
-		termAtt.setLength(end - start);
+		
+		if (cmd.substring(0, 1).toString() == ">") {
+			// resize buffer
+			String operation = cmd.substring(1, cmd.length());
+			switch(operation) {
+			case "A": {
+				termAtt.setLength(termAtt.length() - 1);
+			}
+			case "B": {
+				termAtt.setLength(termAtt.length() - 2);
+			}
+			case "C": {
+				termAtt.setLength(termAtt.length() - 3);
+			}
+			case "D": {
+				termAtt.setLength(termAtt.length() - 2);
+				// add འ
+			}
+			}
+
+			
+		} else if (cmd.substring(0, 1) == "/") {
+			// replace content
+			termAtt.setEmpty().append(cmd.substring(1, cmd.length()));
+		} else {
+			termAtt.setLength(end - start);
+		}
+		
 		assert(start != -1);
 		finalOffset = correctOffset(end);
 		offsetAtt.setOffset(correctOffset(start), finalOffset);
