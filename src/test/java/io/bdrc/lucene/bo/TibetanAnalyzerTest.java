@@ -200,6 +200,7 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/dict-file.txt");
+		tibWordTokenizer.setLemmatize(true); // we want to lemmatize
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}

@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
-import org.apache.lucene.analysis.TokenFilter;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 
 /**
@@ -56,15 +56,15 @@ public final class TibetanAnalyzer extends Analyzer {
 			);
 	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
 	boolean segmentInWords = false; 
-	boolean filterAffixes = false;
+	boolean lemmatize = false;
 	boolean filterChars = false;
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean filterAffixes, boolean filterChars) {
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars) {
 		this.segmentInWords = segmentInWords;
-		this.filterAffixes = filterAffixes;
+		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
 	}
 	
@@ -72,9 +72,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * Creates a new {@link TibetanAnalyzer} with the default values
 	 */
 	public TibetanAnalyzer() {
-		this.segmentInWords = true;
-		this.filterAffixes = true;
-		this.filterChars = true;
+		this(true, true, true);
 	}
   
 	@Override
@@ -90,26 +88,29 @@ public final class TibetanAnalyzer extends Analyzer {
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
 		Tokenizer source = null;
+		TokenStream filter = null;
+		
 		if (segmentInWords) {
 			try {
 				source = new TibWordTokenizer();
+				if (lemmatize) {
+					((TibWordTokenizer) source).setLemmatize(lemmatize);
+				}
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			filter = new StopFilter(source, tibStopSet);
+		
 		} else {
 			source = new TibSyllableTokenizer();
-		}
+			if (lemmatize) {
+				filter = (TibAffixedFilter) new TibAffixedFilter(source);
+			}
+			filter = new StopFilter(filter, tibStopSet);
+		}		
 		
-		TokenFilter filter = null;
-		if (filterAffixes) {
-			 filter = (TibAffixedFilter) new TibAffixedFilter(source);
-		}
-		
-		filter = new StopFilter(filter, tibStopSet);
 		return new TokenStreamComponents(source, filter);
 	}
 }

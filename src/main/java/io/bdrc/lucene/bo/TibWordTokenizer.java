@@ -58,6 +58,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	// term offset, positionIncrement and type
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
+	private boolean lemmatize = false;
 
 	/**
 	 * Constructs a TibWordTokenizer using the file designed by filename
@@ -246,5 +247,11 @@ public final class TibWordTokenizer extends Tokenizer {
 		dataLen = 0;
 		finalOffset = 0;
 		ioBuffer.reset(); // make sure to reset the IO buffer!!
+	}
+
+
+
+	public void setLemmatize(boolean lemmatize) {
+		this.lemmatize = lemmatize;
 	}
 }
