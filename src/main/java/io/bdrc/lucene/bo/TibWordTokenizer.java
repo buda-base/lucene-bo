@@ -115,8 +115,6 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
 
-//	applyCmdToTermAtt(String cmd)
-
 	/**
 	 * Called on each token character to normalize it before it is added to the
 	 * token. The default implementation does nothing. Subclasses may use this to,
@@ -145,8 +143,9 @@ public final class TibWordTokenizer extends Tokenizer {
 		int end = -1;
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
-		String cmd = " ";  // if set to "", it produces an IndexOutOfBoundsError in line 246
+		String cmd = null;
 		int w = -1;
+		int cmdIndex = -1;
 		boolean potentialEnd = false;
 		boolean passedFirstSyllable = false;
 		Row now = null;
@@ -169,7 +168,6 @@ public final class TibWordTokenizer extends Tokenizer {
 			}
 			// use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone
 			final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
-//			System.out.println("\t" +  + bufferIndex + " \"" + Character.toString((char) c) + "\"");
 			final int charCount = Character.charCount(c);
 			bufferIndex += charCount;
 
@@ -177,7 +175,8 @@ public final class TibWordTokenizer extends Tokenizer {
 				if (length == 0) {                // start of token
 					assert(start == -1);
 					now = scanner.getRow(scanner.getRoot());
-					potentialEnd = (now.getCmd((char) c) >= 0); // we may have caught the end, but we must check if next character is a tsheg
+					cmdIndex = now.getCmd((char) c);
+					potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
 					w = now.getRef((char) c);
 					now = (w >= 0) ? scanner.getRow(w) : null;
 					start = offset + bufferIndex - charCount;
@@ -206,9 +205,9 @@ public final class TibWordTokenizer extends Tokenizer {
 							confirmedEndIndex = bufferIndex;
 						}
 						end += charCount;
-						potentialEnd = (now.getCmd((char) c) >= 0); // we may have caught the end, but we must check if next character is a tsheg
+						potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
 						if (now.getCmd((char) c) >= 0) {
-							cmd = scanner.getCommandVal(now.getCmd((char) c));
+							cmd = scanner.getCommandVal(cmdIndex);
 						}
 						w = now.getRef((char) c);
 						now = (w >= 0) ? scanner.getRow(w) : null;
@@ -232,18 +231,16 @@ public final class TibWordTokenizer extends Tokenizer {
 		}
 		
 		termAtt.setLength(end - start);
-		if (lemmatize) {
+		if (lemmatize && cmd != null) {
 			applyCmdToTermAtt(cmd);
 		}
 		assert(start != -1);
 		finalOffset = correctOffset(end);
 		offsetAtt.setOffset(correctOffset(start), finalOffset);
 		return true;
-
 	}
 
 	private void applyCmdToTermAtt(String cmd) {
-		// TODO Auto-generated method stub
 		if (cmd.charAt(0) == '>') {
 			// resize buffer
 			char operation = cmd.charAt(1);
