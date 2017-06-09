@@ -19,6 +19,14 @@ Installation through maven:
 The main Analyzer. 
 It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffixedFilter* and *StopFilter* with a predefined list of stop words.
 
+#### TibWordTokenizer
+
+This tokenizer produces words through a Maximal Matching algorithm. It builds on top of [this Trie implementation](https://github.com/BuddhistDigitalResourceCenter/stemmer).  
+
+Due to its design, this tokenizer doesn't deal with contextual ambiguities.<br>
+For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
+The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected)
+
 #### TibSyllableTokenizer
 
 This tokenizer produces syllabe tokens (with no tshek) from the input Tibetan text.

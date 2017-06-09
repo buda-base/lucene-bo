@@ -1,20 +1,22 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+/*******************************************************************************
+ * Copyright (c) 2017 Buddhist Digital Resource Center (BDRC)
+ * 
+ * If this file is a derivation of another work the license header will appear 
+ * below; otherwise, this work is licensed under the Apache License, Version 2.0 
+ * (the "License"); you may not use this file except in compliance with the 
+ * License.
+ * 
+ * You may obtain a copy of the License at
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
+ ******************************************************************************/
 package io.bdrc.lucene.bo;
 
 import java.io.BufferedReader;
@@ -37,15 +39,17 @@ import io.bdrc.lucene.stemmer.Trie;
  * 
  * <p>
  * Takes a syllable at a time and returns the longest sequence of syllable that form a word within the Trie.<br>
- * {@link #isTibLetter(int)} is used to distinguish clusters of letters forming syllables and {@code u\0F0B}(tsek) to distinguish syllables within a word.
+ * {@link #isTibLetter(int)} is used to distinguish clusters of letters forming syllables and {@code u\0F0B}(tsheg) to distinguish syllables within a word.
  * <br> 
  *  - Unknown syllables are tokenized as separate words.
  * <br>
- *  - All the punctuation is discarded from the produced tokens, including the tsek that usually follows "ང". 
+ *  - All the punctuation is discarded from the produced tokens, including the tsheg that usually follows "ང". 
  * <p>
  * Due to its design, this tokenizer doesn't deal with contextual ambiguities.<br>
  * For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
- * The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected).   
+ * The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected).   
+ * 
+ * Derived from Lucene 6.4.1 analysis.
  * 
  * @author Élie Roux
  * @author Drupchen
