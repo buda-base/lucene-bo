@@ -18,6 +18,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <lucene.version>6.6.0</lucene.version>
   </properties>
    <developers>
     <developer>
@@ -62,15 +63,20 @@
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
   	<dependency>
-     		<groupId>org.apache.lucene</groupId>
-     		<artifactId>lucene-core</artifactId>
-     		<version>6.4.1</version>
+     	<groupId>org.apache.lucene</groupId>
+     	<artifactId>lucene-core</artifactId>
+     	<version>${lucene.version}</version>
   	</dependency>
   	<dependency>
-      	<groupId>org.apache.lucene</groupId>
-      	<artifactId>lucene-analyzers-common</artifactId>
-      	<version>6.4.1</version>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>${lucene.version}</version>
   	</dependency>
+    <dependency>
+      <groupId>io.bdrc.ewtsconverter</groupId>
+      <artifactId>ewts-converter</artifactId>
+      <version>1.1.0</version>
+    </dependency>
   </dependencies>
   <build>
   <plugins>
