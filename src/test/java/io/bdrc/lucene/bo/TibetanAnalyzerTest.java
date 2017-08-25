@@ -36,10 +36,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.bdrc.lucene.stemmer.Optimizer;
-import io.bdrc.lucene.stemmer.Row;
-import io.bdrc.lucene.stemmer.Trie;
-
 import static org.hamcrest.CoreMatchers.*;
 
 /**
@@ -120,78 +116,6 @@ public class TibetanAnalyzerTest
 		return ('\u0F40' <= c && c <= '\u0FBC');
 	}
 
-	/**
-	 *  this function is inspired from getLastOnPath() in stemmer's Trie.java
-	 * @param toAnalyze the string to analyse
-	 * @param startCharIndex the index from which we want to analyze
-	 * @param t the Trie containing the data
-	 */
-	// 
-	public void produceOneToken(String toAnalyze, int startCharIndex, Trie t) {
-		// getting the root of the tree
-//		System.out.println(toAnalyze);
-		Row now = t.getRow(t.getRoot());
-		int w; // temporary index variable
-		int lastCharIndex = -1; // the index of the last match in the string we analyze
-		int lastCmdIndex = -1; // the index (inside the Trie) of the cmd corresponding to the last match
-		
-		int i = startCharIndex; // the current index in the string
-		while (i < toAnalyze.length()) {
-			Character ch = toAnalyze.charAt(i); // get the current character
-//			System.out.println("moving to index "+i+": "+ch);
-			w = now.getCmd(ch); // get the command associated with the current character at next step in the Trie
-			if (w >= 0) {
-				if (i >= toAnalyze.length()-1 || !isTibLetter(toAnalyze.charAt(i+1))) {
-//						System.out.println("current row has an command for it, so it's a match");
-						lastCmdIndex = w;
-						lastCharIndex = i;
-					}
-            } else {
-//            	System.out.println("current row does not have a command for it, no match");
-            }
-			w = now.getRef(ch); // get the next row if there is one
-			if (w >= 0) {
-//				System.out.println("current row does have a reference for this char, further matches are possible, moving one row forward in the Trie");
-                now = t.getRow(w);
-            } else {
-//            	System.out.println("current row does not have a reference to this char, so there's no further possible match, breaking the loop");
-                break; // no more steps possible in our research
-            }
-			i++;
-		}
-		//w = now.getCmd(toAnalyze.charAt(i));
-		if (lastCharIndex == -1) {
-//			System.out.println("I have found nothing");
-			return;
-		}
-//		System.out.println("I have found a token that goes from "+startCharIndex+" to "
-//				+ lastCharIndex);
-//		System.out.println("the substring is: "+toAnalyze.substring(startCharIndex, lastCharIndex+1));
-//		System.out.println("the command associated with this token in the Trie is: "+t.getCommandVal(lastCmdIndex));
-	}
-	
-	@Test
-	public void produceOneTokenTest() throws IOException
-	{
-		System.out.println("Testing Stemmer Trie (produceOneToken() )");
-		Trie test = new Trie(true);
-		test.add("དྲོའི",">a");
-		test.add("བདེ་ལེགས","=");
-		test.add("བདེ", "=");
-		test.add("བཀྲ་ཤིས","=");
-		test.add("བཀྲ", "=");
-		test.add("དྲོ","=");
-		test.add("དགའི", ">A");
-		test.add("དགའ","=");
-		Optimizer opt = new Optimizer();
-		test.reduce(opt);
-		produceOneToken("དག", 0, test);
-		produceOneToken("དགའི", 0, test);
-		produceOneToken("བཀྲ་", 0, test);
-		produceOneToken("བཀྲད", 0, test);
-		produceOneToken("བདེ་ལེགས", 0, test);
-	}
-
 	@Test
 	public void wordTokenizerLemmatizeTest() throws IOException
 	{
@@ -231,7 +155,19 @@ public class TibetanAnalyzerTest
 		TokenStream res = tokenize(new TibCharFilter(reader), new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 	}
-	
+
+	@Test
+	public void ewtsFilterTest() throws IOException
+	{
+		System.out.println("Testing TibEwtsFilter()");
+		String input = "bod rgyal lo invalid བོད";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བོད", "རྒྱལ", "ལོ",  "ཨིནབ",  "ལིད",  "བོད");
+		System.out.print(input + " => ");
+		TokenStream res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
+		assertTokenStream(res, expected);
+	}
+
 	@Test
 	public void bugEatenSyllable() throws IOException
 	{
