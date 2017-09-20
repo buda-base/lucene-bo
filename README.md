@@ -12,6 +12,12 @@ Installation through maven:
     </dependency>
 ```
 
+If the jar is needed for use in a non-maven based install, it may be found at
+
+```
+    https://search.maven.org/remotecontent?filepath=io/bdrc/lucene/lucene-bo/1.1.0/lucene-bo-1.1.0.jar
+```
+
 ## Components
 
 #### TibetanAnalyzer
