@@ -66,9 +66,9 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	/**
 	 * Constructs a TibWordTokenizer using the file designed by filename
-	 * @param filename
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param filename the path to the lexicon file
+	 * @throws FileNotFoundException the file containing the lexicon cannot be found
+	 * @throws IOException the file containing the lexicon cannot be read
 	 */
 	public TibWordTokenizer(String filename) throws FileNotFoundException, IOException {
 		init(filename);
@@ -76,8 +76,8 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	/**
 	 * Constructs a TibWordTokenizer using a default lexicon file (here "resource/output/total_lexicon.txt") 
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws FileNotFoundException the file containing the lexicon cannot be found
+	 * @throws IOException the file containing the lexicon cannot be read
 	 */
 	public TibWordTokenizer() throws FileNotFoundException, IOException {
 		init("resource/output/total_lexicon.txt");
@@ -123,6 +123,9 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * Called on each token character to normalize it before it is added to the
 	 * token. The default implementation does nothing. Subclasses may use this to,
 	 * e.g., lowercase tokens.
+	 * 
+	 * @param c the character to normalize
+	 * @return the normalized character
 	 */
 	protected int normalize(int c) {
 		return c;
