@@ -58,31 +58,38 @@ public final class TibetanAnalyzer extends Analyzer {
 	boolean segmentInWords = false; 
 	boolean lemmatize = false;
 	boolean filterChars = false;
+	boolean fromEwts = false;
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
+	 * 
+	 * @param  segmentInWords  if the segmentation is on words instead of syllables
+	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
+	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
+	 * @param  fromEwts  if the text should be converted from EWTS to Unicode
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars) {
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
+		this.fromEwts = fromEwts;
 	}
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer} with the default values
 	 */
 	public TibetanAnalyzer() {
-		this(true, true, true);
+		this(true, true, true, false);
 	}
   
 	@Override
 	protected Reader initReader(String fieldName, Reader reader) {
-		if (filterChars) {
-			TibCharFilter charFilter = new TibCharFilter(reader);
-			return super.initReader(fieldName, charFilter);
-		} else {
-			return super.initReader(fieldName, reader);
+		if (this.fromEwts) {
+			reader = new TibEwtsFilter(reader);
+		} else if (filterChars) { // filterChars is never needed after ewts translation
+			reader = new TibCharFilter(reader);
 		}
+		return super.initReader(fieldName, reader);
 	}
 	
 	@Override
