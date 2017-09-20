@@ -19,6 +19,18 @@ Installation through maven:
 The main Analyzer. 
 It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffixedFilter* and *StopFilter* with a predefined list of stop words.
 
+There are two constructors. The nullary constructor and
+
+```    
+    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts)
+
+    segmentInWords - if the segmentation is on words instead of syllables
+    lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
+    filterChars - if the text should be converted to NFD (necessary for texts containing NFC strings)
+    fromEwts - if the text should be converted from EWTS to Unicode
+```
+
+The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false)`
 #### TibWordTokenizer
 
 This tokenizer produces words through a Maximal Matching algorithm. It builds on top of [this Trie implementation](https://github.com/BuddhistDigitalResourceCenter/stemmer).  
@@ -29,7 +41,7 @@ The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པ�
 
 #### TibSyllableTokenizer
 
-This tokenizer produces syllabe tokens (with no tshek) from the input Tibetan text.
+This tokenizer produces syllable tokens (with no tshek) from the input Tibetan text.
 
 #### TibAffixedFilter
 
