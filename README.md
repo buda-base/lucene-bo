@@ -8,14 +8,14 @@ Installation through maven:
     <dependency>
       <groupId>io.bdrc.lucene</groupId>
       <artifactId>lucene-bo</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.1</version>
     </dependency>
 ```
 
 If the jar is needed for use in a non-maven based install, it may be found at
 
 ```
-    https://search.maven.org/remotecontent?filepath=io/bdrc/lucene/lucene-bo/1.1.0/lucene-bo-1.1.0.jar
+    https://repo1.maven.org/maven2/io/bdrc/lucene/lucene-bo/1.1.1/lucene-bo-1.1.1.jar
 ```
 
 ## Components
