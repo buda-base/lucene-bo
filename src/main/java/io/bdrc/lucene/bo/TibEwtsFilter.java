@@ -86,15 +86,10 @@ public class TibEwtsFilter extends BaseCharFilter {
 
 	@Override
 	public int read(char[] cbuf, int off, int len) throws IOException {
-		System.out.println("calling read with off="+off+", len="+len);
 	    int numRead = 0;
-	    for(int i = off; i < off + len; i++) {
+	    for (int i = off; i < off + len; i++) {
 	    	int c = read();
-	    	if (c != -1) {
-	    		System.out.println("reading "+(char)c);
-	    	}
 	      	if (c == -1) {
-	      		System.out.println("reached end of input");
 	      		break;
 	      	}
 	      	cbuf[i] = (char) c;
