@@ -64,6 +64,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 		}
 		buffer.freeBefore(inputOff);
 		if (replacement == null || replacement.isEmpty()) {
+			replacementLen = -1;
 			return -1;
 		}
 		int diff = (inputOff - initialInputOff) - replacement.length();
