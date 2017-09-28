@@ -53,6 +53,10 @@ This tokenizer produces syllable tokens (with no tshek) from the input Tibetan t
 
 This filter removes non-ambiguous affixed particles (འི, འོ, འིའོ, འམ, འང and འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
 
+## Maven Build Options
+
+To sign the `.jar`s before deploying, pass `-DperformRelease=true` ; to include `ewts-converter` in the built jar, pass `-DincludeEwts=true`.
+
 ## License
 
 The code is Copyright 2017 Buddhist Digital Resource Center, and is provided under [Apache License 2.0](LICENSE).
