@@ -63,7 +63,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 	private boolean lemmatize = true;
-
+	private boolean debug = false;
 	/**
 	 * Constructs a TibWordTokenizer using the file designed by filename
 	 * @param filename the path to the lexicon file
@@ -74,6 +74,17 @@ public final class TibWordTokenizer extends Tokenizer {
 		init(filename);
 	}
 
+	/**
+	 * Constructs a TibWordTokenizer using the file designed by filename
+	 * @param filename the path to the lexicon file
+	 * @throws FileNotFoundException the file containing the lexicon cannot be found
+	 * @throws IOException the file containing the lexicon cannot be read
+	 */
+	public TibWordTokenizer(boolean debug, String filename) throws FileNotFoundException, IOException {
+		this.debug = debug;
+		init(filename);
+	}
+	
 	/**
 	 * Constructs a TibWordTokenizer using a default lexicon file (here "resource/output/total_lexicon.txt") 
 	 * @throws FileNotFoundException the file containing the lexicon cannot be found
@@ -119,6 +130,26 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
 
+	private int tokenLength;
+
+	private int cmdIndex;
+
+	private boolean foundMatch;
+
+	private int foundMatchCmdIndex;
+
+	private boolean foundNonMaxMatch;
+
+	private Row rootRow;
+
+	private Row currentRow;
+
+	private int tokenStart;
+
+	private int tokenEnd;
+
+	private int charCount;
+
 	/**
 	 * Called on each token character to normalize it before it is added to the
 	 * token. The default implementation does nothing. Subclasses may use this to,
@@ -130,41 +161,35 @@ public final class TibWordTokenizer extends Tokenizer {
 	protected int normalize(int c) {
 		return c;
 	}
-	
-	/**
-	 * Finds whether the given character is a Tibetan letter or not.
-	 * @param c a unicode code-point
-	 * @return true if {@code c} in the specified range; false otherwise
-	 */
-	public boolean isTibLetter(int c) {
-		return ('\u0F40' <= c && c <= '\u0FBC');
-	}
-
 
 	@Override
 	public final boolean incrementToken() throws IOException {
-		//System.out.println("\nincrement token\n");
 		clearAttributes();
-		int length = 0;
-		int start = -1; // this variable is always initialized
-		int end = -1;
+		tokenLength = 0;
+		tokenStart = -1; // this variable is always initialized
+		tokenEnd = -1;
+		rootRow = scanner.getRow(scanner.getRoot());
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
-		String cmd = null;
 		int w = -1;
-		int cmdIndex = -1;
-		int potentialEndCmdIndex = -1;
-		boolean potentialEnd = false;
+		cmdIndex = -1;
+		foundMatchCmdIndex = -1;
+		foundMatch = false;
 		boolean passedFirstSyllable = false;
-		Row now = null;
-		char[] buffer = termAtt.buffer();
+		currentRow = null;
+		char[] tokenBuffer = termAtt.buffer();
+		
+		if (debug) {System.out.println("----------------------");}
+		
+		/* A. FINDING TOKENS */
 		while (true) {
+			/*>>> Deals with the beginning and end of the input string >>>>>>>>>*/
 			if (bufferIndex >= dataLen) {
 				offset += dataLen;
-				CharacterUtils.fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
+				CharacterUtils.fill(ioBuffer, input);		// read supplementary char aware with CharacterUtils
 				if (ioBuffer.getLength() == 0) {
-					dataLen = 0; // so next offset += dataLen won't decrement offset
-					if (length > 0) {
+					dataLen = 0;							// so next offset += dataLen won't decrement offset
+					if (tokenLength > 0) {
 						break;
 					} else {
 						finalOffset = correctOffset(offset);
@@ -174,85 +199,155 @@ public final class TibWordTokenizer extends Tokenizer {
 				dataLen = ioBuffer.getLength();
 				bufferIndex = 0;
 			}
-			// use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone
-			final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
-			final int charCount = Character.charCount(c);
-			bufferIndex += charCount;
+			/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+			
+			/* A.1. FILLING c WITH CHARS FROM ioBuffer */
+			
+			/* (use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone) */
+			final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());	// take next char in ioBuffer
+			charCount = Character.charCount(c);
+			bufferIndex += charCount;			 			// increment bufferIndex for next value of c
+			
+			if (debug) {System.out.println("\t" + (char) c);}
+			
+			/* A.2. PROCESSING c */
+			
+			/* A.2.1) if it's a token char */
+			if (isTibetanTokenChar(c)) {
+				if (isStartOfToken(c)) {                // start of token
+					assert(tokenStart == -1); // TODO : necessary ???
+					tryToFindMatchIn(rootRow, c);
+					tryToContinueDownTheTrie(rootRow, c);
+					incrementTokenIndices();
+//					ifIsNeededAttributeStartingIndexOfNonword();
 
-			if (isTibLetter(c) || (c == '\u0F0B' && length > 0)) {  // if it's a token char
-				if (length == 0) {                // start of token
-					assert(start == -1);
-					now = scanner.getRow(scanner.getRoot());
-					cmdIndex = now.getCmd((char) c);
-					potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
-					if (potentialEnd) {
-						potentialEndCmdIndex = cmdIndex;
-					}
-					w = now.getRef((char) c);
-					now = (w >= 0) ? scanner.getRow(w) : null;
-					start = offset + bufferIndex - charCount;
-					end = start + charCount;
 				} else {
-					if (length >= buffer.length-1) { // check if a supplementary could run out of bounds
-						buffer = termAtt.resizeBuffer(2+length); // make sure a supplementary fits in the buffer
+					
+					/*>>> corner case for ioBuffer >>>>>>>*/
+					if (tokenLength >= tokenBuffer.length-1) { // check if a supplementary could run out of bounds
+						tokenBuffer = termAtt.resizeBuffer(2+tokenLength); // make sure a supplementary fits in the buffer
 					}
-					if (now == null) {
+					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+					
+					if (cantGoDownTheTrie()) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
 							// we just want to go to the end of the syllable
-							if (c == '\u0F0B') {
-								confirmedEnd = end;
+							if (reachedSylEnd(c)) {
+								confirmedEnd = tokenEnd;
 								confirmedEndIndex = bufferIndex;
 								break;
 							}
-							end += charCount; // else we're just passing
+							tokenEnd += charCount; // else we're just passing
 						} else {
 							break;
 						}
 					} else {
-						if (c == '\u0F0B') {
+						if (reachedSylEnd(c)) {
 							passedFirstSyllable = true;
-							confirmedEnd = end;
+							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
-						end += charCount;
-						cmdIndex = now.getCmd((char) c);
-						potentialEnd = (cmdIndex >= 0); // we may have caught the end, but we must check if next character is a tsheg
-						if (potentialEnd) {
-							potentialEndCmdIndex = cmdIndex;
-						}
-						w = now.getRef((char) c);
-						now = (w >= 0) ? scanner.getRow(w) : null;
+						tokenEnd += charCount;
+						tryToFindMatchIn(currentRow, c);
+						tryToContinueDownTheTrie(currentRow, c);
 					}
 				}
-				length += Character.toChars(normalize(c), buffer, length); // buffer it, normalized
-				if (length >= MAX_WORD_LEN) { // buffer overflow! make sure to check for >= surrogate pair could break == test
+				IncrementTokenLengthAndAddCurrentCharTo(tokenBuffer, c);
+				/*>>>>>> ioBuffer corner case: buffer overflow! >>>*/
+				if (tokenLength >= MAX_WORD_LEN) {		// make sure to check for >= surrogate pair could break == test
 					break;
 				}
-			} else if (length > 0) {           // at non-Letter w/ chars
+				/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+			
+			/* A.2.2) if it is not a token char */
+			} else if (tokenLength > 0) {           // at non-Letter w/ chars
 				break;                           // return 'em
 			}
 		}
-		if (potentialEnd) {
-			confirmedEnd = end;
+		
+		/* B. HANDING THEM TO LUCENE */
+		
+		/* B.1. IF THERE IS A NON-MAX MATCH */
+		if (foundMatch) {
+			confirmedEnd = tokenEnd;
 			confirmedEndIndex = bufferIndex;
 		}
 		if (confirmedEnd > 0) {
 			bufferIndex = confirmedEndIndex;
-			end = confirmedEnd;
+			tokenEnd = confirmedEnd;
 		}
 		
-		termAtt.setLength(end - start);
-		cmd = scanner.getCommandVal(potentialEndCmdIndex);
-		if (lemmatize && cmd != null) {
-			applyCmdToTermAtt(cmd);
-		}
-		assert(start != -1);
-		finalOffset = correctOffset(end);
-		offsetAtt.setOffset(correctOffset(start), finalOffset);
+		/* B.2. EXITING incrementToken() WITH THE TOKEN */
+		assert(tokenStart != -1);
+		finalizeSettingTermAttribute();
+		lemmatizeIfRequired();
 		return true;
 	}
 
+	private void finalizeSettingTermAttribute() {
+		finalOffset = correctOffset(tokenEnd);
+		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
+		termAtt.setLength(tokenEnd - tokenStart);
+	}
+
+	private boolean reachedSylEnd(int c) {
+		return c == '\u0F0B';
+	}
+
+	private boolean cantGoDownTheTrie() {
+		return currentRow == null;
+	}
+
+	private void lemmatizeIfRequired() {
+		if (lemmatize) {
+			String cmd = scanner.getCommandVal(foundMatchCmdIndex);
+			if (cmd != null ) {
+				applyCmdToTermAtt(cmd);	
+			}
+		}
+	}
+
+	private void IncrementTokenLengthAndAddCurrentCharTo(char[] tokenBuffer, int c) {
+		tokenLength += Character.toChars(normalize(c), tokenBuffer, tokenLength);	// add normalized c to tokenBuffer
+	}
+
+	private void incrementTokenIndices() {
+		tokenStart = offset + bufferIndex - charCount;
+		tokenEnd = tokenStart + charCount;		// tokenEnd is one char ahead of tokenStart (ending index is exclusive)
+	}
+
+	private void tryToContinueDownTheTrie(Row row, int c) {
+		int ref = row.getRef((char) c);
+		currentRow = (ref >= 0) ? scanner.getRow(ref) : null;
+	}
+
+	private void tryToFindMatchIn(Row row, int c) {
+		cmdIndex = row.getCmd((char) c);
+		foundMatch = (cmdIndex >= 0);	// we may have caught the end, but we must check if next character is a tsheg
+		if (foundMatch) {
+			foundMatchCmdIndex = cmdIndex;
+//			foundNonMaxMatch = storeNonMaxMatchState(); TODO 
+		}
+	}
+
+	final private boolean isStartOfToken(int c) {
+		return tokenLength == 0;
+	}
+
+	final private boolean isTibetanTokenChar(int c) {
+		return isTibLetter(c) || (c == '\u0F0B' && tokenLength > 0);
+	}
+
+	/**
+	 * Finds whether the given character is a Tibetan letter or not.
+	 * @param c a unicode code-point
+	 * @return true if {@code c} in the specified range; false otherwise
+	 */
+	public boolean isTibLetter(int c) {
+		return ('\u0F40' <= c && c <= '\u0FBC');	// between "Tibetan Letter Ka" and "Tibetan Subjoined Letter Fixed-Form Ra"
+	}
+	
 	private void applyCmdToTermAtt(String cmd) {
 		if (cmd.charAt(0) == '>') {
 			// resize buffer

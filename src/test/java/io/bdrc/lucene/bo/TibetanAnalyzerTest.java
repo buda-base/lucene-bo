@@ -194,6 +194,19 @@ public class TibetanAnalyzerTest
 	}
 	
 	@Test
+	public void nonMaxMatchingTokenTest() throws IOException
+	{
+		System.out.println("Testing non-maximal matches");
+		String input = "བཀྲ་ཤིས་བདེ་ལེགས།";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས");
+		System.out.println(input + " => ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/io-buffer-size-test.txt");
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
+		assertTokenStream(syllables, expected);
+	}
+	
+	@Test
 	public void ioBufferLimitTest() throws IOException
 	{
 		System.out.println("Testing max size of ioBuffer");
@@ -201,7 +214,7 @@ public class TibetanAnalyzerTest
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		
 		HashMap<Integer, Integer> ranges = new HashMap<Integer, Integer>();
-		ranges.put(2030, 2049);
+//		ranges.put(2030, 2049);
 		ranges.put(4080, 4097);
 
 		for (HashMap.Entry<Integer, Integer> entry : ranges.entrySet()) {
@@ -209,7 +222,7 @@ public class TibetanAnalyzerTest
 				System.out.println(i);
 				String input = repeatChar('་', i)+"བཀྲ་ཤིས་བདེ་ལེགས།";
 				Reader reader = new StringReader(input);
-				System.out.print(input + " => ");
+				System.out.print(input + " => \n");
 				TokenStream syllables = tokenize(reader, tibWordTokenizer);
 				assertTokenStream(syllables, expected);
 			}			
