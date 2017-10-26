@@ -244,7 +244,7 @@ public final class TibWordTokenizer extends Tokenizer {
 							}
 							tokenEnd += charCount; // else we're just passing
 						} else {
-							ifWentOneCharTooFarStepBack(c);	// the current chars begin an entry in the Trie
+							stepBackIfStartedNextSylButCantGoFurther(c);	// the current chars begin an entry in the Trie
 							break;
 						}
 					} else {	// normal case
@@ -290,7 +290,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		return true;
 	}
 
-	private void ifWentOneCharTooFarStepBack(int c) {
+	private void stepBackIfStartedNextSylButCantGoFurther(int c) {
 		if (cmdIndex == -1 && currentRow == null && passedFirstSyllable && !reachedSylEnd(c)) {
 			bufferIndex -= charCount;
 			tokenEnd -= charCount;
