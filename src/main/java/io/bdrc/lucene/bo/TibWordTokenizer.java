@@ -233,7 +233,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					}
 					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 					
-					if (wentToMaxDownTheTrie(c)) {
+					if (wentToMaxDownTheTrie()) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
 							// we just want to go to the end of the syllable
@@ -313,7 +313,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		return c == '\u0F0B';	// isTibetanTokenChar() filters all punctuation and space, so filtering tsek is enough
 	}
 
-	private boolean wentToMaxDownTheTrie(int c) {
+	private boolean wentToMaxDownTheTrie() {
 		return currentRow == null;
 	}
 
