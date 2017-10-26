@@ -172,7 +172,8 @@ public final class TibWordTokenizer extends Tokenizer {
 		while (true) {
 			/* A.1. FILLING c WITH CHARS FROM ioBuffer */
 			final int c = ioBuffer.get(bufferIndex);	// take next char in ioBuffer
-			bufferIndex += charCount;			 			// increment bufferIndex for next value of c
+			bufferIndex += charCount;			 		// increment bufferIndex for next value of c
+			/* when ioBuffer is empty (end of input, ...) */
 			if (c == -1) {
 				bufferIndex -= charCount;
 				if (tokenLength == 0) {
@@ -196,13 +197,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					incrementTokenIndices();
 
 				} else {
-					
-					/*>>> corner case for ioBuffer >>>>>>>*/
-					if (tokenLength >= tokenBuffer.length-1) { // check if a supplementary could run out of bounds
-						tokenBuffer = termAtt.resizeBuffer(2+tokenLength); // make sure a supplementary fits in the buffer
-					}
-					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-					
+					ifNeededResize(tokenBuffer);
 					if (wentToMaxDownTheTrie()) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
@@ -217,7 +212,7 @@ public final class TibWordTokenizer extends Tokenizer {
 							stepBackIfStartedNextSylButCantGoFurther(c);	// the current chars begin an entry in the Trie
 							break;
 						}
-					} else {	// normal case: we are in the middle of a potential token
+					} else {					// normal case: we are in the middle of a potential token
 						if (foundMatch) {
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
@@ -228,15 +223,13 @@ public final class TibWordTokenizer extends Tokenizer {
 					}
 				}
 				IncrementTokenLengthAndAddCurrentCharTo(tokenBuffer, c);
-				/*>>>>>> ioBuffer corner case: buffer overflow! >>>*/
-				if (tokenLength >= MAX_WORD_LEN) {		// make sure to check for >= surrogate pair could break == test
+				if (tokenLength >= MAX_WORD_LEN) {	// tokenBuffer corner case: buffer overflow! 
 					break;
 				}
-				/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 			
 			/* A.2.2) if it is not a token char */
-			} else if (tokenLength > 0) {           // at non-Letter w/ chars
-				break;                           // return 'em
+			} else if (tokenLength > 0) {
+				break;
 			}
 		}
 		
@@ -257,6 +250,12 @@ public final class TibWordTokenizer extends Tokenizer {
 		finalizeSettingTermAttribute();
 		lemmatizeIfRequired();
 		return true;
+	}
+
+	private void ifNeededResize(char[] tokenBuffer) {
+		if (tokenLength >= tokenBuffer.length-1) {				// check if a supplementary could run out of bounds
+			tokenBuffer = termAtt.resizeBuffer(2+tokenLength);	// make sure a supplementary fits in the buffer
+		}
 	}
 
 	private final void stepBackIfStartedNextSylButCantGoFurther(final int c) {
