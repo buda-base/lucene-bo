@@ -23,6 +23,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -70,18 +73,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @throws IOException the file containing the lexicon cannot be read
 	 */
 	public TibWordTokenizer(String filename) throws FileNotFoundException, IOException {
-		init(filename);
-	}
-
-	/**
-	 * Constructs a TibWordTokenizer using the file designed by filename
-	 * @param filename the path to the lexicon file
-	 * @throws FileNotFoundException the file containing the lexicon cannot be found
-	 * @throws IOException the file containing the lexicon cannot be read
-	 */
-	public TibWordTokenizer(boolean debug, String filename) throws FileNotFoundException, IOException {
-		this.debug = debug;
-		init(filename);
+		init(new FileReader(filename));
 	}
 	
 	/**
@@ -90,7 +82,14 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @throws IOException the file containing the lexicon cannot be read
 	 */
 	public TibWordTokenizer() throws FileNotFoundException, IOException {
-		init("resource/output/total_lexicon.txt");
+		InputStream stream = null;
+		stream = TibWordTokenizer.class.getResourceAsStream("total_lexicon.txt");
+		if (stream == null) {
+			// we're not using the jar, there is no resource, assuming we're running the code
+			init(new FileReader("resource/output/total_lexicon.txt"));
+		} else {
+			init(new InputStreamReader(stream));
+		}
 	}
 
 	/**
@@ -101,10 +100,10 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @throws FileNotFoundException 
 	 * @throws IOException
 	 */
-	private void init(String filename) throws FileNotFoundException, IOException {
+	private void init(Reader reader) throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
 		// currently only adds the entries without any diff
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+		try (BufferedReader br = new BufferedReader(reader)) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				final int spaceIndex = line.indexOf(' ');
@@ -382,5 +381,9 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	public final void setLemmatize(final boolean lemmatize) {
 		this.lemmatize = lemmatize;
+	}
+	
+	public final void setDebug(final boolean debug) {
+		this.debug = debug;
 	}
 }

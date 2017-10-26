@@ -188,7 +188,7 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བ", "ཐོབ");
 		System.out.print(input + " => ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/eaten-syl-dict.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -201,7 +201,7 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས");
 		System.out.println(input + " => ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/io-buffer-size-test.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -214,7 +214,7 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
 		System.out.println(input + " => ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/non-max-match-test.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/non-max-match-test.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
