@@ -243,7 +243,8 @@ public final class TibWordTokenizer extends Tokenizer {
 							break;
 						}
 					} else {	// normal case: we are in the middle of a potential token
-						if (foundANonMaxMatch(c)) {
+						if (foundMatch) {
+							foundNonMaxMatch = true;
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
@@ -282,14 +283,6 @@ public final class TibWordTokenizer extends Tokenizer {
 		finalizeSettingTermAttribute();
 		lemmatizeIfRequired();
 		return true;
-	}
-
-	private boolean foundANonMaxMatch(int c) {
-		if (reachedSylEnd(c) && foundMatch) {
-			foundNonMaxMatch = true;
-			return true;
-		}
-		return false;
 	}
 
 	private void stepBackIfStartedNextSylButCantGoFurther(int c) {
