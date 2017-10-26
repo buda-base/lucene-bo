@@ -51,6 +51,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	boolean lemmatize = false;
 	boolean filterChars = false;
 	boolean fromEwts = false;
+	String lexiconFileName = null;
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
@@ -58,10 +59,10 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  segmentInWords  if the segmentation is on words instead of syllables
 	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
 	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-	 * @param  fromEwts  if the text should be converted from EWTS to Unicode
-	 * @throws IOException  if the file containing stopwords can't be opened 
+	 * @param  fromEwts  if the text should be converted from EWTS
+	 * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String stopFilename) throws IOException {
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String stopFilename, String lexiconFileName) throws IOException {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
@@ -77,6 +78,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		} else {
 			this.tibStopSet = null;
 		}
+		this.lexiconFileName = lexiconFileName;
 	}
 	
 	/**
@@ -84,7 +86,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, false, "src/main/resources/bo-stopwords.txt");
+		this(true, true, true, false, "src/main/resources/bo-stopwords.txt", null);
 	}
   
     /**
@@ -135,7 +137,10 @@ public final class TibetanAnalyzer extends Analyzer {
 		
 		if (segmentInWords) {
 			try {
-				source = new TibWordTokenizer();
+				if (this.lexiconFileName != null)
+					source = new TibWordTokenizer(this.lexiconFileName);
+				else
+					source = new TibWordTokenizer();
 				if (lemmatize) {
 					((TibWordTokenizer) source).setLemmatize(lemmatize);
 				}

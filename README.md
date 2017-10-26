@@ -28,15 +28,16 @@ It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffix
 There are two constructors. The nullary constructor and
 
 ```    
-    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts)
+    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
 
     segmentInWords - if the segmentation is on words instead of syllables
     lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
     filterChars - if the text should be converted to NFD (necessary for texts containing NFC strings)
-    fromEwts - if the text should be converted from EWTS to Unicode
+    fromEwts - if the text should be converted from EWTS
+    lexiconFileName - file name of the lexicon file to be used for word segmentation (null for the default one)
 ```
 
-The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false)`
+The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
 
 #### TibWordTokenizer
 
