@@ -181,12 +181,12 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void bugEatenSyllable() throws IOException
+	public void startedNextSyllableBugWithNonMaxMatches() throws IOException
 	{
 		System.out.println("Bug testing in TibWordTokenizer()");
-		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		String input = "བ་ཐོབ་";
 		Reader reader = new StringReader(input);
-		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ", "བ", "ཐོབ", "པར", "ཤོག");
+		List<String> expected = Arrays.asList("བ", "ཐོབ");
 		System.out.print(input + " => ");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
@@ -214,8 +214,8 @@ public class TibetanAnalyzerTest
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		
 		HashMap<Integer, Integer> ranges = new HashMap<Integer, Integer>();
-		ranges.put(2030, 2049);
-//		ranges.put(4080, 4097);
+//		ranges.put(2030, 2049);
+		ranges.put(4080, 4097);
 
 		for (HashMap.Entry<Integer, Integer> entry : ranges.entrySet()) {
 			for (int i=entry.getKey() ; i<entry.getValue(); i++) {

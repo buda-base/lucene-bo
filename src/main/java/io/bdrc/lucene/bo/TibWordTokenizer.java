@@ -344,8 +344,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		cmdIndex = row.getCmd((char) c);
 		foundMatch = (cmdIndex >= 0);	// we may have caught the end, but we must check if next character is a tsheg
 		if (foundMatch) {
-			foundMatchCmdIndex = cmdIndex;
-//			foundNonMaxMatch = storeNonMaxMatchState(); TODO 
+			foundMatchCmdIndex = cmdIndex; 
 		}
 	}
 
