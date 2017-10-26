@@ -233,7 +233,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					}
 					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 					
-					if (wentToMaxDownTheTrie()) {
+					if (wentToMaxDownTheTrie(c)) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
 							// we just want to go to the end of the syllable
@@ -244,9 +244,10 @@ public final class TibWordTokenizer extends Tokenizer {
 							}
 							tokenEnd += charCount; // else we're just passing
 						} else {
+							ifWentOneCharTooFarStepBack(c);	// the current chars begin an entry in the Trie
 							break;
 						}
-					} else {
+					} else {	// normal case
 						if (reachedSylEnd(c) && foundMatch && !foundNonMaxMatch) {
 							foundNonMaxMatch = true;
 							confirmedEnd = tokenEnd;
@@ -289,6 +290,13 @@ public final class TibWordTokenizer extends Tokenizer {
 		return true;
 	}
 
+	private void ifWentOneCharTooFarStepBack(int c) {
+		if (cmdIndex == -1 && currentRow == null && passedFirstSyllable && !reachedSylEnd(c)) {
+			bufferIndex -= charCount;
+			tokenEnd -= charCount;
+		}
+	}
+
 	private void checkIfFirstSylPassed(int c) {
 		if (c == '\u0F0B' && !passedFirstSyllable) {
 			passedFirstSyllable = true;
@@ -305,7 +313,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		return c == '\u0F0B';	// isTibetanTokenChar() filters all punctuation and space, so filtering tsek is enough
 	}
 
-	private boolean wentToMaxDownTheTrie() {
+	private boolean wentToMaxDownTheTrie(int c) {
 		return currentRow == null;
 	}
 
