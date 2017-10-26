@@ -227,7 +227,7 @@ public class TibetanAnalyzerTest
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		
 		HashMap<Integer, Integer> ranges = new HashMap<Integer, Integer>();
-//		ranges.put(2030, 2049);
+		ranges.put(2030, 2049);
 		ranges.put(4080, 4097);
 
 		for (HashMap.Entry<Integer, Integer> entry : ranges.entrySet()) {
