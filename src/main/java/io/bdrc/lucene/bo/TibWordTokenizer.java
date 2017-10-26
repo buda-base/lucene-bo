@@ -285,7 +285,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 
 	private boolean foundANonMaxMatch(int c) {
-		if (reachedSylEnd(c) && foundMatch && !foundNonMaxMatch) {
+		if (reachedSylEnd(c) && foundMatch) {
 			foundNonMaxMatch = true;
 			return true;
 		}
