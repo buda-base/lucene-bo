@@ -207,6 +207,19 @@ public class TibetanAnalyzerTest
 	}
 	
 	@Test
+	public void nonMaxMatchingSecondLevel() throws IOException
+	{
+		System.out.println("Testing non-maximal matches");
+		String input = "བཀྲ་ཤིས་བདེ་ལེགས";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
+		System.out.println(input + " => ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/non-max-match-test.txt");
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
+		assertTokenStream(syllables, expected);
+	}
+	
+	@Test
 	public void ioBufferLimitTest() throws IOException
 	{
 		System.out.println("Testing max size of ioBuffer");
