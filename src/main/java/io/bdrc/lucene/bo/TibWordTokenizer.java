@@ -103,19 +103,18 @@ public final class TibWordTokenizer extends Tokenizer {
 	 */
 	private void init(String filename) throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
-
-		//		currently only adds the entries without any diff
+		// currently only adds the entries without any diff
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				int spaceIndex = line.indexOf(' ');
+				final int spaceIndex = line.indexOf(' ');
 				if (spaceIndex == -1) {
 					throw new IllegalArgumentException("The dictionary file is corrupted in the following line.\n" + line);
 				} else {
 					this.scanner.add(line.substring(0, spaceIndex), line.substring(spaceIndex+1));
 				}
 			}
-			Optimizer opt = new Optimizer();
+			final Optimizer opt = new Optimizer();
 			this.scanner.reduce(opt);
 		}
 		ioBuffer = new RollingCharBuffer();
@@ -130,7 +129,6 @@ public final class TibWordTokenizer extends Tokenizer {
 	private int cmdIndex;
 	private boolean foundMatch;
 	private int foundMatchCmdIndex;
-	private boolean foundNonMaxMatch;
 	private Row rootRow;
 	private Row currentRow;
 	private int tokenStart;
@@ -147,7 +145,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @param c the character to normalize
 	 * @return the normalized character
 	 */
-	protected int normalize(int c) {
+	protected int normalize(final int c) {
 		return c;
 	}
 
@@ -163,7 +161,6 @@ public final class TibWordTokenizer extends Tokenizer {
 		int confirmedEndIndex = -1;
 		cmdIndex = -1;
 		foundMatchCmdIndex = -1;
-		foundNonMaxMatch = false;
 		foundMatch = false;
 		passedFirstSyllable = false;
 		currentRow = null;
@@ -222,7 +219,6 @@ public final class TibWordTokenizer extends Tokenizer {
 						}
 					} else {	// normal case: we are in the middle of a potential token
 						if (foundMatch) {
-							foundNonMaxMatch = true;
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
@@ -263,57 +259,57 @@ public final class TibWordTokenizer extends Tokenizer {
 		return true;
 	}
 
-	private void stepBackIfStartedNextSylButCantGoFurther(int c) {
+	private final void stepBackIfStartedNextSylButCantGoFurther(final int c) {
 		if (cmdIndex == -1 && currentRow == null && passedFirstSyllable && !reachedSylEnd(c)) {
 			bufferIndex -= charCount;
 			tokenEnd -= charCount;
 		}
 	}
 
-	private void checkIfFirstSylPassed(int c) {
+	private final void checkIfFirstSylPassed(final int c) {
 		if (c == '\u0F0B' && !passedFirstSyllable) {
 			passedFirstSyllable = true;
 		}
 	}
 
-	private void finalizeSettingTermAttribute() {
+	private final void finalizeSettingTermAttribute() {
 		finalOffset = correctOffset(tokenEnd);
 		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
 		termAtt.setLength(tokenEnd - tokenStart);
 	}
 
-	private boolean reachedSylEnd(int c) {
+	private final boolean reachedSylEnd(final int c) {
 		return c == '\u0F0B';	// isTibetanTokenChar() filters all punctuation and space, so filtering tsek is enough
 	}
 
-	private boolean wentToMaxDownTheTrie() {
+	private final boolean wentToMaxDownTheTrie() {
 		return currentRow == null;
 	}
 
-	private void lemmatizeIfRequired() {
+	private final void lemmatizeIfRequired() {
 		if (lemmatize) {
-			String cmd = scanner.getCommandVal(foundMatchCmdIndex);
+			final String cmd = scanner.getCommandVal(foundMatchCmdIndex);
 			if (cmd != null ) {
 				applyCmdToTermAtt(cmd);	
 			}
 		}
 	}
 
-	private void IncrementTokenLengthAndAddCurrentCharTo(char[] tokenBuffer, int c) {
+	private final void IncrementTokenLengthAndAddCurrentCharTo(final char[] tokenBuffer, final int c) {
 		tokenLength += Character.toChars(normalize(c), tokenBuffer, tokenLength);	// add normalized c to tokenBuffer
 	}
 
-	private void incrementTokenIndices() {
+	private final void incrementTokenIndices() {
 		tokenStart = bufferIndex - charCount;
 		tokenEnd = tokenStart + charCount;		// tokenEnd is one char ahead of tokenStart (ending index is exclusive)
 	}
 
-	private void tryToContinueDownTheTrie(Row row, int c) {
-		int ref = row.getRef((char) c);
+	private final void tryToContinueDownTheTrie(final Row row, final int c) {
+		final int ref = row.getRef((char) c);
 		currentRow = (ref >= 0) ? scanner.getRow(ref) : null;
 	}
 
-	private void tryToFindMatchIn(Row row, int c) {
+	private final void tryToFindMatchIn(final Row row, final int c) {
 		cmdIndex = row.getCmd((char) c);
 		foundMatch = (cmdIndex >= 0);	// we may have caught the end, but we must check if next character is a tsheg
 		if (foundMatch) {
@@ -321,11 +317,11 @@ public final class TibWordTokenizer extends Tokenizer {
 		}
 	}
 
-	final private boolean isStartOfToken(int c) {
+	private final boolean isStartOfToken(final int c) {
 		return tokenLength == 0;
 	}
 
-	final private boolean isTibetanTokenChar(int c) {
+	private final boolean isTibetanTokenChar(final int c) {
 		return isTibLetter(c) || (c == '\u0F0B' && tokenLength > 0);
 	}
 
@@ -334,14 +330,14 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @param c a unicode code-point
 	 * @return true if {@code c} in the specified range; false otherwise
 	 */
-	public boolean isTibLetter(int c) {
+	public final boolean isTibLetter(final int c) {
 		return ('\u0F40' <= c && c <= '\u0FBC');	// between "Tibetan Letter Ka" and "Tibetan Subjoined Letter Fixed-Form Ra"
 	}
 	
-	private void applyCmdToTermAtt(String cmd) {
+	private final void applyCmdToTermAtt(final String cmd) {
 		if (cmd.charAt(0) == '>') {
 			// resize buffer
-			char operation = cmd.charAt(1);
+			final char operation = cmd.charAt(1);
 			switch(operation) {
 			case 'A':
 				termAtt.setLength(termAtt.length() - 1);
@@ -354,7 +350,7 @@ public final class TibWordTokenizer extends Tokenizer {
 				break;
 			case 'D':
 				// replaces the last character by a འ
-				char[] buffer = termAtt.buffer();
+				final char[] buffer = termAtt.buffer();
 				buffer[termAtt.length()-1] = 'འ';
 				break;
 			default:
@@ -385,7 +381,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		ioBuffer.reset(input); // make sure to reset the IO buffer!!
 	}
 
-	public void setLemmatize(boolean lemmatize) {
+	public final void setLemmatize(final boolean lemmatize) {
 		this.lemmatize = lemmatize;
 	}
 }
