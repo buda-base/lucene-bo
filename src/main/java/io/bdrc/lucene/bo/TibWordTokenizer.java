@@ -24,11 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.CharacterUtils.CharacterBuffer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.util.RollingCharBuffer;
 
 import io.bdrc.lucene.stemmer.Optimizer;
 import io.bdrc.lucene.stemmer.Row;
@@ -119,36 +118,26 @@ public final class TibWordTokenizer extends Tokenizer {
 			Optimizer opt = new Optimizer();
 			this.scanner.reduce(opt);
 		}
+		ioBuffer = new RollingCharBuffer();
+		ioBuffer.reset(input);
 	}
 
-	private int offset = 0, bufferIndex = 0, dataLen = 0, finalOffset = 0;
+	private int bufferIndex = 0, finalOffset = 0;
 	private static final int MAX_WORD_LEN = 255;
-	private static final int IO_BUFFER_SIZE = 4096;
 
 	//	  private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	//	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
-	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
-
+	private RollingCharBuffer ioBuffer;
 	private int tokenLength;
-
 	private int cmdIndex;
-
 	private boolean foundMatch;
-
 	private int foundMatchCmdIndex;
-
-	private boolean foundNonMaxMatch;
-
 	private Row rootRow;
-
 	private Row currentRow;
-
 	private int tokenStart;
-
 	private int tokenEnd;
-
-	private int charCount;
+	private final int charCount = 1; // the number of chars in a codepoint, always 1 for Tibetan
 
 	/**
 	 * Called on each token character to normalize it before it is added to the
@@ -165,13 +154,13 @@ public final class TibWordTokenizer extends Tokenizer {
 	@Override
 	public final boolean incrementToken() throws IOException {
 		clearAttributes();
+		ioBuffer.freeBefore(bufferIndex);
 		tokenLength = 0;
 		tokenStart = -1; // this variable is always initialized
 		tokenEnd = -1;
 		rootRow = scanner.getRow(scanner.getRoot());
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
-		int w = -1;
 		cmdIndex = -1;
 		foundMatchCmdIndex = -1;
 		foundMatch = false;
@@ -183,31 +172,18 @@ public final class TibWordTokenizer extends Tokenizer {
 		
 		/* A. FINDING TOKENS */
 		while (true) {
-			/*>>> Deals with the beginning and end of the input string >>>>>>>>>*/
-			if (bufferIndex >= dataLen) {
-				offset += dataLen;
-				CharacterUtils.fill(ioBuffer, input);		// read supplementary char aware with CharacterUtils
-				if (ioBuffer.getLength() == 0) {
-					dataLen = 0;							// so next offset += dataLen won't decrement offset
-					if (tokenLength > 0) {
-						break;
-					} else {
-						finalOffset = correctOffset(offset);
-						return false;
-					}
-				}
-				dataLen = ioBuffer.getLength();
-				bufferIndex = 0;
-			}
-			/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-			
 			/* A.1. FILLING c WITH CHARS FROM ioBuffer */
-			
-			/* (use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone) */
-			final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());	// take next char in ioBuffer
-			charCount = Character.charCount(c);
+			final int c = ioBuffer.get(bufferIndex);	// take next char in ioBuffer
 			bufferIndex += charCount;			 			// increment bufferIndex for next value of c
-			
+			if (c == -1) {
+				bufferIndex -= charCount;
+				if (tokenLength == 0) {
+					finalOffset = correctOffset(bufferIndex);
+					return false;
+				}
+				break;
+			}
+ 
 			if (debug) {System.out.println("\t" + (char) c);}
 			
 			/* A.2. PROCESSING c */
@@ -284,7 +260,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		lemmatizeIfRequired();
 		return true;
 	}
-
+	
 	private void finalizeSettingTermAttribute() {
 		finalOffset = correctOffset(tokenEnd);
 		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
@@ -313,7 +289,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 
 	private void incrementTokenIndices() {
-		tokenStart = offset + bufferIndex - charCount;
+		tokenStart = bufferIndex - charCount;
 		tokenEnd = tokenStart + charCount;		// tokenEnd is one char ahead of tokenStart (ending index is exclusive)
 	}
 
@@ -391,13 +367,9 @@ public final class TibWordTokenizer extends Tokenizer {
 	public void reset() throws IOException {
 		super.reset();
 		bufferIndex = 0;
-		offset = 0;
-		dataLen = 0;
 		finalOffset = 0;
-		ioBuffer.reset(); // make sure to reset the IO buffer!!
+		ioBuffer.reset(input); // make sure to reset the IO buffer!!
 	}
-
-
 
 	public void setLemmatize(boolean lemmatize) {
 		this.lemmatize = lemmatize;
