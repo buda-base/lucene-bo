@@ -125,19 +125,19 @@ public final class TibWordTokenizer extends Tokenizer {
 	private int bufferIndex = 0, finalOffset = 0;
 	private static final int MAX_WORD_LEN = 255;
 
-	//	  private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-	//	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
-
 	private RollingCharBuffer ioBuffer;
 	private int tokenLength;
 	private int cmdIndex;
 	private boolean foundMatch;
 	private int foundMatchCmdIndex;
+	private boolean foundNonMaxMatch;
 	private Row rootRow;
 	private Row currentRow;
 	private int tokenStart;
 	private int tokenEnd;
 	private final int charCount = 1; // the number of chars in a codepoint, always 1 for Tibetan
+
+	private boolean passedFirstSyllable;
 
 	/**
 	 * Called on each token character to normalize it before it is added to the
@@ -163,8 +163,9 @@ public final class TibWordTokenizer extends Tokenizer {
 		int confirmedEndIndex = -1;
 		cmdIndex = -1;
 		foundMatchCmdIndex = -1;
+		foundNonMaxMatch = false;
 		foundMatch = false;
-		boolean passedFirstSyllable = false;
+		passedFirstSyllable = false;
 		currentRow = null;
 		char[] tokenBuffer = termAtt.buffer();
 		
@@ -190,12 +191,12 @@ public final class TibWordTokenizer extends Tokenizer {
 			
 			/* A.2.1) if it's a token char */
 			if (isTibetanTokenChar(c)) {
+				
+				checkIfFirstSylPassed(c);
 				if (isStartOfToken(c)) {                // start of token
-					assert(tokenStart == -1); // TODO : necessary ???
 					tryToFindMatchIn(rootRow, c);
 					tryToContinueDownTheTrie(rootRow, c);
 					incrementTokenIndices();
-//					ifIsNeededAttributeStartingIndexOfNonword();
 
 				} else {
 					
@@ -205,7 +206,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					}
 					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 					
-					if (cantGoDownTheTrie()) {
+					if (wentToMaxDownTheTrie()) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
 							// we just want to go to the end of the syllable
@@ -216,11 +217,12 @@ public final class TibWordTokenizer extends Tokenizer {
 							}
 							tokenEnd += charCount; // else we're just passing
 						} else {
+							stepBackIfStartedNextSylButCantGoFurther(c);	// the current chars begin an entry in the Trie
 							break;
 						}
-					} else {
-						if (reachedSylEnd(c)) {
-							passedFirstSyllable = true;
+					} else {	// normal case: we are in the middle of a potential token
+						if (foundMatch) {
+							foundNonMaxMatch = true;
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
@@ -260,7 +262,20 @@ public final class TibWordTokenizer extends Tokenizer {
 		lemmatizeIfRequired();
 		return true;
 	}
-	
+
+	private void stepBackIfStartedNextSylButCantGoFurther(int c) {
+		if (cmdIndex == -1 && currentRow == null && passedFirstSyllable && !reachedSylEnd(c)) {
+			bufferIndex -= charCount;
+			tokenEnd -= charCount;
+		}
+	}
+
+	private void checkIfFirstSylPassed(int c) {
+		if (c == '\u0F0B' && !passedFirstSyllable) {
+			passedFirstSyllable = true;
+		}
+	}
+
 	private void finalizeSettingTermAttribute() {
 		finalOffset = correctOffset(tokenEnd);
 		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
@@ -268,10 +283,10 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 
 	private boolean reachedSylEnd(int c) {
-		return c == '\u0F0B';
+		return c == '\u0F0B';	// isTibetanTokenChar() filters all punctuation and space, so filtering tsek is enough
 	}
 
-	private boolean cantGoDownTheTrie() {
+	private boolean wentToMaxDownTheTrie() {
 		return currentRow == null;
 	}
 
@@ -302,8 +317,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		cmdIndex = row.getCmd((char) c);
 		foundMatch = (cmdIndex >= 0);	// we may have caught the end, but we must check if next character is a tsheg
 		if (foundMatch) {
-			foundMatchCmdIndex = cmdIndex;
-//			foundNonMaxMatch = storeNonMaxMatchState(); TODO 
+			foundMatchCmdIndex = cmdIndex; 
 		}
 	}
 

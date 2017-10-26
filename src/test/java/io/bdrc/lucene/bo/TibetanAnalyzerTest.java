@@ -181,14 +181,14 @@ public class TibetanAnalyzerTest
 	}
 
 	@Test
-	public void bugEatenSyllable() throws IOException
+	public void startedNextSyllableBugWithNonMaxMatches() throws IOException
 	{
 		System.out.println("Bug testing in TibWordTokenizer()");
-		String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག";
+		String input = "བ་ཐོབ་";
 		Reader reader = new StringReader(input);
-		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ", "བ", "ཐོབ", "པར", "ཤོག");
+		List<String> expected = Arrays.asList("བ", "ཐོབ");
 		System.out.print(input + " => ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -207,10 +207,23 @@ public class TibetanAnalyzerTest
 	}
 	
 	@Test
+	public void nonMaxMatchingSecondLevel() throws IOException
+	{
+		System.out.println("Testing non-maximal matches");
+		String input = "བཀྲ་ཤིས་བདེ་ལེགས";
+		Reader reader = new StringReader(input);
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
+		System.out.println(input + " => ");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/non-max-match-test.txt");
+		TokenStream syllables = tokenize(reader, tibWordTokenizer);
+		assertTokenStream(syllables, expected);
+	}
+	
+	@Test
 	public void ioBufferLimitTest() throws IOException
 	{
 		System.out.println("Testing max size of ioBuffer");
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		
 		HashMap<Integer, Integer> ranges = new HashMap<Integer, Integer>();
