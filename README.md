@@ -37,6 +37,7 @@ There are two constructors. The nullary constructor and
 ```
 
 The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false)`
+
 #### TibWordTokenizer
 
 This tokenizer produces words through a Maximal Matching algorithm. It builds on top of [this Trie implementation](https://github.com/BuddhistDigitalResourceCenter/stemmer).  
