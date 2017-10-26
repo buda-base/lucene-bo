@@ -150,6 +150,8 @@ public final class TibWordTokenizer extends Tokenizer {
 
 	private int charCount;
 
+	private boolean passedFirstSyllable;
+
 	/**
 	 * Called on each token character to normalize it before it is added to the
 	 * token. The default implementation does nothing. Subclasses may use this to,
@@ -171,11 +173,11 @@ public final class TibWordTokenizer extends Tokenizer {
 		rootRow = scanner.getRow(scanner.getRoot());
 		int confirmedEnd = -1;
 		int confirmedEndIndex = -1;
-		int w = -1;
 		cmdIndex = -1;
 		foundMatchCmdIndex = -1;
+		foundNonMaxMatch = false;
 		foundMatch = false;
-		boolean passedFirstSyllable = false;
+		passedFirstSyllable = false;
 		currentRow = null;
 		char[] tokenBuffer = termAtt.buffer();
 		
@@ -208,12 +210,14 @@ public final class TibWordTokenizer extends Tokenizer {
 			charCount = Character.charCount(c);
 			bufferIndex += charCount;			 			// increment bufferIndex for next value of c
 			
-			if (debug) {System.out.println("\t" + (char) c);}
+			if (debug) {System.out.println(bufferIndex-1 + "\t" + (char) c);}
 			
 			/* A.2. PROCESSING c */
 			
 			/* A.2.1) if it's a token char */
 			if (isTibetanTokenChar(c)) {
+				
+				checkIfFirstSylPassed(c);
 				if (isStartOfToken(c)) {                // start of token
 					assert(tokenStart == -1); // TODO : necessary ???
 					tryToFindMatchIn(rootRow, c);
@@ -229,7 +233,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					}
 					/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 					
-					if (cantGoDownTheTrie()) {
+					if (wentToMaxDownTheTrie()) {
 						if (!passedFirstSyllable) {
 							// we're in a broken state (in the first syllable and no match)
 							// we just want to go to the end of the syllable
@@ -243,8 +247,8 @@ public final class TibWordTokenizer extends Tokenizer {
 							break;
 						}
 					} else {
-						if (reachedSylEnd(c)) {
-							passedFirstSyllable = true;
+						if (reachedSylEnd(c) && foundMatch && !foundNonMaxMatch) {
+							foundNonMaxMatch = true;
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
@@ -285,6 +289,12 @@ public final class TibWordTokenizer extends Tokenizer {
 		return true;
 	}
 
+	private void checkIfFirstSylPassed(int c) {
+		if (c == '\u0F0B' && !passedFirstSyllable) {
+			passedFirstSyllable = true;
+		}
+	}
+
 	private void finalizeSettingTermAttribute() {
 		finalOffset = correctOffset(tokenEnd);
 		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
@@ -292,10 +302,10 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 
 	private boolean reachedSylEnd(int c) {
-		return c == '\u0F0B';
+		return c == '\u0F0B';	// isTibetanTokenChar() filters all punctuation and space, so filtering tsek is enough
 	}
 
-	private boolean cantGoDownTheTrie() {
+	private boolean wentToMaxDownTheTrie() {
 		return currentRow == null;
 	}
 

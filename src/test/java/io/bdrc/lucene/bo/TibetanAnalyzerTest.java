@@ -188,7 +188,7 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ", "བ", "ཐོབ", "པར", "ཤོག");
 		System.out.print(input + " => ");
-		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/eaten-syl-dict.txt");
+		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer(true, "src/test/resources/eaten-syl-dict.txt");
 		TokenStream syllables = tokenize(reader, tibWordTokenizer);
 		assertTokenStream(syllables, expected);
 	}
@@ -210,12 +210,12 @@ public class TibetanAnalyzerTest
 	public void ioBufferLimitTest() throws IOException
 	{
 		System.out.println("Testing max size of ioBuffer");
-		List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
+		List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས");
 		TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/io-buffer-size-test.txt");
 		
 		HashMap<Integer, Integer> ranges = new HashMap<Integer, Integer>();
-//		ranges.put(2030, 2049);
-		ranges.put(4080, 4097);
+		ranges.put(2030, 2049);
+//		ranges.put(4080, 4097);
 
 		for (HashMap.Entry<Integer, Integer> entry : ranges.entrySet()) {
 			for (int i=entry.getKey() ; i<entry.getValue(); i++) {
