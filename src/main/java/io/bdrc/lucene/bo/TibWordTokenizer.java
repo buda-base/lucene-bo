@@ -125,9 +125,6 @@ public final class TibWordTokenizer extends Tokenizer {
 	private static final int MAX_WORD_LEN = 255;
 	private static final int IO_BUFFER_SIZE = 4096;
 
-	//	  private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-	//	  private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
-
 	private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
 
 	private int tokenLength;
@@ -219,11 +216,9 @@ public final class TibWordTokenizer extends Tokenizer {
 				
 				checkIfFirstSylPassed(c);
 				if (isStartOfToken(c)) {                // start of token
-					assert(tokenStart == -1); // TODO : necessary ???
 					tryToFindMatchIn(rootRow, c);
 					tryToContinueDownTheTrie(rootRow, c);
 					incrementTokenIndices();
-//					ifIsNeededAttributeStartingIndexOfNonword();
 
 				} else {
 					
@@ -247,9 +242,8 @@ public final class TibWordTokenizer extends Tokenizer {
 							stepBackIfStartedNextSylButCantGoFurther(c);	// the current chars begin an entry in the Trie
 							break;
 						}
-					} else {	// normal case
-						if (reachedSylEnd(c) && foundMatch && !foundNonMaxMatch) {
-							foundNonMaxMatch = true;
+					} else {	// normal case: we are in the middle of a potential token
+						if (foundANonMaxMatch(c)) {
 							confirmedEnd = tokenEnd;
 							confirmedEndIndex = bufferIndex;
 						}
@@ -288,6 +282,14 @@ public final class TibWordTokenizer extends Tokenizer {
 		finalizeSettingTermAttribute();
 		lemmatizeIfRequired();
 		return true;
+	}
+
+	private boolean foundANonMaxMatch(int c) {
+		if (reachedSylEnd(c) && foundMatch && !foundNonMaxMatch) {
+			foundNonMaxMatch = true;
+			return true;
+		}
+		return false;
 	}
 
 	private void stepBackIfStartedNextSylButCantGoFurther(int c) {
@@ -413,8 +415,6 @@ public final class TibWordTokenizer extends Tokenizer {
 		finalOffset = 0;
 		ioBuffer.reset(); // make sure to reset the IO buffer!!
 	}
-
-
 
 	public void setLemmatize(boolean lemmatize) {
 		this.lemmatize = lemmatize;
