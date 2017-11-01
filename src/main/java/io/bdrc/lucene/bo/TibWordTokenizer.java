@@ -51,7 +51,7 @@ import io.bdrc.lucene.stemmer.Trie;
  * For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
  * The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected).   
  * 
- * Derived from Lucene 6.4.1 analysis.
+ * Derived from Lucene 6.4.1 analysis.util.CharTokenizer
  * 
  * @author Élie Roux
  * @author Drupchen
@@ -60,8 +60,6 @@ import io.bdrc.lucene.stemmer.Trie;
 public final class TibWordTokenizer extends Tokenizer {
 	private Trie scanner;
 
-	// this tokenizer generates three attributes:
-	// term offset, positionIncrement and type
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 	private boolean lemmatize = true;
@@ -97,12 +95,11 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * 
 	 * The format of each line in filename must be as follows: inflected-form + space + lemma
 	 * @param filename the file containing the entries to be added
-	 * @throws FileNotFoundException 
-	 * @throws IOException
+	 * @throws FileNotFoundException the file containing the Trie can't be found
+	 * @throws IOException the file containing the Trie can't be read
 	 */
 	private void init(Reader reader) throws FileNotFoundException, IOException {
 		this.scanner = new Trie(true);
-		// currently only adds the entries without any diff
 		try (BufferedReader br = new BufferedReader(reader)) {
 			String line;
 			while ((line = br.readLine()) != null) {
