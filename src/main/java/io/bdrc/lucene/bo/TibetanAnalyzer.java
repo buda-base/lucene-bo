@@ -44,7 +44,7 @@ import org.apache.lucene.util.IOUtils;
  **/
 public final class TibetanAnalyzer extends Analyzer {
 	
-	static CharArraySet tibStopSet;
+	CharArraySet tibStopSet;
 	boolean segmentInWords = false; 
 	boolean lemmatize = false;
 	boolean filterChars = false;
@@ -65,9 +65,9 @@ public final class TibetanAnalyzer extends Analyzer {
 		this.filterChars = filterChars;
 		this.fromEwts = fromEwts;
 		if (stopFilename != null) {
-			TibetanAnalyzer.tibStopSet = StopFilter.makeStopSet(getWordList(stopFilename, "#"));
+			this.tibStopSet = StopFilter.makeStopSet(getWordList(stopFilename, "#"));
 		} else {
-			TibetanAnalyzer.tibStopSet = null;
+			this.tibStopSet = null;
 		}
 	}
 	
