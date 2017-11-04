@@ -20,16 +20,19 @@
 
 package io.bdrc.lucene.bo;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.util.IOUtils;
 
 /**
  * An Analyzer that uses {@link TibSyllableTokenizer} and filters with StopFilter
@@ -41,20 +44,7 @@ import org.apache.lucene.analysis.Tokenizer;
  **/
 public final class TibetanAnalyzer extends Analyzer {
 	
-	// non-ambiguous particles
-	static final List<String> tibStopWords = Arrays.asList(
-			"ཏུ", 
-			"གི", "ཀྱི", 
-			"གིས", "ཀྱིས", "ཡིས", 
-			"ཀྱང", 
-			"སྟེ", "ཏེ", 
-			"མམ", "རམ", "སམ", "ཏམ", 
-			"ནོ", "བོ", "ཏོ", 
-			"གིན", "ཀྱིན", "གྱིན", 
-			"ཅིང", "ཅིག", 
-			"ཅེས", "ཞེས"
-			);
-	static final CharArraySet tibStopSet = StopFilter.makeStopSet(tibStopWords);
+	static CharArraySet tibStopSet;
 	boolean segmentInWords = false; 
 	boolean lemmatize = false;
 	boolean filterChars = false;
@@ -67,21 +57,59 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
 	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
 	 * @param  fromEwts  if the text should be converted from EWTS to Unicode
+	 * @throws IOException  if the file containing stopwords can't be opened 
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) {
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String stopFilename) throws IOException {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
 		this.fromEwts = fromEwts;
+		if (stopFilename != null) {
+			TibetanAnalyzer.tibStopSet = StopFilter.makeStopSet(getWordList(stopFilename, "#"));
+		} else {
+			TibetanAnalyzer.tibStopSet = null;
+		}
 	}
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer} with the default values
+	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
-	public TibetanAnalyzer() {
-		this(true, true, true, false);
+	public TibetanAnalyzer() throws IOException {
+		this(true, true, true, false, "src/main/resources/tib-stopwords.txt");
 	}
   
+	/**
+	 * @param reader Reader containing the list of stopwords
+	 * @param comment The string representing a comment.
+	 * @return result the {@link ArrayList} to fill with the reader's words
+	 */
+	public static ArrayList<String> getWordList(String filename, String comment) throws IOException {
+		ArrayList<String> result = new ArrayList<String>();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			String word = null;
+			while ((word = br.readLine()) != null) {
+				word = word.replace("\t", "");
+				if (word.contains(comment)) {
+					if (!word.startsWith(comment)) {
+						word = word.substring(0, word.indexOf(comment));
+						word = word.trim();
+						if (!word.isEmpty()) result.add(word);
+					}
+				} else {
+					word = word.trim();
+					if (!word.isEmpty()) result.add(word);
+				}
+			}
+		}
+		finally {
+			IOUtils.close(br);
+		}
+		return result;
+	}
+	
 	@Override
 	protected Reader initReader(String fieldName, Reader reader) {
 		if (this.fromEwts) {

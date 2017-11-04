@@ -1,0 +1,33 @@
+# unambiguous case particles
+	# ladon
+		ཏུ		 
+	# dreldra
+		གི
+		ཀྱི		 
+	# jedra
+		གིས
+		ཀྱིས
+		ཡིས		 
+	# gyendu
+		ཀྱང		
+	# lhakche
+		སྟེ
+		ཏེ
+	# 
+		མམ
+		རམ
+		སམ
+		ཏམ
+	# lardu 
+		ནོ
+		བོ
+		ཏོ
+	#  
+		གིན
+		ཀྱིན
+		གྱིན
+	# cing sogs 
+		ཅིང
+		ཅིག
+		ཅེས
+		ཞེས

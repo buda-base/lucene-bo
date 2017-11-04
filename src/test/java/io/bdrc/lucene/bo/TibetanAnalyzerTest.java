@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -115,7 +117,8 @@ public class TibetanAnalyzerTest
 
 		System.out.print(input + " => ");
 		TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
-		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
+		CharArraySet stopSet = StopFilter.makeStopSet(TibetanAnalyzer.getWordList("src/main/resources/tib-stopwords.txt", "#"));
+		StopFilter res = new StopFilter(syllables, stopSet);
 		assertTokenStream(res, expected);
 	}
 	
@@ -241,6 +244,19 @@ public class TibetanAnalyzerTest
 			}			
 		}
 	}
+	
+    @Test
+    public void testParseStopwords() throws Exception {
+    	System.out.println("Parse stopwords file");
+    	ArrayList<String> result = TibetanAnalyzer.getWordList("src/main/resources/tib-stopwords.txt", "#");
+    	boolean res = true;
+    	for (String stop: result) {
+    		if (stop.contains("#") || stop.equals("")) {
+    			res = false;
+    		}
+    	}
+    	assertTrue(res);
+    }
 	
 	@AfterClass
 	public static void finish() {
