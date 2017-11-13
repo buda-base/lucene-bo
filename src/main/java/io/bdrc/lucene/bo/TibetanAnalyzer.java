@@ -60,23 +60,38 @@ public final class TibetanAnalyzer extends Analyzer {
 	boolean filterChars = false;
 	boolean fromEwts = false;
 	String lexiconFileName = null;
-	
-	/**
-	 * Creates a new {@link TibetanAnalyzer}
-	 * 
-	 * @param  segmentInWords  if the segmentation is on words instead of syllables
-	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
-	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-	 * @param  fromEwts  if the text should be converted from EWTS
-	 * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
-	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName) {
-		this.segmentInWords = segmentInWords;
-		this.lemmatize = lemmatize;
-		this.filterChars = filterChars;
-		this.fromEwts = fromEwts;
-		this.lexiconFileName = lexiconFileName;
-	}
+    
+    /**
+     * Creates a new {@link TibetanAnalyzer}
+     * 
+     * @param  segmentInWords  if the segmentation is on words instead of syllables
+     * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
+     * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
+     * @param  fromEwts  if the text should be converted from EWTS
+     */
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) {
+        this.segmentInWords = segmentInWords;
+        this.lemmatize = lemmatize;
+        this.filterChars = filterChars;
+        this.fromEwts = fromEwts;
+    }
+    
+    /**
+     * Creates a new {@link TibetanAnalyzer}
+     * 
+     * @param  segmentInWords  if the segmentation is on words instead of syllables
+     * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
+     * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
+     * @param  fromEwts  if the text should be converted from EWTS
+     * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
+     */
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName) {
+        this.segmentInWords = segmentInWords;
+        this.lemmatize = lemmatize;
+        this.filterChars = filterChars;
+        this.fromEwts = fromEwts;
+        this.lexiconFileName = lexiconFileName;
+    }
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer} with the default values
