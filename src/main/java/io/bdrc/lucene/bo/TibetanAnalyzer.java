@@ -62,7 +62,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	String lexiconFileName = null;
     
     /**
-     * Creates a new {@link TibetanAnalyzer}
+     * Creates a new {@link TibetanAnalyzer} with default lexicon
      * 
      * @param  segmentInWords  if the segmentation is on words instead of syllables
      * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
@@ -70,10 +70,7 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param  fromEwts  if the text should be converted from EWTS
      */
     public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) {
-        this.segmentInWords = segmentInWords;
-        this.lemmatize = lemmatize;
-        this.filterChars = filterChars;
-        this.fromEwts = fromEwts;
+        this(segmentInWords, lemmatize, filterChars, fromEwts, null);
     }
     
     /**
