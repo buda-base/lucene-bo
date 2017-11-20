@@ -23,7 +23,6 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.lucene.analysis.Tokenizer;
@@ -75,6 +74,11 @@ public final class TibWordTokenizer extends Tokenizer {
 		init(filename);
 	}
 	
+	public TibWordTokenizer(boolean debug, String filename) throws FileNotFoundException, IOException {
+		init(filename);
+		this.debug = debug;
+	}
+	
 	/**
 	 * Constructs a TibWordTokenizer using a default lexicon file (here "resource/output/total_lexicon.txt") 
 	 * @throws FileNotFoundException the file containing the lexicon cannot be found
@@ -93,15 +97,15 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @throws IOException the file containing the Trie can't be read
 	 */
 	private void init(String filename) throws FileNotFoundException, IOException {
-		if (filename != null) {
-			this.scanner = BuildCompiledTrie.buildTrie(Arrays.asList(filename));
-			ioBuffer = new RollingCharBuffer();
-			ioBuffer.reset(input);
-		} else {	// revert to loading the compiled Trie
-			init();
-		}
+		this.scanner = BuildCompiledTrie.compileTrie(Arrays.asList(filename));
+		ioBuffer = new RollingCharBuffer();
+		ioBuffer.reset(input);
 	}
-	
+	/**
+	 * 
+	 * @throws FileNotFoundException  the file of the compiled Trie is not found
+	 * @throws IOException  the file of the compiled Trie can't be opened
+	 */
 	private void init() throws FileNotFoundException, IOException {
 		DataInputStream inStream = new DataInputStream(new FileInputStream(compiledTrieName));
 		this.scanner = new Trie(inStream);

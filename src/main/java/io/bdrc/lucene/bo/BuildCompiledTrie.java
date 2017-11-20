@@ -11,7 +11,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import io.bdrc.lucene.stemmer.Optimizer;
+import io.bdrc.lucene.stemmer.Gener;
+import io.bdrc.lucene.stemmer.Reduce;
 import io.bdrc.lucene.stemmer.Trie;
 
 public class BuildCompiledTrie {
@@ -27,18 +28,24 @@ public class BuildCompiledTrie {
 	
 	public static void main(String [] args){
 		List<String> inputFiles = Arrays.asList(
-				"resources/sanskrit-stemming-data/output/total_output.txt"	// Sanskrit Heritage entries
+				"resources/output/total_lexicon.txt"	// Sanskrit Heritage entries
 				);
 		String outFile = "src/main/resources/bo-compiled-trie.dump";
 		
 		try {
-			Trie trie = buildTrie(inputFiles);
+			Trie trie = compileTrie(inputFiles);
 			storeTrie(trie, outFile);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static Trie compileTrie(List<String> inputFiles) throws FileNotFoundException, IOException {
+		Trie trie = buildTrie(inputFiles);
+		trie = optimizeTrie(trie, new Gener());
+		return trie;
 	}
 	
 	/**
@@ -65,14 +72,20 @@ public class BuildCompiledTrie {
 				}
 			}
 		}
-		
-		/* Optimize the Trie
-		 * 
-		 * Optimizer  - optimisation time: 10mn ; compiled Trie size: 10mo
-		 * Optimizer2 - optimisation time: 12mn ; compiled Trie size: 12mo
-		 * */
-		Optimizer opt = new Optimizer();
-		trie = opt.optimize(trie);
+		return trie;
+	}
+	
+	/**
+	 *  
+	 * Optimizer  - optimisation time: 10mn ; compiled Trie size: 10mo
+	 * Optimizer2 - optimisation time: 12mn ; compiled Trie size: 12mo
+	 * 
+	 * @param trie
+	 * @param optimizer
+	 * @return
+	 */
+	public static Trie optimizeTrie(Trie trie, Reduce optimizer) {
+		trie = optimizer.optimize(trie);
 		return trie;
 	}
 	

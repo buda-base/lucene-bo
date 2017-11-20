@@ -85,3 +85,6 @@ local.properties
 #
 catalog-v001.xml
 /scrapbook.jpage
+
+# compiled Trie files
+*.dump
