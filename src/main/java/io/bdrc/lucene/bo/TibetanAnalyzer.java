@@ -21,9 +21,11 @@
 package io.bdrc.lucene.bo;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 
@@ -64,8 +66,14 @@ public final class TibetanAnalyzer extends Analyzer {
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
 		this.fromEwts = fromEwts;
-		if (stopFilename != null) {
-			this.tibStopSet = StopFilter.makeStopSet(getWordList(stopFilename, "#"));
+		if (stopFilename != null ) {
+		    InputStream stream = null;
+	        stream = TibetanAnalyzer.class.getResourceAsStream("/tib-stopwords.txt");
+	        if (stream == null) {      // we're not using the jar, these is no resource, assuming we're running the code
+	            this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
+	        } else {
+	            this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
+	        }
 		} else {
 			this.tibStopSet = null;
 		}
@@ -79,36 +87,36 @@ public final class TibetanAnalyzer extends Analyzer {
 		this(true, true, true, false, "src/main/resources/tib-stopwords.txt");
 	}
   
-	/**
-	 * @param reader Reader containing the list of stopwords
-	 * @param comment The string representing a comment.
-	 * @return result the {@link ArrayList} to fill with the reader's words
-	 */
-	public static ArrayList<String> getWordList(String filename, String comment) throws IOException {
-		ArrayList<String> result = new ArrayList<String>();
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(filename));
-			String word = null;
-			while ((word = br.readLine()) != null) {
-				word = word.replace("\t", "");
-				if (word.contains(comment)) {
-					if (!word.startsWith(comment)) {
-						word = word.substring(0, word.indexOf(comment));
-						word = word.trim();
-						if (!word.isEmpty()) result.add(word);
-					}
-				} else {
-					word = word.trim();
-					if (!word.isEmpty()) result.add(word);
-				}
-			}
-		}
-		finally {
-			IOUtils.close(br);
-		}
-		return result;
-	}
+    /**
+     * @param reader Reader containing the list of stopwords
+     * @param comment The string representing a comment.
+     * @return result the {@link ArrayList} to fill with the reader's words
+     */
+    public static ArrayList<String> getWordList(InputStream inputStream, String comment) throws IOException {
+        ArrayList<String> result = new ArrayList<String>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(inputStream));
+            String word = null;
+            while ((word = br.readLine()) != null) {
+                word = word.replace("\t", "");
+                if (word.contains(comment)) {
+                    if (!word.startsWith(comment)) {
+                        word = word.substring(0, word.indexOf(comment));
+                        word = word.trim();
+                        if (!word.isEmpty()) result.add(word);
+                    }
+                } else {
+                    word = word.trim();
+                    if (!word.isEmpty()) result.add(word);
+                }
+            }
+        }
+        finally {
+            IOUtils.close(br);
+        }
+        return result;
+    }
 	
 	@Override
 	protected Reader initReader(String fieldName, Reader reader) {

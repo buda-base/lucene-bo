@@ -11,30 +11,34 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import io.bdrc.lucene.stemmer.Gener;
-import io.bdrc.lucene.stemmer.Reduce;
+import io.bdrc.lucene.stemmer.Optimizer;
 import io.bdrc.lucene.stemmer.Trie;
 
 public class BuildCompiledTrie {
 	/**
 	 * Builds a Trie from all the entries in a list of files
-	 * Optimizes it
 	 * Dumps it in a binary file
 	 * 
 	 * !!! Ensure to have enough Stack memory 
-	 * ( -Xss40m seems to be enough for all the inflected forms of Sanskrit Heritage)
 	 * 
 	 */
-	
+    static boolean optimize = false;
+	static String outFile = "src/main/resources/bo-compiled-trie.dump";
+    static List<String> inputFiles = Arrays.asList(
+            "resources/output/total_lexicon.txt"
+            );
+    
 	public static void main(String [] args){
-		List<String> inputFiles = Arrays.asList(
-				"resources/output/total_lexicon.txt"	// Sanskrit Heritage entries
-				);
-		String outFile = "src/main/resources/bo-compiled-trie.dump";
-		
 		try {
-			Trie trie = compileTrie(inputFiles);
-			storeTrie(trie, outFile);
+			Trie trie = compileTrie();
+			
+            if (optimize) {
+                trie = optimizeTrie(trie, new Optimizer());       
+                storeTrie(trie, "src/main/resources/bo-compiled-trie_optimized.dump");    
+            } else {
+                storeTrie(trie, outFile);
+            }
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -42,15 +46,13 @@ public class BuildCompiledTrie {
 		}
 	}
 	
-	public static Trie compileTrie(List<String> inputFiles) throws FileNotFoundException, IOException {
-		Trie trie = buildTrie(inputFiles);
-		trie = optimizeTrie(trie, new Gener());
+	public static Trie compileTrie() throws FileNotFoundException, IOException {
+	    Trie trie = buildTrie(inputFiles);
+	    storeTrie(trie, outFile);
 		return trie;
 	}
 	
 	/**
-	 * 
-	 * 
 	 * 
 	 * @param inputFiles  the list of files to feed the Trie with
 	 * @return the optimized Trie
@@ -84,7 +86,7 @@ public class BuildCompiledTrie {
 	 * @param optimizer
 	 * @return
 	 */
-	public static Trie optimizeTrie(Trie trie, Reduce optimizer) {
+	public static Trie optimizeTrie(Trie trie, Optimizer optimizer) {
 		trie = optimizer.optimize(trie);
 		return trie;
 	}

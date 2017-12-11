@@ -80,7 +80,9 @@ local.properties
 # Eclipse Scrapbook
 .jpage
 
-#
+# Eclipes Pydev
+.pydevproject
+
 # Protege
 #
 catalog-v001.xml
