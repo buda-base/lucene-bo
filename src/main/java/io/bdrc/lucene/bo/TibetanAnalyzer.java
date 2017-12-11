@@ -68,7 +68,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		this.fromEwts = fromEwts;
 		if (stopFilename != null ) {
 		    InputStream stream = null;
-	        stream = TibetanAnalyzer.class.getResourceAsStream("/tib-stopwords.txt");
+	        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
 	        if (stream == null) {      // we're not using the jar, these is no resource, assuming we're running the code
 	            this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
 	        } else {
@@ -84,7 +84,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, false, "src/main/resources/tib-stopwords.txt");
+		this(true, true, true, false, "src/main/resources/bo-stopwords.txt");
 	}
   
     /**
