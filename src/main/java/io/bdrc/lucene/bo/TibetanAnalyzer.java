@@ -46,12 +46,18 @@ import org.apache.lucene.util.IOUtils;
  **/
 public final class TibetanAnalyzer extends Analyzer {
 	
+	static public final String INPUT_METHOD_UNICODE = "unicode";
+	static public final String INPUT_METHOD_DTS = "dts";
+	static public final String INPUT_METHOD_EWTS = "ewts";
+	static public final String INPUT_METHOD_ALALC = "alalc";
+	static public final String INPUT_METHOD_DEFAULT = INPUT_METHOD_UNICODE;
+	
 	CharArraySet tibStopSet;
 	boolean segmentInWords = false; 
 	boolean lemmatize = false;
 	boolean filterChars = false;
-	boolean fromEwts = false;
 	String lexiconFileName = null;
+	String inputMethod = INPUT_METHOD_DEFAULT;
 	
 	/**
 	 * Creates a new {@link TibetanAnalyzer}
@@ -59,24 +65,28 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  segmentInWords  if the segmentation is on words instead of syllables
 	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
 	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-	 * @param  fromEwts  if the text should be converted from EWTS
-	 * @param  stopFileName  file containing all the stopwords
-	 * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
-	 * @throws IOException if the file containing stopwords can't be opened
+	 * @param  inputMethod  if the text should be converted from EWTS to Unicode
+	 * @param  stopFilename  a file name with a stop word list
+	 * @throws IOException  if the file containing stopwords can't be opened 
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String stopFilename, String lexiconFileName) throws IOException {
+
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename, String lexiconFileName) throws IOException {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
-		this.fromEwts = fromEwts;
-		if (stopFilename != null ) {
-		    InputStream stream = null;
-	        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
-	        if (stream == null) {      // we're not using the jar, these is no resource, assuming we're running the code
-	            this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
-	        } else {
-	            this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
-	        }
+		this.inputMethod = inputMethod;
+		if (stopFilename != null) {
+			if (stopFilename.isEmpty()) {
+				InputStream stream = null;
+		        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
+		        if (stream == null) {      // we're not using the jar, there is no resource, assuming we're running the code
+		        	this.tibStopSet = null;
+		        } else {
+		            this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
+		        }
+			} else {
+				this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
+			}
 		} else {
 			this.tibStopSet = null;
 		}
@@ -93,8 +103,8 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param  fromEwts  if the text should be converted from EWTS
      * @throws IOException if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) throws IOException {
-        this(segmentInWords, lemmatize, filterChars, fromEwts, null);
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod) throws IOException {
+        this(segmentInWords, lemmatize, filterChars, inputMethod, null);
     }
     
     /**
@@ -107,8 +117,8 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
      * @throws IOException if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName) throws IOException {
-        this(segmentInWords, lemmatize, filterChars, fromEwts, "", lexiconFileName);
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String lexiconFileName) throws IOException {
+        this(segmentInWords, lemmatize, filterChars, inputMethod, "", lexiconFileName);
     }
 	
 	/**
@@ -116,7 +126,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, false, "src/main/resources/bo-stopwords.txt", "resources/output/total_lexicon.txt");
+		this(true, true, true, INPUT_METHOD_DEFAULT, "src/main/resources/bo-stopwords.txt", "resources/output/total_lexicon.txt");
 	}
   
     /**
@@ -149,13 +159,19 @@ public final class TibetanAnalyzer extends Analyzer {
         }
         return result;
     }
-	
+    
 	@Override
 	protected Reader initReader(String fieldName, Reader reader) {
-		if (this.fromEwts) {
-			reader = new TibEwtsFilter(reader);
-		} else if (filterChars) { // filterChars is never needed after ewts translation
+		switch (this.inputMethod) {
+		case INPUT_METHOD_EWTS:
+		case INPUT_METHOD_DTS:
+		case INPUT_METHOD_ALALC:
+			reader = new TibEwtsFilter(reader, this.inputMethod);
+			break;
+		case INPUT_METHOD_UNICODE:
+		default:
 			reader = new TibCharFilter(reader);
+			break;
 		}
 		return super.initReader(fieldName, reader);
 	}

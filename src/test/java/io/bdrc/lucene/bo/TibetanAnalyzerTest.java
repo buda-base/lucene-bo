@@ -220,13 +220,27 @@ public class TibetanAnalyzerTest
 		Reader reader = new StringReader(input);
 		List<String> expected = Arrays.asList("བོད", "རྒྱལ", "ལོ",  "ཨིནབ",  "ལིད",  "བོད");
 		System.out.print(input + " => ");
-		TokenStream res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
+		TokenStream res = tokenize(new TibEwtsFilter(reader, "ewts"), new TibSyllableTokenizer());
 		assertTokenStream(res, expected);
 		// long string, provoked a bug
 		input = "de'i sprul sku yi ngogs chos rje dge 'dun mkhas grub ni mkhan chen dge 'dun rgya mtsho'i gyi sku tshar chu khyi (1742) lor 'khrungs/ rje de nyid las bcu gsum pa la rab tu byung/ dgon chen du mdo sngags la sbyangs/ rig gnas thams cad la mkhas/ nyer gcig pa chu sprel la smon lam rab 'byams pa mdzad/ kun mkhyen bar mas mgo 'dren mdzad de lcang skya rin po chen nas chos rje'i cho lo gnang/ mkhan chen gshegs par dngul srang stong dang nyis brgyas mchod rten bzhengs/ lcags byi lor rgyud khrir bzhugs/ bde mchog yi dam mdzad/ gsung rtsom yang 'ga' zhig snang/ bdun cu pa lcags byi  (mdo smad chos 'byung du bdun cu pa lcags byi lor gshegs pa zer ba lo grangs dang lo snying thod mi thug pa dpyad gzhi ru sor bzhag byas pa) lor gshegs/ de'i sprul sku dge 'dun yon tan rgya mtsho chos srid kyi mkhyen rgya che zhing rgyud pa'i khri mdzad/ de'i sprul sku yi ngogs nas 'khrungs pa dkon mchog rgyal mtshan da lta bzhugs";
 		reader = new StringReader(input);
 		res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
 		while (res.incrementToken()) {} // with trigger the exception in case of a bug
+		// dts
+		input = "Ḥdul-ba rnam-par-ḥbyed-pa";
+		reader = new StringReader(input);
+		expected = Arrays.asList("འདུལ", "བ", "རྣམ", "པར", "འབྱེད", "པ");
+		System.out.print(input + " => ");
+		res = tokenize(new TibEwtsFilter(reader, "dts"), new TibSyllableTokenizer());
+		assertTokenStream(res, expected);
+		// alalc
+		input = "Ri-gi-ā-ra";
+		reader = new StringReader(input);
+		expected = Arrays.asList("རི", "གི", "ཨཱ", "ར");
+		System.out.print(input + " => ");
+		res = tokenize(new TibEwtsFilter(reader, "alalc"), new TibSyllableTokenizer());
+		assertTokenStream(res, expected);
 	}
 
 	@Test

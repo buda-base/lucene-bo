@@ -33,8 +33,8 @@ There are two constructors. The nullary constructor and
     segmentInWords - if the segmentation is on words instead of syllables
     lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
     filterChars - if the text should be converted to NFD (necessary for texts containing NFC strings)
-    fromEwts - if the text should be converted from EWTS
-    lexiconFileName - file name of the lexicon file to be used for word segmentation (null for the default one)
+    inputMode - "unicode" (default), "ewts", "dts" (Diacritics Transliteration Schema) or "alalc" ([ALA-LC](https://www.loc.gov/catdir/cpso/romanization/tibetan.pdf))
+    stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
 ```
 
 The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
