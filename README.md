@@ -8,14 +8,14 @@ Installation through maven:
     <dependency>
       <groupId>io.bdrc.lucene</groupId>
       <artifactId>lucene-bo</artifactId>
-      <version>1.1.1</version>
+      <version>1.2.0</version>
     </dependency>
 ```
 
 If the jar is needed for use in a non-maven based install, it may be found at
 
 ```
-    https://repo1.maven.org/maven2/io/bdrc/lucene/lucene-bo/1.1.1/lucene-bo-1.1.1.jar
+    https://repo1.maven.org/maven2/io/bdrc/lucene/lucene-bo/1.2.0/lucene-bo-1.2.0.jar
 ```
 
 ## Components
@@ -37,7 +37,7 @@ There are two constructors. The nullary constructor and
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
 ```
 
-The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
+The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, "unicode", "")`
 
 #### TibWordTokenizer
 
