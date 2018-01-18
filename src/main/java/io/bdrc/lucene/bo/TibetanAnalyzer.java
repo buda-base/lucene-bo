@@ -130,8 +130,9 @@ public final class TibetanAnalyzer extends Analyzer {
 	}
   
     /**
-     * @param reader Reader containing the list of stopwords
-     * @param comment The string representing a comment.
+     * @param inputStream stream to the list of stopwords
+     * @param comment The string representing a comment
+     * @throws IOException  if the file containing stopwords can't be opened
      * @return result the {@link ArrayList} to fill with the reader's words
      */
     public static ArrayList<String> getWordList(InputStream inputStream, String comment) throws IOException {
