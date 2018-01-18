@@ -28,7 +28,7 @@ It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffix
 There are two constructors. The nullary constructor and
 
 ```    
-    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
+    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMode, String lexiconFileName)
 
     segmentInWords - if the segmentation is on words instead of syllables
     lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
