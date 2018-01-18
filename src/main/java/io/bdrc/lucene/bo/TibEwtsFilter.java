@@ -16,7 +16,7 @@ import io.bdrc.ewtsconverter.EwtsConverter;
  **/
 public class TibEwtsFilter extends BaseCharFilter {
 	
-	public static final EwtsConverter converter = new EwtsConverter(false, false, false, true);
+	public static EwtsConverter converter;
 	
 	private final RollingCharBuffer buffer = new RollingCharBuffer();
 	private final int MAX_EWTS_LEN = 32;
@@ -27,11 +27,27 @@ public class TibEwtsFilter extends BaseCharFilter {
 	StringBuilder tmpEwts;
 	
 	public TibEwtsFilter(Reader in) {
+		this(in, TibetanAnalyzer.INPUT_METHOD_EWTS);
+	}
+
+	public TibEwtsFilter(Reader in, String inputMethod) {
 		super(in);
+		EwtsConverter.Mode mode = EwtsConverter.Mode.EWTS;
+		switch(inputMethod) {
+		case TibetanAnalyzer.INPUT_METHOD_DTS:
+			mode = EwtsConverter.Mode.DWTS;
+			break;
+		case TibetanAnalyzer.INPUT_METHOD_ALALC:
+			mode = EwtsConverter.Mode.ALALC;
+			break;
+		default:
+			break;
+		}
+		converter = new EwtsConverter(false, false, false, true, mode);
 		buffer.reset(in);
 		inputOff = 0;
 	}
-
+	
 	@Override
 	public void reset() throws IOException {
 		input.reset();
