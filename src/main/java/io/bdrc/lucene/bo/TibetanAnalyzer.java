@@ -62,6 +62,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  fromEwts  if the text should be converted from EWTS
 	 * @param  stopFileName  file containing all the stopwords
 	 * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
+	 * @throws IOException if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String stopFilename, String lexiconFileName) throws IOException {
 		this.segmentInWords = segmentInWords;
@@ -81,7 +82,8 @@ public final class TibetanAnalyzer extends Analyzer {
 		}
 		this.lexiconFileName = lexiconFileName;
 	}
-    
+	
+	
     /**
      * Creates a new {@link TibetanAnalyzer} with default lexicon
      * 
@@ -89,8 +91,9 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
      * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
      * @param  fromEwts  if the text should be converted from EWTS
+     * @throws IOException if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) {
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts) throws IOException {
         this(segmentInWords, lemmatize, filterChars, fromEwts, null);
     }
     
@@ -102,13 +105,10 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
      * @param  fromEwts  if the text should be converted from EWTS
      * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
+     * @throws IOException if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName) {
-        this.segmentInWords = segmentInWords;
-        this.lemmatize = lemmatize;
-        this.filterChars = filterChars;
-        this.fromEwts = fromEwts;
-        this.lexiconFileName = lexiconFileName;
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName) throws IOException {
+        this(segmentInWords, lemmatize, filterChars, fromEwts, "", lexiconFileName);
     }
 	
 	/**
@@ -167,10 +167,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		
 		if (segmentInWords) {
 			try {
-				if (this.lexiconFileName != null)
-					source = new TibWordTokenizer(this.lexiconFileName);
-				else
-					source = new TibWordTokenizer();
+				source = new TibWordTokenizer();
 				if (lemmatize) {
 					((TibWordTokenizer) source).setLemmatize(lemmatize);
 				}
