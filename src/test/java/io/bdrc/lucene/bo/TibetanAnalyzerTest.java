@@ -21,6 +21,8 @@
 package io.bdrc.lucene.bo;
 
 import static org.junit.Assert.*;
+
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,11 +30,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +56,25 @@ public class TibetanAnalyzerTest
 		tokenizer.reset();
 		return tokenizer;
 	}
-		
+
+    static private void assertOffsets(String inputStr, TokenStream tokenStream, List<String> expected) {
+        try {
+            List<String> termList = new ArrayList<String>();
+            // CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
+            OffsetAttribute offsetAttr = tokenStream.addAttribute(OffsetAttribute.class);
+            while (tokenStream.incrementToken()) {
+                int start = offsetAttr.startOffset();
+                int end = offsetAttr.endOffset();
+                termList.add(inputStr.substring(start, end));
+            }
+            System.out.println(String.join(" ", termList));
+            assertThat(termList, is(expected));
+        } catch (IOException e) {
+            assertTrue(false);
+        }
+    }
+
+	
 	static private void assertTokenStream(TokenStream tokenStream, List<String> expected) {
 		try {
 			List<String> termList = new ArrayList<String>();
@@ -115,7 +138,8 @@ public class TibetanAnalyzerTest
 
 		System.out.print(input + " => ");
 		TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
-		StopFilter res = new StopFilter(syllables, TibetanAnalyzer.tibStopSet);
+		CharArraySet stopSet = StopFilter.makeStopSet(TibetanAnalyzer.getWordList(new FileInputStream("src/main/resources/bo-stopwords.txt"), "#"));
+		StopFilter res = new StopFilter(syllables, stopSet);
 		assertTokenStream(res, expected);
 	}
 	
@@ -163,6 +187,18 @@ public class TibetanAnalyzerTest
 		assertTokenStream(res, expected);
 	}
 
+    @Test
+    public void ewtsOffsetBug() throws IOException
+    {
+        System.out.println("Testing TibEwtsFilter()");
+        String input = "dpal rdo rje snying po'i rgyan gyi rgyud chen po'i dka' 'grel";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("dpal", "rdo rje", "snying po'i", "rgyan", "gyi", "rgyud", "chen po'i", "dka' 'grel");
+        System.out.print(input + " => ");
+        TokenStream res = tokenize(new TibEwtsFilter(reader), new TibWordTokenizer("src/test/resources/ewts-offset-test.txt"));
+        assertOffsets(input, res, expected);
+    }
+	
 	@Test
 	public void ewtsFilterTest() throws IOException
 	{
@@ -241,6 +277,19 @@ public class TibetanAnalyzerTest
 			}			
 		}
 	}
+	
+    @Test
+    public void testParseStopwords() throws Exception {
+    	System.out.println("Parse stopwords file");
+    	ArrayList<String> result = TibetanAnalyzer.getWordList(new FileInputStream("src/main/resources/bo-stopwords.txt"), "#");
+    	boolean res = true;
+    	for (String stop: result) {
+    		if (stop.contains("#") || stop.equals("")) {
+    			res = false;
+    		}
+    	}
+    	assertTrue(res);
+    }
 	
 	@AfterClass
 	public static void finish() {
