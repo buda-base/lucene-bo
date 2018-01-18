@@ -191,9 +191,9 @@ public class TibetanAnalyzerTest
     public void ewtsOffsetBug() throws IOException
     {
         System.out.println("Testing TibEwtsFilter()");
-        String input = "dpal rdo rje snying po'i rgyan gyi rgyud chen po'i dka' 'grel";
+        String input = "mkhan po dpal rdo rje snying po'i rgyan gyi rgyud chen po'i dka' 'grel";
         Reader reader = new StringReader(input);
-        List<String> expected = Arrays.asList("dpal", "rdo rje", "snying po'i", "rgyan", "gyi", "rgyud", "chen po'i", "dka' 'grel");
+        List<String> expected = Arrays.asList("mkhan po", "dpal", "rdo rje", "snying po'i", "rgyan", "gyi", "rgyud", "chen po'i", "dka' 'grel");
         System.out.print(input + " => ");
         TokenStream res = tokenize(new TibEwtsFilter(reader), new TibWordTokenizer("src/test/resources/ewts-offset-test.txt"));
         assertOffsets(input, res, expected);

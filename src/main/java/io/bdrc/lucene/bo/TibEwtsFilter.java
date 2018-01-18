@@ -40,6 +40,12 @@ public class TibEwtsFilter extends BaseCharFilter {
 		inputOff = 0;
 	}
 	
+	public static boolean isEwtsLetters(int c) {
+		if (c == ' ' || c == '*' || c == '_' || c == '(' || c == '/' || c == ')' || c == ':')
+			return false;
+		return true;
+	}
+	
 	@Override
 	public int read() throws IOException {
 		if (replacement != null && replacementIdx < replacementLen) {
@@ -49,6 +55,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 		replacementIdx = 0;
 		tmpEwts = new StringBuilder();
 		int initialInputOff = inputOff;
+		boolean stoppedOnPunctuation = false;
 		while (true) {
 			int c = buffer.get(inputOff);
 			if (c == -1) {
@@ -57,7 +64,12 @@ public class TibEwtsFilter extends BaseCharFilter {
 			}
 			inputOff = inputOff +1;
 			tmpEwts.append((char) c);
-			if (c == ' ' || c == '*' || c == '_' || c > 127 || inputOff - initialInputOff > MAX_EWTS_LEN) {
+			if (!isEwtsLetters(c)) {
+				replacement = converter.toUnicode(tmpEwts.toString());
+				stoppedOnPunctuation = true;
+				break;
+			}
+			if (inputOff - initialInputOff > MAX_EWTS_LEN) {
 				replacement = converter.toUnicode(tmpEwts.toString());
 				break;
 			}
@@ -72,7 +84,8 @@ public class TibEwtsFilter extends BaseCharFilter {
         if (diff != 0) {
             final int prevCumulativeDiff = getLastCumulativeDiff();
             if (diff > 0) {
-              addOffCorrectMap(inputOff - diff - prevCumulativeDiff, prevCumulativeDiff + diff);
+            	int adjustedInputOff = stoppedOnPunctuation ? inputOff-1 : inputOff;
+                addOffCorrectMap(adjustedInputOff - diff - prevCumulativeDiff, prevCumulativeDiff + diff);
             } else {
               final int outputStart = inputOff - prevCumulativeDiff;
               for(int extraIDX=0;extraIDX<-diff;extraIDX++) {
