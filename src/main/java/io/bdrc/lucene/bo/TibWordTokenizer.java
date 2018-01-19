@@ -23,8 +23,11 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 
 import org.apache.lucene.analysis.Tokenizer;
@@ -72,9 +75,16 @@ public final class TibWordTokenizer extends Tokenizer {
 	 * @throws IOException the file containing the lexicon cannot be read
 	 */
 	public TibWordTokenizer() throws FileNotFoundException, IOException {
-		init();
-	}  
-	
+		InputStream stream = null;
+		stream = TibWordTokenizer.class.getResourceAsStream("/total_lexicon.txt");
+		if (stream == null) {
+			// we're not using the jar, there is no resource, assuming we're running the code
+			init(new FileReader("resource/output/total_lexicon.txt"));
+		} else {
+			init(new InputStreamReader(stream));
+		}
+	}
+
 	/**
 	 * Constructs a TibWordTokenizer using a given trie
 	 * @param trie  built with BuildCompiledTrie.java
@@ -100,7 +110,7 @@ public final class TibWordTokenizer extends Tokenizer {
      * @throws FileNotFoundException  the file of the compiled Trie is not found
      * @throws IOException  the file of the compiled Trie can't be opened
      */
-    private void init() throws FileNotFoundException, IOException {
+    private void init(Reader reader) throws FileNotFoundException, IOException {
         InputStream stream = null;
         stream = TibWordTokenizer.class.getResourceAsStream("/bo-compiled-trie.dump");
         if (stream == null) {  // we're not using the jar, there is no resource, assuming we're running the code
