@@ -31,9 +31,9 @@ import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.core.StopFilter;
-import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
 
 /**
@@ -78,7 +78,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		if (stopFilename != null) {
 			if (stopFilename.isEmpty()) {
 				InputStream stream = null;
-		        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
+		        stream = TibetanAnalyzer.class.getResourceAsStream("bo-stopwords.txt");
 		        if (stream == null) {      // we're not using the jar, there is no resource, assuming we're running the code
 		        	this.tibStopSet = null;
 		        } else {
@@ -180,29 +180,34 @@ public final class TibetanAnalyzer extends Analyzer {
 	@Override
 	protected TokenStreamComponents createComponents(final String fieldName) {
 		Tokenizer source = null;
-		TokenStream filter = null;
+		TokenFilter filter = null;
 		
 		if (segmentInWords) {
 			try {
 				source = new TibWordTokenizer();
-				if (lemmatize) {
-					((TibWordTokenizer) source).setLemmatize(lemmatize);
-				}
+				((TibWordTokenizer) source).setLemmatize(lemmatize);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			filter = new StopFilter(source, tibStopSet);
-		
 		} else {
 			source = new TibSyllableTokenizer();
 			if (lemmatize) {
-				filter = (TibAffixedFilter) new TibAffixedFilter(source);
+				filter = new TibAffixedFilter(source);
 			}
-			filter = new StopFilter(filter, tibStopSet);
-		}		
-		
-		return new TokenStreamComponents(source, filter);
+		}
+		if (tibStopSet != null) {
+			if (filter != null) {
+				filter = new StopFilter(filter, tibStopSet);
+			} else {
+				filter = new StopFilter(source, tibStopSet);
+			}
+		}
+		if (filter != null) {
+			return new TokenStreamComponents(source, filter);
+		} else {
+			return new TokenStreamComponents(source);
+		}
 	}
 }
