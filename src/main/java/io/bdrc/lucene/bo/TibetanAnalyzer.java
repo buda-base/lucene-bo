@@ -76,7 +76,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		if (stopFilename != null) {
 			if (stopFilename.isEmpty()) {
 				InputStream stream = null;
-		        stream = TibetanAnalyzer.class.getResourceAsStream("bo-stopwords.txt");
+		        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
 		        if (stream == null) {      // we're not using the jar, there is no resource, assuming we're running the code
 		        	this.tibStopSet = null;
 		        } else {
