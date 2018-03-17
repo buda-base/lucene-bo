@@ -19,8 +19,8 @@ public class TibCharFilter extends MappingCharFilter {
 		builder.add("\u0F37", ""); //  ༷
 		// Characters to decompose
 		builder.add("\u0F00", "\u0F68\u0F7C\u0F7E"); //  ༀ 
-		builder.add("\u0F02", "\u0F60\u0F70\u0F82"); // ༂
-		builder.add("\u0F03", "\u0F60\u0F70\u0F14"); //  ༃
+		builder.add("\u0F02", "\u0F60\u0F74\u0F82\u0F7F"); // ༂
+		builder.add("\u0F03", "\u0F60\u0F74\u0F82\u0F14"); //  ༃
 		builder.add("\u0F43", "\u0F42\u0FB7"); //  གྷ
 		builder.add("\u0F48", "\u0F47\u0FB7"); //  ཈
 		builder.add("\u0F4D", "\u0F4C\u0FB7"); //  ཌྷ
