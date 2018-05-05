@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import io.bdrc.lucene.stemmer.Optimizer;
+import io.bdrc.lucene.stemmer.Reduce;
 import io.bdrc.lucene.stemmer.Trie;
 
 public class BuildCompiledTrie {
@@ -22,10 +22,10 @@ public class BuildCompiledTrie {
 	 * !!! Ensure to have enough Stack memory 
 	 * 
 	 */
-    static boolean optimize = false;
+    static boolean optimize = true;
 	static String outFile = "src/main/resources/bo-compiled-trie.dump";
     static List<String> inputFiles = Arrays.asList(
-            "resources/output/total_lexicon.txt"
+            "resource/output/total_lexicon.txt"
             );
     
 	public static void main(String [] args){
@@ -33,7 +33,7 @@ public class BuildCompiledTrie {
 			Trie trie = compileTrie();
 			
             if (optimize) {
-                trie = optimizeTrie(trie, new Optimizer());       
+                trie = optimizeTrie(trie, new Reduce());       
                 storeTrie(trie, "src/main/resources/bo-compiled-trie_optimized.dump");    
             } else {
                 storeTrie(trie, outFile);
@@ -47,9 +47,16 @@ public class BuildCompiledTrie {
 	}
 	
 	public static Trie compileTrie() throws FileNotFoundException, IOException {
+	    return compileTrie(true);
+	}
+	
+	public static Trie compileTrie(boolean optimize) throws FileNotFoundException, IOException {
 	    Trie trie = buildTrie(inputFiles);
+	    if (optimize) {
+	        trie = optimizeTrie(trie, new Reduce());
+	    }
 	    storeTrie(trie, outFile);
-		return trie;
+	    return trie;
 	}
 	
 	/**
@@ -86,7 +93,7 @@ public class BuildCompiledTrie {
 	 * @param optimizer
 	 * @return
 	 */
-	public static Trie optimizeTrie(Trie trie, Optimizer optimizer) {
+	public static Trie optimizeTrie(Trie trie, Reduce optimizer) {
 		trie = optimizer.optimize(trie);
 		return trie;
 	}

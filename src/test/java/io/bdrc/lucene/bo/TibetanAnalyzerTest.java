@@ -155,6 +155,19 @@ public class TibetanAnalyzerTest
 		assertTokenStream(syllables, expected);
 	}
 
+    @Test
+    public void wordTokenizerFullTrie() throws IOException
+    {
+        System.out.println("Testing TibWordTokenizer() without lemmatization");
+        String input = "༆ བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས། རྟག་ཏུ་བདེ་བ་ཐོབ་པར་ཤོག ནམ་མཁའི་མཐས་ཐུག་པར་ཤོག";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("བཀྲ་ཤིས", "བདེ་ལེགས", "ཕུན", "སུམ", "ཚོགས", "རྟག", "ཏུ", "བདེ་བ", "ཐོབ་པར", "ཤོག", "ནམ་མཁའི", "མཐས", "ཐུག་པར", "ཤོག");
+        System.out.print(input + " => ");
+        TibWordTokenizer tibWordTokenizer = new TibWordTokenizer();
+        tibWordTokenizer.setLemmatize(false); // we don't want to lemmatize
+        TokenStream syllables = tokenize(reader, tibWordTokenizer);
+        assertTokenStream(syllables, expected);
+    }
 	
 	@Test
 	public void mappingCharFilterTest() throws IOException

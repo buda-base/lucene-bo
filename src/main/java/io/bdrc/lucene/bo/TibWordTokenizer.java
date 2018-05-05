@@ -86,11 +86,11 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 	
 	public TibWordTokenizer(String trieFile) throws FileNotFoundException, IOException {
-	    System.out.println("The default compiled Trie is not found ; building it will take some time!");
+	    System.out.println("\n\tcompiled Trie not found ; building it will take some time!");
         long start = System.currentTimeMillis();
         this.scanner = BuildCompiledTrie.buildTrie(Arrays.asList(trieFile));
         long end = System.currentTimeMillis();
-        System.out.println("Trie built in " + (end - start) / 1000 + "s.");
+        System.out.println("\tTime: " + (end - start) / 1000 + "s.");
         ioBuffer = new RollingCharBuffer();
         ioBuffer.reset(input);
 	}
@@ -105,14 +105,13 @@ public final class TibWordTokenizer extends Tokenizer {
         stream = TibWordTokenizer.class.getResourceAsStream("/bo-compiled-trie.dump");
         if (stream == null) {  // we're not using the jar, there is no resource, assuming we're running the code
             if (!new File(compiledTrieName).exists()) {
-                System.out.println("The default compiled Trie is not found ; building it will take some time!");
+                System.out.println("\n\tcompiled Trie not found ; building it will take some time!");
                 long start = System.currentTimeMillis();
                 BuildCompiledTrie.compileTrie();
                 long end = System.currentTimeMillis();
-                System.out.println("Trie built in " + (end - start) / 1000 + "s.");
+                System.out.println("\tTime: " + (end - start) / 1000 + "s.");
             }
             init(new FileInputStream(compiledTrieName));    
-            this.scanner = new Trie(new DataInputStream(stream));
         } else {
             init(stream);
         }
@@ -124,7 +123,11 @@ public final class TibWordTokenizer extends Tokenizer {
      * @param inputStream the compiled Trie opened as a Stream 
      */
     private void init(InputStream inputStream) throws FileNotFoundException, IOException {
+        System.out.println("\n\tLoading the trie");
+        long start = System.currentTimeMillis();
         this.scanner = new Trie(new DataInputStream(inputStream));
+        long end = System.currentTimeMillis();
+        System.out.println("\tTime: " + (end - start) / 1000 + "s.");
         ioBuffer = new RollingCharBuffer();
         ioBuffer.reset(input);
     }
