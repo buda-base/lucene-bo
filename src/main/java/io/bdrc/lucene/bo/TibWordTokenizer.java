@@ -32,7 +32,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.util.RollingCharBuffer;
 
-import io.bdrc.lucene.stemmer.Optimizer;
+import io.bdrc.lucene.stemmer.Reduce;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
 
@@ -113,7 +113,7 @@ public final class TibWordTokenizer extends Tokenizer {
 					this.scanner.add(line.substring(0, spaceIndex), line.substring(spaceIndex+1));
 				}
 			}
-			final Optimizer opt = new Optimizer();
+			final Reduce opt = new Reduce();
 			this.scanner.reduce(opt);
 		}
 		ioBuffer = new RollingCharBuffer();
