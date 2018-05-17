@@ -93,34 +93,6 @@ public final class TibetanAnalyzer extends Analyzer {
 		this.lexiconFileName = lexiconFileName;
 	}
 	
-	
-    /**
-     * Creates a new {@link TibetanAnalyzer} with default lexicon
-     * 
-     * @param  segmentInWords  if the segmentation is on words instead of syllables
-     * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
-     * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-     * @param  fromEwts  if the text should be converted from EWTS
-     * @throws IOException if the file containing stopwords can't be opened
-     */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod) throws IOException {
-        this(segmentInWords, lemmatize, filterChars, inputMethod, null);
-    }
-    
-    /**
-     * Creates a new {@link TibetanAnalyzer}
-     * 
-     * @param  segmentInWords  if the segmentation is on words instead of syllables
-     * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
-     * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-     * @param  fromEwts  if the text should be converted from EWTS
-     * @param  lexiconFileName  file name of the lexicon file to be used for word segmentation (null for the default one)
-     * @throws IOException if the file containing stopwords can't be opened
-     */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String lexiconFileName) throws IOException {
-        this(segmentInWords, lemmatize, filterChars, inputMethod, "", lexiconFileName);
-    }
-	
 	/**
 	 * Creates a new {@link TibetanAnalyzer} with the default values
 	 * @throws IOException  if the file containing stopwords can't be opened
@@ -184,7 +156,11 @@ public final class TibetanAnalyzer extends Analyzer {
 		
 		if (segmentInWords) {
 			try {
-				source = new TibWordTokenizer();
+			    if (lexiconFileName != null) {
+			        source = new TibWordTokenizer(lexiconFileName);
+			    } else {
+			        source = new TibWordTokenizer();
+			    }
 				((TibWordTokenizer) source).setLemmatize(lemmatize);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
