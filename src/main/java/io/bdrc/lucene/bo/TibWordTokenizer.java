@@ -79,7 +79,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		stream = TibWordTokenizer.class.getResourceAsStream("/total_lexicon.txt");
 		if (stream == null) {
 			// we're not using the jar, there is no resource, assuming we're running the code
-			init(new FileReader("resource/output/total_lexicon.txt"));
+			init(new FileReader("resources/output/total_lexicon.txt"));
 		} else {
 			init(new InputStreamReader(stream));
 		}
