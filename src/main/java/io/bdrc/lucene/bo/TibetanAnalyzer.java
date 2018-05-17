@@ -86,7 +86,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, false, "src/main/resources/bo-stopwords.txt", null);
+		this(true, true, true, false, "src/main/resources/bo-stopwords.txt", "resources/output/total_lexicon.txt");
 	}
   
     /**

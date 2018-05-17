@@ -22,22 +22,15 @@ public class BuildCompiledTrie {
 	 * !!! Ensure to have enough Stack memory 
 	 * 
 	 */
-    static boolean optimize = true;
 	static String outFile = "src/main/resources/bo-compiled-trie.dump";
     static List<String> inputFiles = Arrays.asList(
-            "resource/output/total_lexicon.txt"
+            "resources/output/total_lexicon.txt"
             );
     
 	public static void main(String [] args){
 		try {
 			Trie trie = compileTrie();
-			
-            if (optimize) {
-                trie = optimizeTrie(trie, new Reduce());       
-                storeTrie(trie, "src/main/resources/bo-compiled-trie_optimized.dump");    
-            } else {
-                storeTrie(trie, outFile);
-            }
+			storeTrie(trie, outFile);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -52,9 +45,6 @@ public class BuildCompiledTrie {
 	
 	public static Trie compileTrie(boolean optimize) throws FileNotFoundException, IOException {
 	    Trie trie = buildTrie(inputFiles);
-	    if (optimize) {
-	        trie = optimizeTrie(trie, new Reduce());
-	    }
 	    storeTrie(trie, outFile);
 	    return trie;
 	}
@@ -81,20 +71,7 @@ public class BuildCompiledTrie {
 				}
 			}
 		}
-		return trie;
-	}
-	
-	/**
-	 *  
-	 * Optimizer  - optimisation time: 10mn ; compiled Trie size: 10mo
-	 * Optimizer2 - optimisation time: 12mn ; compiled Trie size: 12mo
-	 * 
-	 * @param trie
-	 * @param optimizer
-	 * @return
-	 */
-	public static Trie optimizeTrie(Trie trie, Reduce optimizer) {
-		trie = optimizer.optimize(trie);
+		trie = new Reduce().optimize(trie);
 		return trie;
 	}
 	
