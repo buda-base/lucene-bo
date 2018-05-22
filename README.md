@@ -43,11 +43,7 @@ It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffix
 There are two constructors. The nullary constructor and
 
 ```    
-<<<<<<< HEAD
-    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMode, String lexiconFileName)
-=======
     TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
->>>>>>> refs/remotes/origin/develop
 
     segmentInWords - if the segmentation is on words instead of syllables
     lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
@@ -56,11 +52,7 @@ There are two constructors. The nullary constructor and
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
 ```
 
-<<<<<<< HEAD
-The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, "unicode", "")`
-=======
 The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
->>>>>>> refs/remotes/origin/develop
 
 #### TibWordTokenizer
 
