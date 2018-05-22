@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
  
+<<<<<<< HEAD
 ## [1.2.0] - 20180118
+=======
+## [Unreleased] - Unreleased
+>>>>>>> refs/remotes/origin/develop
 ### Fixed
 - fixed offsets of ewts conversion
 

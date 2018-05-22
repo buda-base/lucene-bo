@@ -19,20 +19,22 @@
  ******************************************************************************/
 package io.bdrc.lucene.bo;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.util.RollingCharBuffer;
 
-import io.bdrc.lucene.stemmer.Reduce;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
 
@@ -51,31 +53,22 @@ import io.bdrc.lucene.stemmer.Trie;
  * For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
  * The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected).   
  * 
- * Derived from Lucene 6.4.1 analysis.
+ * Derived from Lucene 6.4.1 analysis.util.CharTokenizer
  * 
  * @author Élie Roux
  * @author Drupchen
  *
  */
 public final class TibWordTokenizer extends Tokenizer {
-	private Trie scanner;
-
-	// this tokenizer generates three attributes:
-	// term offset, positionIncrement and type
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
-	private boolean lemmatize = true;
-	private boolean debug = false;
-	/**
-	 * Constructs a TibWordTokenizer using the file designed by filename
-	 * @param filename the path to the lexicon file
-	 * @throws FileNotFoundException the file containing the lexicon cannot be found
-	 * @throws IOException the file containing the lexicon cannot be read
-	 */
-	public TibWordTokenizer(String filename) throws FileNotFoundException, IOException {
-		init(new FileReader(filename));
-	}
 	
+	private Trie scanner;
+	private String compiledTrieName = "src/main/resources/bo-compiled-trie.dump";
+	
+	private boolean debug = false;
+	private boolean lemmatize = true;
+		
 	/**
 	 * Constructs a TibWordTokenizer using a default lexicon file (here "resource/output/total_lexicon.txt") 
 	 * @throws FileNotFoundException the file containing the lexicon cannot be found
@@ -86,40 +79,69 @@ public final class TibWordTokenizer extends Tokenizer {
 		stream = TibWordTokenizer.class.getResourceAsStream("/total_lexicon.txt");
 		if (stream == null) {
 			// we're not using the jar, there is no resource, assuming we're running the code
-			init(new FileReader("resource/output/total_lexicon.txt"));
+			init(new FileReader("resources/output/total_lexicon.txt"));
 		} else {
 			init(new InputStreamReader(stream));
 		}
 	}
 
 	/**
-	 * Initializes and populates {@see #scanner} 
-	 * 
-	 * The format of each line in filename must be as follows: inflected-form + space + lemma
-	 * @param filename the file containing the entries to be added
-	 * @throws FileNotFoundException 
-	 * @throws IOException
+	 * Constructs a TibWordTokenizer using a given trie
+	 * @param trie  built with BuildCompiledTrie.java
 	 */
-	private void init(Reader reader) throws FileNotFoundException, IOException {
-		this.scanner = new Trie(true);
-		// currently only adds the entries without any diff
-		try (BufferedReader br = new BufferedReader(reader)) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				final int spaceIndex = line.indexOf(' ');
-				if (spaceIndex == -1) {
-					throw new IllegalArgumentException("The dictionary file is corrupted in the following line.\n" + line);
-				} else {
-					this.scanner.add(line.substring(0, spaceIndex), line.substring(spaceIndex+1));
-				}
-			}
-			final Reduce opt = new Reduce();
-			this.scanner.reduce(opt);
-		}
-		ioBuffer = new RollingCharBuffer();
-		ioBuffer.reset(input);
+	public TibWordTokenizer(Trie trie) {
+        this.scanner = trie;
+        ioBuffer = new RollingCharBuffer();
+        ioBuffer.reset(input);
 	}
-
+	
+	public TibWordTokenizer(String trieFile) throws FileNotFoundException, IOException {
+	    System.out.println("\n\tcompiled Trie not found, building it.");
+        long start = System.currentTimeMillis();
+        this.scanner = BuildCompiledTrie.buildTrie(Arrays.asList(trieFile));
+        long end = System.currentTimeMillis();
+        System.out.println("\tTime: " + (end - start) / 1000 + "s.");
+        ioBuffer = new RollingCharBuffer();
+        ioBuffer.reset(input);
+	}
+	
+	/**
+     * 
+     * @throws FileNotFoundException  the file of the compiled Trie is not found
+     * @throws IOException  the file of the compiled Trie can't be opened
+     */
+    private void init(Reader reader) throws FileNotFoundException, IOException {
+        InputStream stream = null;
+        stream = TibWordTokenizer.class.getResourceAsStream("/bo-compiled-trie.dump");
+        if (stream == null) {  // we're not using the jar, there is no resource, assuming we're running the code
+            if (!new File(compiledTrieName).exists()) {
+                System.out.println("\n\tcompiled Trie not found, building it.");
+                long start = System.currentTimeMillis();
+                BuildCompiledTrie.compileTrie();
+                long end = System.currentTimeMillis();
+                System.out.println("\tTime: " + (end - start) / 1000 + "s.");
+            }
+            init(new FileInputStream(compiledTrieName));    
+        } else {
+            init(stream);
+        }
+    }
+    
+    /**
+     * Opens an existing compiled Trie
+     * 
+     * @param inputStream the compiled Trie opened as a Stream 
+     */
+    private void init(InputStream inputStream) throws FileNotFoundException, IOException {
+        System.out.println("\n\tLoading the trie");
+        long start = System.currentTimeMillis();
+        this.scanner = new Trie(new DataInputStream(inputStream));
+        long end = System.currentTimeMillis();
+        System.out.println("\tTime: " + (end - start) / 1000 + "s.");
+        ioBuffer = new RollingCharBuffer();
+        ioBuffer.reset(input);
+    }
+	
 	private int bufferIndex = 0, finalOffset = 0;
 	private static final int MAX_WORD_LEN = 255;
 
@@ -234,7 +256,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		
 		/* B. HANDING THEM TO LUCENE */
 		
-		/* B.1. IF THERE IS A NON-MAX MATCH */
+		/* B.1. IF THERE IS A NON-MAX MATCH */
 		if (foundMatch) {
 			confirmedEnd = tokenEnd;
 			confirmedEndIndex = bufferIndex;

@@ -1,3 +1,6 @@
 [submodule "resource"]
 	path = resource
 	url = https://github.com/BuddhistDigitalResourceCenter/tibetan-stemming-data.git
+[submodule "resources"]
+	path = resources
+	url = https://github.com/BuddhistDigitalResourceCenter/tibetan-stemming-data.git

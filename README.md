@@ -2,7 +2,7 @@
 
 This repository contains Lucene tools (analysers, tokenizers and filters) for the Tibetan Language. They are based on [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
 
-Installation through maven:
+## Installation through maven:
 
 ```xml
     <dependency>
@@ -18,6 +18,21 @@ If the jar is needed for use in a non-maven based install, it may be found at
     https://repo1.maven.org/maven2/io/bdrc/lucene/lucene-bo/1.2.0/lucene-bo-1.2.0.jar
 ```
 
+## Building from source
+
+First, make sure the submodule is initialized (`git submodule init`, then `git submodule update` from the root of the repo)
+
+The base command line to build a jar is:
+
+```
+mvn clean compile exec:java package
+```
+
+The following options alter the packaging:
+
+- `-DincludeDeps=true` includes `io.bdrc.lucene:stemmer` and `io.bdrc.ewtsconverter:ewts-converter` in the produced jar file
+- `-DperformRelease=true` signs the jar file with gpg
+
 ## Components
 
 #### TibetanAnalyzer
@@ -28,7 +43,11 @@ It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffix
 There are two constructors. The nullary constructor and
 
 ```    
+<<<<<<< HEAD
     TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMode, String lexiconFileName)
+=======
+    TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
+>>>>>>> refs/remotes/origin/develop
 
     segmentInWords - if the segmentation is on words instead of syllables
     lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
@@ -37,7 +56,11 @@ There are two constructors. The nullary constructor and
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
 ```
 
+<<<<<<< HEAD
 The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, "unicode", "")`
+=======
+The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
+>>>>>>> refs/remotes/origin/develop
 
 #### TibWordTokenizer
 

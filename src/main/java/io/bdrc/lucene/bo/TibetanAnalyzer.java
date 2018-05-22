@@ -31,9 +31,9 @@ import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
 
 /**
@@ -56,6 +56,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	boolean segmentInWords = false; 
 	boolean lemmatize = false;
 	boolean filterChars = false;
+	String lexiconFileName = null;
 	String inputMethod = INPUT_METHOD_DEFAULT;
 	
 	/**
@@ -66,9 +67,10 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
 	 * @param  inputMethod  if the text should be converted from EWTS to Unicode
 	 * @param  stopFilename  a file name with a stop word list
+	 * @param  lexiconFileName  lexicon used to populate the Trie
 	 * @throws IOException  if the file containing stopwords can't be opened 
 	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename) throws IOException {
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename, String lexiconFileName) throws IOException {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
 		this.filterChars = filterChars;
@@ -88,6 +90,7 @@ public final class TibetanAnalyzer extends Analyzer {
 		} else {
 			this.tibStopSet = null;
 		}
+		this.lexiconFileName = lexiconFileName;
 	}
 	
 	/**
@@ -95,7 +98,7 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @throws IOException  if the file containing stopwords can't be opened
 	 */
 	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, INPUT_METHOD_DEFAULT, "");
+		this(true, true, true, INPUT_METHOD_DEFAULT, "src/main/resources/bo-stopwords.txt", "resources/output/total_lexicon.txt");
 	}
   
     /**
@@ -153,12 +156,18 @@ public final class TibetanAnalyzer extends Analyzer {
 		
 		if (segmentInWords) {
 			try {
-				source = new TibWordTokenizer();
+			    if (lexiconFileName != null) {
+			        source = new TibWordTokenizer(lexiconFileName);
+			    } else {
+			        source = new TibWordTokenizer();
+			    }
 				((TibWordTokenizer) source).setLemmatize(lemmatize);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return null;
 			}
 		} else {
 			source = new TibSyllableTokenizer();
