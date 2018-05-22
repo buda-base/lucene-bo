@@ -2,7 +2,7 @@
 
 This repository contains Lucene tools (analysers, tokenizers and filters) for the Tibetan Language. They are based on [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
 
-Installation through maven:
+## Installation through maven:
 
 ```xml
     <dependency>
@@ -17,6 +17,21 @@ If the jar is needed for use in a non-maven based install, it may be found at
 ```
     https://repo1.maven.org/maven2/io/bdrc/lucene/lucene-bo/1.1.1/lucene-bo-1.1.1.jar
 ```
+
+## Building from source
+
+First, make sure the submodule is initialized (`git submodule init`, then `git submodule update` from the root of the repo)
+
+The base command line to build a jar is:
+
+```
+mvn clean compile exec:java package
+```
+
+The following options alter the packaging:
+
+- `-DincludeDeps=true` includes `io.bdrc.lucene:stemmer` and `io.bdrc.ewtsconverter:ewts-converter` in the produced jar file
+- `-DperformRelease=true` signs the jar file with gpg
 
 ## Components
 

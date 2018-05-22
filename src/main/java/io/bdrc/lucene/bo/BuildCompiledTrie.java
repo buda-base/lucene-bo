@@ -36,6 +36,7 @@ public class BuildCompiledTrie {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			
 		}
 	}
 	
@@ -52,6 +53,8 @@ public class BuildCompiledTrie {
 	/**
 	 * 
 	 * @param inputFiles  the list of files to feed the Trie with
+	 * @throws FileNotFoundException  input file not found  
+	 * @throws IOException  could not write to the output file
 	 * @return the optimized Trie
 	 */
 	public static Trie buildTrie(List<String> inputFiles) throws FileNotFoundException, IOException {
@@ -79,6 +82,8 @@ public class BuildCompiledTrie {
 	 * 
 	 * @param trie  the trie to store in binary format
 	 * @param outFilename  the path+filename of the output file
+     * @throws FileNotFoundException  output file not found
+     * @throws IOException  could not write to output file
 	 */
 	public static void storeTrie(Trie trie, String outFilename) throws FileNotFoundException, IOException {
 		OutputStream output = new DataOutputStream(new FileOutputStream(outFilename));

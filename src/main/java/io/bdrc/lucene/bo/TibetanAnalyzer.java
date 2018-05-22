@@ -67,9 +67,9 @@ public final class TibetanAnalyzer extends Analyzer {
 	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
 	 * @param  inputMethod  if the text should be converted from EWTS to Unicode
 	 * @param  stopFilename  a file name with a stop word list
+	 * @param  lexiconFileName  lexicon used to populate the Trie
 	 * @throws IOException  if the file containing stopwords can't be opened 
 	 */
-
 	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename, String lexiconFileName) throws IOException {
 		this.segmentInWords = segmentInWords;
 		this.lemmatize = lemmatize;
@@ -164,8 +164,10 @@ public final class TibetanAnalyzer extends Analyzer {
 				((TibWordTokenizer) source).setLemmatize(lemmatize);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				return null;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return null;
 			}
 		} else {
 			source = new TibSyllableTokenizer();

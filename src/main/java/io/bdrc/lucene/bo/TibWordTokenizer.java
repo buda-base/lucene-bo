@@ -96,7 +96,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	}
 	
 	public TibWordTokenizer(String trieFile) throws FileNotFoundException, IOException {
-	    System.out.println("\n\tcompiled Trie not found ; building it will take some time!");
+	    System.out.println("\n\tcompiled Trie not found, building it.");
         long start = System.currentTimeMillis();
         this.scanner = BuildCompiledTrie.buildTrie(Arrays.asList(trieFile));
         long end = System.currentTimeMillis();
@@ -115,7 +115,7 @@ public final class TibWordTokenizer extends Tokenizer {
         stream = TibWordTokenizer.class.getResourceAsStream("/bo-compiled-trie.dump");
         if (stream == null) {  // we're not using the jar, there is no resource, assuming we're running the code
             if (!new File(compiledTrieName).exists()) {
-                System.out.println("\n\tcompiled Trie not found ; building it will take some time!");
+                System.out.println("\n\tcompiled Trie not found, building it.");
                 long start = System.currentTimeMillis();
                 BuildCompiledTrie.compileTrie();
                 long end = System.currentTimeMillis();
