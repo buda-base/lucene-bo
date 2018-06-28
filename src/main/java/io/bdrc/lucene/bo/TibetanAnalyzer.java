@@ -92,7 +92,15 @@ public final class TibetanAnalyzer extends Analyzer {
 		}
 		this.lexiconFileName = lexiconFileName;
 	}
-	
+
+	/**
+	 * Creates a new {@link TibetanAnalyzer} with the default values
+	 * @throws IOException  if the file containing stopwords can't be opened
+	 */
+	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename) throws IOException {
+		this(segmentInWords, lemmatize, filterChars, inputMethod, stopFilename, null);
+	}
+
 	/**
 	 * Creates a new {@link TibetanAnalyzer} with the default values
 	 * @throws IOException  if the file containing stopwords can't be opened
