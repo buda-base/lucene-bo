@@ -5,13 +5,12 @@ This repository contains Lucene tools (analysers, tokenizers and filters) for th
 Content summary:
 
 - a convertor from EWTS, DTS or ALALC encodings to Tibetan Unicode
-- a filter to convert NFC strings to NFD
-- a filter to remove affixed particles
-- a filter to remove syllable markers (ex: that mark root verse syllables)
+- a filter to normalise unicode Tibetan characters
+- a filter to remove obvious affixed particles
 - a stopword filter
-- syllable-based tokenizer
-- word-based tokenizer that:
-    - can lemmatize
+- a syllable-based tokenizer
+- a maxmatch-based word tokenizer that:
+    - can lemmatize (remove ambiguous affixes ར and ས)
     - uses user-defined word lists
 
 ## Installation through maven:
