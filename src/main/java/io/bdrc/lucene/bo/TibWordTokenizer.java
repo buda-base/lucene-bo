@@ -34,6 +34,8 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.util.RollingCharBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
@@ -65,6 +67,7 @@ public final class TibWordTokenizer extends Tokenizer {
 	
 	private Trie scanner;
 	private String compiledTrieName = "src/main/resources/bo-compiled-trie.dump";
+	static final Logger logger = LoggerFactory.getLogger(TibWordTokenizer.class);
 	
 	private boolean debug = false;
 	private boolean lemmatize = true;
@@ -268,7 +271,7 @@ public final class TibWordTokenizer extends Tokenizer {
 		
 		/* B.2. EXITING incrementToken() WITH THE TOKEN */
 		assert(tokenStart != -1);
-		finalizeSettingTermAttribute();
+		finalizeSettingTermAttribute(tokenBuffer);
 		lemmatizeIfRequired();
 		return true;
 	}
@@ -292,9 +295,20 @@ public final class TibWordTokenizer extends Tokenizer {
 		}
 	}
 
-	private final void finalizeSettingTermAttribute() {
-		finalOffset = correctOffset(tokenEnd);
-		offsetAtt.setOffset(correctOffset(tokenStart), finalOffset);
+	private final void finalizeSettingTermAttribute(char[] tokenBuffer) {
+        int initialOffset = correctOffset(tokenStart);
+        finalOffset = correctOffset(tokenEnd);
+        if (initialOffset < -1) {
+            logger.warn("initialOffset incorrect. start: ", initialOffset, "end: ", finalOffset, 
+                    "string: ", tokenBuffer.toString());
+            initialOffset = 0;
+        }
+        if (finalOffset < initialOffset) {
+            logger.warn("finalOffset incorrect. start: ", initialOffset, "end: ", finalOffset, 
+                    "string: ", tokenBuffer.toString());
+            finalOffset = initialOffset;
+        }
+        offsetAtt.setOffset(initialOffset, finalOffset);
 		termAtt.setLength(tokenEnd - tokenStart);
 	}
 
