@@ -90,12 +90,15 @@ public class TibEwtsFilter extends BaseCharFilter {
 				break;
 			}
 		}
+		//System.out.println("ewts: \""+tmpEwts.toString()+"\", replacement="+replacement);
 		buffer.freeBefore(inputOff);
-		if (replacement == null || replacement.isEmpty()) {
-			replacementLen = -1;
-			return -1;
-		}
-		final int diff = (inputOff - initialInputOff) - replacement.length();
+		if (replacement == null) {
+			replacementLen = 0;
+		} else { 
+		    replacementLen = replacement.length();
+	    }
+		final int diff = (inputOff - initialInputOff) - replacementLen;
+		//System.out.println("diff="+diff+", replacementLen="+replacementLen+", initialInputOff="+initialInputOff+", inputOff="+inputOff);
 		// verbatim from charfilterMappingCharFilter
         if (diff != 0) {
             final int prevCumulativeDiff = getLastCumulativeDiff();
@@ -109,8 +112,10 @@ public class TibEwtsFilter extends BaseCharFilter {
               }
             }
         }
+        if (replacementLen == 0) {
+            return -1;
+        }
 		replacementIdx = 1;
-		replacementLen = replacement.length();
 		return replacement.charAt(0);
 	}
 

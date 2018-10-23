@@ -225,8 +225,8 @@ public class TibetanAnalyzerTest
     @Test
     public void ewtsOffsetBug2() throws IOException, ParseException, InvalidTokenOffsetsException
     {
-            String input = "sems dpa' chen po khro yu lo tsA ba'i man ngag brgya rtsa rgyas 'bring bsdus gsum bzhugs pa'i 'bring po'i lung thob pa'i tho/";
-            String queryLucene = "test:\"tsA ba'i\"";
+            String input = "(cha) bka' bkan gnyis kyi lung";
+            String queryLucene = "test:\"bka'\"";
             Analyzer indexingAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
             Analyzer queryAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
             TokenStream indexTk = indexingAnalyzer.tokenStream("", input);
@@ -237,7 +237,8 @@ public class TibetanAnalyzerTest
             highlighter.setTextFragmenter(new SimpleFragmenter(10));
             TextFragment[] frags = highlighter.getBestTextFragments(indexTk, input, true, 128);
             final String firstFrag = frags[0].toString();
-            assert(firstFrag.equals("sems dpa' chen po khro yu lo ->tsA<- ->ba'i<- man ngag brgya rtsa rgyas 'bring bsdus gsum bzhugs pa'i 'bring po'i lung thob pa'i tho/"));
+            System.out.println(firstFrag);
+            assert(firstFrag.equals("(cha) ->bka'<- bkan gnyis kyi lung"));
             indexingAnalyzer.close();
             queryAnalyzer.close();
     }
