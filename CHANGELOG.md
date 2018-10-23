@@ -2,8 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
  
-## [Unreleased] - Unreleased
+## [1.4.3] - 20181023
+### Fixed
+- fixed offsets of ewts conversion
+- fixed resource inclusion
 
+### Added
+- possibility to index DTS and ALALC encodings
+
+## [1.2.0] - 20180118
+### Fixed
+- fixed offsets of ewts conversion
 
 ## [1.2.0] - 20180118
 ### Fixed

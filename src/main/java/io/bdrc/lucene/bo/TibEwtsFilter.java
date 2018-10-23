@@ -35,7 +35,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 		EwtsConverter.Mode mode = EwtsConverter.Mode.EWTS;
 		switch(inputMethod) {
 		case TibetanAnalyzer.INPUT_METHOD_DTS:
-			mode = EwtsConverter.Mode.DWTS;
+			mode = EwtsConverter.Mode.DTS;
 			break;
 		case TibetanAnalyzer.INPUT_METHOD_ALALC:
 			mode = EwtsConverter.Mode.ALALC;
