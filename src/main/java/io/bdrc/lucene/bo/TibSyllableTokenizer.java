@@ -19,14 +19,14 @@
  ******************************************************************************/
 package io.bdrc.lucene.bo;
 
-
 import org.apache.lucene.analysis.util.CharTokenizer;
 
-/** 
- * A TibSyllableTokenizer divides text between sequences of Tibetan Letter and/or Digit 
- * characters and sequences of all other characters - typically some sort of white space 
- * but other punctuation and characters from other language code-pages are not considered
- * as constituents of tokens for the purpose of search and indexing.
+/**
+ * A TibSyllableTokenizer divides text between sequences of Tibetan Letter
+ * and/or Digit characters and sequences of all other characters - typically
+ * some sort of white space but other punctuation and characters from other
+ * language code-pages are not considered as constituents of tokens for the
+ * purpose of search and indexing.
  * <p>
  * Adjacent sequences of Tibetan Letter and/or Digit characters form tokens.
  * </p>
@@ -39,23 +39,23 @@ import org.apache.lucene.analysis.util.CharTokenizer;
  * 
  */
 public final class TibSyllableTokenizer extends CharTokenizer {
-  
-	/**
-	 * Construct a new TibSyllableTokenizer.
-	 */
-	public TibSyllableTokenizer() {
-	}
-	
-	// see http://jrgraphix.net/r/Unicode/0F00-0FFF
-	protected boolean isTibLetterOrDigit(int c) {
-		return ('\u0F40' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
-	}
-  
-	/** 
-	 * Collects only characters which satisfy isTibetanLetterOrDigit()
-	 */
-	@Override
-	protected boolean isTokenChar(int c) {
-		return isTibLetterOrDigit(c);
-	}
+
+    /**
+     * Construct a new TibSyllableTokenizer.
+     */
+    public TibSyllableTokenizer() {
+    }
+
+    // see http://jrgraphix.net/r/Unicode/0F00-0FFF
+    protected boolean isTibLetterOrDigit(int c) {
+        return ('\u0F40' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
+    }
+
+    /**
+     * Collects only characters which satisfy isTibetanLetterOrDigit()
+     */
+    @Override
+    protected boolean isTokenChar(int c) {
+        return isTibLetterOrDigit(c);
+    }
 }

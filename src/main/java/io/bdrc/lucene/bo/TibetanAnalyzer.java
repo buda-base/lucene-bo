@@ -37,7 +37,8 @@ import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
 
 /**
- * An Analyzer that uses {@link TibSyllableTokenizer} and filters with StopFilter
+ * An Analyzer that uses {@link TibSyllableTokenizer} and filters with
+ * StopFilter
  * 
  * Derived from Lucene 6.4.1 analysis.core.WhitespaceAnalyzer.java
  * 
@@ -45,74 +46,106 @@ import org.apache.lucene.util.IOUtils;
  * @author Hélios Hildt
  **/
 public final class TibetanAnalyzer extends Analyzer {
-	
-	static public final String INPUT_METHOD_UNICODE = "unicode";
-	static public final String INPUT_METHOD_DTS = "dts";
-	static public final String INPUT_METHOD_EWTS = "ewts";
-	static public final String INPUT_METHOD_ALALC = "alalc";
-	static public final String INPUT_METHOD_DEFAULT = INPUT_METHOD_UNICODE;
-	
-	CharArraySet tibStopSet;
-	boolean segmentInWords = false; 
-	boolean lemmatize = false;
-	boolean filterChars = false;
-	String lexiconFileName = null;
-	String inputMethod = INPUT_METHOD_DEFAULT;
-	
-	/**
-	 * Creates a new {@link TibetanAnalyzer}
-	 * 
-	 * @param  segmentInWords  if the segmentation is on words instead of syllables
-	 * @param  lemmatize  if the analyzer should remove affixed particles, and normalize words in words mode
-	 * @param  filterChars  if the text should be converted to NFD (necessary for texts containing NFC strings)
-	 * @param  inputMethod  if the text should be converted from EWTS to Unicode
-	 * @param  stopFilename  a file name with a stop word list
-	 * @param  lexiconFileName  lexicon used to populate the Trie
-	 * @throws IOException  if the file containing stopwords can't be opened 
-	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename, String lexiconFileName) throws IOException {
-		this.segmentInWords = segmentInWords;
-		this.lemmatize = lemmatize;
-		this.filterChars = filterChars;
-		this.inputMethod = inputMethod;
-		if (stopFilename != null) {
-			if (stopFilename.isEmpty()) {
-				InputStream stream = null;
-		        stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
-		        if (stream == null) {      // we're not using the jar, there is no resource, assuming we're running the code
-		        	this.tibStopSet = null;
-		        } else {
-		            this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
-		        }
-			} else {
-				this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
-			}
-		} else {
-			this.tibStopSet = null;
-		}
-		this.lexiconFileName = lexiconFileName;
-	}
 
-	/**
-	 * Creates a new {@link TibetanAnalyzer} with the default values
-	 * @throws IOException  if the file containing stopwords can't be opened
-	 */
-	public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod, String stopFilename) throws IOException {
-		this(segmentInWords, lemmatize, filterChars, inputMethod, stopFilename, null);
-	}
+    static public final String INPUT_METHOD_UNICODE = "unicode";
+    static public final String INPUT_METHOD_DTS = "dts";
+    static public final String INPUT_METHOD_EWTS = "ewts";
+    static public final String INPUT_METHOD_ALALC = "alalc";
+    static public final String INPUT_METHOD_DEFAULT = INPUT_METHOD_UNICODE;
 
-	/**
-	 * Creates a new {@link TibetanAnalyzer} with the default values
-	 * @throws IOException  if the file containing stopwords can't be opened
-	 */
-	public TibetanAnalyzer() throws IOException {
-		this(true, true, true, INPUT_METHOD_DEFAULT, "src/main/resources/bo-stopwords.txt", "resources/output/total_lexicon.txt");
-	}
-  
+    CharArraySet tibStopSet;
+    boolean segmentInWords = false;
+    boolean lemmatize = false;
+    boolean filterChars = false;
+    String lexiconFileName = null;
+    String inputMethod = INPUT_METHOD_DEFAULT;
+
     /**
-     * @param inputStream stream to the list of stopwords
-     * @param comment The string representing a comment
-     * @throws IOException  if the file containing stopwords can't be opened
+     * Creates a new {@link TibetanAnalyzer}
+     * 
+     * @param segmentInWords
+     *            if the segmentation is on words instead of syllables
+     * @param lemmatize
+     *            if the analyzer should remove affixed particles, and normalize
+     *            words in words mode
+     * @param filterChars
+     *            if the text should be converted to NFD (necessary for texts
+     *            containing NFC strings)
+     * @param inputMethod
+     *            if the text should be converted from EWTS to Unicode
+     * @param stopFilename
+     *            a file name with a stop word list
+     * @param lexiconFileName
+     *            lexicon used to populate the Trie
+     * @throws IOException
+     *             if the file containing stopwords can't be opened
+     */
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod,
+            String stopFilename, String lexiconFileName) throws IOException {
+        this.segmentInWords = segmentInWords;
+        this.lemmatize = lemmatize;
+        this.filterChars = filterChars;
+        this.inputMethod = inputMethod;
+        if (stopFilename != null) {
+            if (stopFilename.isEmpty()) {
+                InputStream stream = null;
+                stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
+                if (stream == null) { // we're not using the jar, there is no resource, assuming we're running the
+                                      // code
+                    this.tibStopSet = null;
+                } else {
+                    this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
+                }
+            } else {
+                this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
+            }
+        } else {
+            this.tibStopSet = null;
+        }
+        this.lexiconFileName = lexiconFileName;
+    }
+
+    /**
+     * Creates a new {@link TibetanAnalyzer}s
+     * 
+     * @param segmentInWords
+     *            if the segmentation is on words instead of syllables
+     * @param lemmatize
+     *            if the analyzer should remove affixed particles, and normalize
+     *            words in words mode
+     * @param filterChars
+     *            if the text should be converted to NFD (necessary for texts
+     *            containing NFC strings)
+     * @param inputMethod
+     *            if the text should be converted from EWTS to Unicode
+     * @param stopFilename
+     *            a file name with a stop word list
+     * @throws IOException
+     *             if the file containing stopwords can't be opened
+     */
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod,
+            String stopFilename) throws IOException {
+        this(segmentInWords, lemmatize, filterChars, inputMethod, stopFilename, null);
+    }
+
+    /**
+     * Creates a new {@link TibetanAnalyzer} with the default values
+     * 
+     * @throws IOException
+     *             if the file containing stopwords can't be opened
+     */
+    public TibetanAnalyzer() throws IOException {
+        this(true, true, true, INPUT_METHOD_DEFAULT, "src/main/resources/bo-stopwords.txt",
+                "resources/output/total_lexicon.txt");
+    }
+
+    /**
+     * @param inputStream
+     *            stream to the list of stopwords
+     * @param comment
+     *            The string representing a comment
+     * @throws IOException
+     *             if the file containing stopwords can't be opened
      * @return result the {@link ArrayList} to fill with the reader's words
      */
     public static ArrayList<String> getWordList(InputStream inputStream, String comment) throws IOException {
@@ -127,73 +160,74 @@ public final class TibetanAnalyzer extends Analyzer {
                     if (!word.startsWith(comment)) {
                         word = word.substring(0, word.indexOf(comment));
                         word = word.trim();
-                        if (!word.isEmpty()) result.add(word);
+                        if (!word.isEmpty())
+                            result.add(word);
                     }
                 } else {
                     word = word.trim();
-                    if (!word.isEmpty()) result.add(word);
+                    if (!word.isEmpty())
+                        result.add(word);
                 }
             }
-        }
-        finally {
+        } finally {
             IOUtils.close(br);
         }
         return result;
     }
-    
-	@Override
-	protected Reader initReader(String fieldName, Reader reader) {
-		switch (this.inputMethod) {
-		case INPUT_METHOD_EWTS:
-		case INPUT_METHOD_DTS:
-		case INPUT_METHOD_ALALC:
-			reader = new TibEwtsFilter(reader, this.inputMethod);
-			break;
-		case INPUT_METHOD_UNICODE:
-		default:
-			reader = new TibCharFilter(reader);
-			break;
-		}
-		return super.initReader(fieldName, reader);
-	}
-	
-	@Override
-	protected TokenStreamComponents createComponents(final String fieldName) {
-		Tokenizer source = null;
-		TokenFilter filter = null;
-		
-		if (segmentInWords) {
-			try {
-			    if (lexiconFileName != null) {
-			        source = new TibWordTokenizer(lexiconFileName);
-			    } else {
-			        source = new TibWordTokenizer();
-			    }
-				((TibWordTokenizer) source).setLemmatize(lemmatize);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			source = new TibSyllableTokenizer();
-			if (lemmatize) {
-				filter = new TibAffixedFilter(source);
-			}
-		}
-		if (tibStopSet != null) {
-			if (filter != null) {
-				filter = new StopFilter(filter, tibStopSet);
-			} else {
-				filter = new StopFilter(source, tibStopSet);
-			}
-		}
-		if (filter != null) {
-			return new TokenStreamComponents(source, filter);
-		} else {
-			return new TokenStreamComponents(source);
-		}
-	}
+
+    @Override
+    protected Reader initReader(String fieldName, Reader reader) {
+        switch (this.inputMethod) {
+        case INPUT_METHOD_EWTS:
+        case INPUT_METHOD_DTS:
+        case INPUT_METHOD_ALALC:
+            reader = new TibEwtsFilter(reader, this.inputMethod);
+            break;
+        case INPUT_METHOD_UNICODE:
+        default:
+            reader = new TibCharFilter(reader);
+            break;
+        }
+        return super.initReader(fieldName, reader);
+    }
+
+    @Override
+    protected TokenStreamComponents createComponents(final String fieldName) {
+        Tokenizer source = null;
+        TokenFilter filter = null;
+
+        if (segmentInWords) {
+            try {
+                if (lexiconFileName != null) {
+                    source = new TibWordTokenizer(lexiconFileName);
+                } else {
+                    source = new TibWordTokenizer();
+                }
+                ((TibWordTokenizer) source).setLemmatize(lemmatize);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            source = new TibSyllableTokenizer();
+            if (lemmatize) {
+                filter = new TibAffixedFilter(source);
+            }
+        }
+        if (tibStopSet != null) {
+            if (filter != null) {
+                filter = new StopFilter(filter, tibStopSet);
+            } else {
+                filter = new StopFilter(source, tibStopSet);
+            }
+        }
+        if (filter != null) {
+            return new TokenStreamComponents(source, filter);
+        } else {
+            return new TokenStreamComponents(source);
+        }
+    }
 }
