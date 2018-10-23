@@ -30,7 +30,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 		this(in, TibetanAnalyzer.INPUT_METHOD_EWTS);
 	}
 
-	public TibEwtsFilter(Reader in, String inputMethod) {
+	public TibEwtsFilter(final Reader in, final String inputMethod) {
 		super(in);
 		EwtsConverter.Mode mode = EwtsConverter.Mode.EWTS;
 		switch(inputMethod) {
@@ -56,7 +56,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 		inputOff = 0;
 	}
 	
-	public static boolean isEwtsLetters(int c) {
+	public static boolean isEwtsLetters(final int c) {
 		if (c == ' ' || c == '*' || c == '_' || c == '(' || c == '/' || c == ')' || c == ':')
 			return false;
 		return true;
@@ -70,10 +70,10 @@ public class TibEwtsFilter extends BaseCharFilter {
 		replacement = null;
 		replacementIdx = 0;
 		tmpEwts = new StringBuilder();
-		int initialInputOff = inputOff;
+		final int initialInputOff = inputOff;
 		boolean stoppedOnPunctuation = false;
 		while (true) {
-			int c = buffer.get(inputOff);
+			final int c = buffer.get(inputOff);
 			if (c == -1) {
 				replacement = tmpEwts.length() > 0 ? converter.toUnicode(tmpEwts.toString()) : null;
 				break;
@@ -95,16 +95,16 @@ public class TibEwtsFilter extends BaseCharFilter {
 			replacementLen = -1;
 			return -1;
 		}
-		int diff = (inputOff - initialInputOff) - replacement.length();
+		final int diff = (inputOff - initialInputOff) - replacement.length();
 		// verbatim from charfilterMappingCharFilter
         if (diff != 0) {
             final int prevCumulativeDiff = getLastCumulativeDiff();
             if (diff > 0) {
-            	int adjustedInputOff = stoppedOnPunctuation ? inputOff-1 : inputOff;
+            	final int adjustedInputOff = stoppedOnPunctuation ? inputOff-1 : inputOff;
                 addOffCorrectMap(adjustedInputOff - diff - prevCumulativeDiff, prevCumulativeDiff + diff);
             } else {
               final int outputStart = inputOff - prevCumulativeDiff;
-              for(int extraIDX=0;extraIDX<-diff;extraIDX++) {
+              for (int extraIDX = 0 ; extraIDX < -diff ; extraIDX++) {
                 addOffCorrectMap(outputStart + extraIDX, prevCumulativeDiff - extraIDX - 1);
               }
             }
@@ -115,7 +115,7 @@ public class TibEwtsFilter extends BaseCharFilter {
 	}
 
 	@Override
-	public int read(char[] cbuf, int off, int len) throws IOException {
+	public int read(final char[] cbuf, final int off, final int len) throws IOException {
 	    int numRead = 0;
 	    for (int i = off; i < off + len; i++) {
 	    	int c = read();
@@ -125,7 +125,6 @@ public class TibEwtsFilter extends BaseCharFilter {
 	      	cbuf[i] = (char) c;
 	      	numRead++;
 	    }
-
 	    return numRead == 0 ? -1 : numRead;
 	}
 }

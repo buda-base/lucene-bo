@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
@@ -38,6 +39,15 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.TextFragment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -203,15 +213,35 @@ public class TibetanAnalyzerTest
     @Test
     public void ewtsOffsetBug() throws IOException
     {
-        System.out.println("Testing TibEwtsFilter()");
+        System.out.println("Testing TibEwtsFilter() offsets");
         String input = "dpal rdo rje snying po'i rgyan gyi rgyud chen po'i dka' 'grel";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("dpal", "rdo rje", "snying po'i", "rgyan", "gyi", "rgyud", "chen po'i", "dka' 'grel");
         System.out.print(input + " => ");
         TokenStream res = tokenize(new TibEwtsFilter(reader), new TibWordTokenizer("src/test/resources/ewts-offset-test.txt"));
-//        assertOffsets(input, res, expected); // commented to build
+        assertOffsets(input, res, expected); // commented to build
     }
-	
+
+    @Test
+    public void ewtsOffsetBug2() throws IOException, ParseException, InvalidTokenOffsetsException
+    {
+            String input = "sems dpa' chen po khro yu lo tsA ba'i man ngag brgya rtsa rgyas 'bring bsdus gsum bzhugs pa'i 'bring po'i lung thob pa'i tho/";
+            String queryLucene = "test:\"tsA ba'i\"";
+            Analyzer indexingAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
+            Analyzer queryAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
+            TokenStream indexTk = indexingAnalyzer.tokenStream("", input);
+            QueryParser queryParser = new QueryParser("test", queryAnalyzer);
+            Query query = queryParser.parse(queryLucene);
+            SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("->", "<-");
+            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
+            highlighter.setTextFragmenter(new SimpleFragmenter(10));
+            TextFragment[] frags = highlighter.getBestTextFragments(indexTk, input, true, 128);
+            final String firstFrag = frags[0].toString();
+            assert(firstFrag.equals("sems dpa' chen po khro yu lo ->tsA<- ->ba'i<- man ngag brgya rtsa rgyas 'bring bsdus gsum bzhugs pa'i 'bring po'i lung thob pa'i tho/"));
+            indexingAnalyzer.close();
+            queryAnalyzer.close();
+    }
+    
 	@Test
 	public void ewtsFilterTest() throws IOException
 	{
