@@ -83,7 +83,7 @@ This filter removes non-ambiguous affixed particles (འི, འོ, འིའ�
 
 ## Maven Build Options
 
-To sign the `.jar`s before deploying, pass `-DperformRelease=true` ; to include `ewts-converter` in the built jar, pass `-DincludeDeps=true`.
+To sign the `.jar`s before deploying, pass `-DperformRelease=true` ; to include `ewts-converter` and `stemmer` in the built jar, pass `-DincludeDeps=true`.
 
 ## License
 
