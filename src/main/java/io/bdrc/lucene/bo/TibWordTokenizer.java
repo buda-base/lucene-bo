@@ -20,8 +20,6 @@
 package io.bdrc.lucene.bo;
 
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -127,19 +125,14 @@ public final class TibWordTokenizer extends Tokenizer {
      * @throws IOException
      *             the file of the compiled Trie can't be opened
      */
-    private void init(Reader reader) throws FileNotFoundException, IOException {
+    private void init(Reader reader) throws IOException {
         InputStream stream = null;
-        stream = TibWordTokenizer.class.getResourceAsStream("/bo-compiled-trie.dump");
-        if (stream == null) { // we're not using the jar, there is no resource, assuming we're running the
-                              // code
-            if (!new File(compiledTrieName).exists()) {
-                System.out.println("\n\tcompiled Trie not found, building it.");
-                long start = System.currentTimeMillis();
-                BuildCompiledTrie.compileTrie();
-                long end = System.currentTimeMillis();
-                System.out.println("\tTime: " + (end - start) / 1000 + "s.");
-            }
-            init(new FileInputStream(compiledTrieName));
+        stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
+        if (stream == null) {
+            final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
+                    + "\n\tAborting...";
+            logger.error(msg);
+            throw new IOException(msg);
         } else {
             init(stream);
         }

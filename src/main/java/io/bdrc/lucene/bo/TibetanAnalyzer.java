@@ -35,6 +35,8 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An Analyzer that uses {@link TibSyllableTokenizer} and filters with
@@ -52,6 +54,8 @@ public final class TibetanAnalyzer extends Analyzer {
     static public final String INPUT_METHOD_EWTS = "ewts";
     static public final String INPUT_METHOD_ALALC = "alalc";
     static public final String INPUT_METHOD_DEFAULT = INPUT_METHOD_UNICODE;
+
+    static final Logger logger = LoggerFactory.getLogger(TibetanAnalyzer.class);
 
     CharArraySet tibStopSet;
     boolean segmentInWords = false;
@@ -89,9 +93,11 @@ public final class TibetanAnalyzer extends Analyzer {
         if (stopFilename != null) {
             if (stopFilename.isEmpty()) {
                 InputStream stream = null;
-                stream = TibetanAnalyzer.class.getResourceAsStream("/bo-stopwords.txt");
-                if (stream == null) { // we're not using the jar, there is no resource, assuming we're running the
-                                      // code
+                stream = CommonHelpers.getResourceOrFile("bo-stopwords.txt");
+                if (stream == null) {
+                    final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
+                            + "\n\tAborting...";
+                    logger.error(msg);
                     this.tibStopSet = null;
                 } else {
                     this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
