@@ -65,6 +65,8 @@ public final class TibWordTokenizer extends Tokenizer {
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
+    private static Trie defaultTrie = null;
+
     private Trie scanner;
     static final Logger logger = LoggerFactory.getLogger(TibWordTokenizer.class);
 
@@ -79,6 +81,12 @@ public final class TibWordTokenizer extends Tokenizer {
      *             the file containing the lexicon cannot be read
      */
     public TibWordTokenizer() throws FileNotFoundException, IOException {
+        if (defaultTrie != null) {
+            this.scanner = defaultTrie;
+            ioBuffer = new RollingCharBuffer();
+            ioBuffer.reset(input);
+            return;
+        }
         InputStream stream = null;
         stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
         if (stream == null) {
@@ -88,6 +96,7 @@ public final class TibWordTokenizer extends Tokenizer {
             throw new IOException(msg);
         } else {
             init(stream);
+            defaultTrie = scanner;
         }
     }
 
