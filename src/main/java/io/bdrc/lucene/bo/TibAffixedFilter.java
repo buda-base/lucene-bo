@@ -24,10 +24,10 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 /**
- * Removes <tt>འི</tt>, <tt>འོ</tt>, <tt>འིའོ</tt>, <tt>འམ</tt>, <tt>འང</tt> and
- * <tt>འིས</tt> characters at end of token.
+ * Removes <em>འི</em>, <em>འོ</em>, <em>འིའོ</em>, <em>འམ</em>, <em>འང</em> and
+ * <em>འིས</em> characters at end of token.
  * <p>
- * The <tt>འི</tt> is an affixed particle that can be usefully ignored in search
+ * The <em>འི</em> is an affixed particle that can be usefully ignored in search
  * and indexing so that "པོ" and "པོའི" will match. This should help searches to
  * be more lenient.
  * </p>
@@ -143,8 +143,8 @@ public class TibAffixedFilter extends TokenFilter {
     /**
      * Returns the next token in the stream, or null at EOS.
      * <p>
-     * Removes <tt>འི</tt>, <tt>འོ</tt>, <tt>འིའོ</tt>, <tt>འམ</tt>, <tt>འང</tt> and
-     * <tt>འིས</tt> from the end of words.
+     * Removes <em>འི</em>, <em>འོ</em>, <em>འིའོ</em>, <em>འམ</em>, <em>འང</em> and
+     * <em>འིས</em> from the end of words.
      * </p>
      */
     @Override
