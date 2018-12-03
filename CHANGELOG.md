@@ -1,7 +1,11 @@
 # Change log
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
- 
+
+## [1.4.4] - 20181203
+### Fixed
+- fixed fetching of jar file
+
 ## [1.4.3] - 20181023
 ### Fixed
 - fixed offsets of ewts conversion
