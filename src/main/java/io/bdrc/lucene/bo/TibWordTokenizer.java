@@ -21,11 +21,8 @@ package io.bdrc.lucene.bo;
 
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 
 import org.apache.lucene.analysis.Tokenizer;
@@ -69,7 +66,6 @@ public final class TibWordTokenizer extends Tokenizer {
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
     private Trie scanner;
-    private String compiledTrieName = "src/main/resources/bo-compiled-trie.dump";
     static final Logger logger = LoggerFactory.getLogger(TibWordTokenizer.class);
 
     private boolean debug = false;
@@ -79,20 +75,19 @@ public final class TibWordTokenizer extends Tokenizer {
      * Constructs a TibWordTokenizer using a default lexicon file (here
      * "resource/output/total_lexicon.txt")
      * 
-     * @throws FileNotFoundException
-     *             the file containing the lexicon cannot be found
      * @throws IOException
      *             the file containing the lexicon cannot be read
      */
     public TibWordTokenizer() throws FileNotFoundException, IOException {
         InputStream stream = null;
-        stream = TibWordTokenizer.class.getResourceAsStream("/total_lexicon.txt");
+        stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
         if (stream == null) {
-            // we're not using the jar, there is no resource, assuming we're running the
-            // code
-            init(new FileReader("resources/output/total_lexicon.txt"));
+            final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
+                    + "\n\tAborting...";
+            logger.error(msg);
+            throw new IOException(msg);
         } else {
-            init(new InputStreamReader(stream));
+            init(stream);
         }
     }
 
@@ -116,26 +111,6 @@ public final class TibWordTokenizer extends Tokenizer {
         System.out.println("\tTime: " + (end - start) / 1000 + "s.");
         ioBuffer = new RollingCharBuffer();
         ioBuffer.reset(input);
-    }
-
-    /**
-     * 
-     * @throws FileNotFoundException
-     *             the file of the compiled Trie is not found
-     * @throws IOException
-     *             the file of the compiled Trie can't be opened
-     */
-    private void init(Reader reader) throws IOException {
-        InputStream stream = null;
-        stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
-        if (stream == null) {
-            final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
-                    + "\n\tAborting...";
-            logger.error(msg);
-            throw new IOException(msg);
-        } else {
-            init(stream);
-        }
     }
 
     /**
