@@ -80,7 +80,7 @@ public final class TibWordTokenizer extends Tokenizer {
      * @throws IOException
      *             the file containing the lexicon cannot be read
      */
-    public TibWordTokenizer() throws FileNotFoundException, IOException {
+    public TibWordTokenizer() throws IOException {
         if (defaultTrie != null) {
             this.scanner = defaultTrie;
             ioBuffer = new RollingCharBuffer();
@@ -128,7 +128,7 @@ public final class TibWordTokenizer extends Tokenizer {
      * @param inputStream
      *            the compiled Trie opened as a Stream
      */
-    private void init(InputStream inputStream) throws FileNotFoundException, IOException {
+    private void init(InputStream inputStream) throws IOException {
         System.out.println("\n\tLoading the trie");
         long start = System.currentTimeMillis();
         this.scanner = new Trie(new DataInputStream(inputStream));
