@@ -1,4 +1,4 @@
-# Lucene Analyzers for Tibetan
+# Lucene Analyzers for Tibetan 
 
 This repository contains Lucene tools (analysers, tokenizers and filters) for the Tibetan Language. They are based on [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
 
