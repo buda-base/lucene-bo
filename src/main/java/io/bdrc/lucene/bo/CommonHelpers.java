@@ -13,7 +13,7 @@ public class CommonHelpers {
 
     public static InputStream getResourceOrFile(final String baseName) {
         InputStream stream = null;
-        stream = CommonHelpers.class.getClassLoader().getResourceAsStream("/" + baseName);
+        stream = CommonHelpers.class.getResourceAsStream("/" + baseName);
         if (stream != null) {
             logger.info("found resource /{} through regular classloader", baseName);
             return stream;

@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -53,6 +51,9 @@ import org.apache.lucene.search.highlight.TextFragment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.bdrc.lucene.sixtofour.CharArraySet;
+import io.bdrc.lucene.sixtofour.StopFilter;
 
 /**
  * Unit tests for the Tibetan tokenizers and filters.

@@ -21,6 +21,8 @@ package io.bdrc.lucene.bo;
 
 import org.apache.lucene.analysis.util.CharTokenizer;
 
+import io.bdrc.lucene.sixtofour.Dummy;
+
 /**
  * A TibSyllableTokenizer divides text between sequences of Tibetan Letter
  * and/or Digit characters and sequences of all other characters - typically
@@ -44,6 +46,7 @@ public final class TibSyllableTokenizer extends CharTokenizer {
      * Construct a new TibSyllableTokenizer.
      */
     public TibSyllableTokenizer() {
+        super(Dummy.READER);
     }
 
     // see http://jrgraphix.net/r/Unicode/0F00-0FFF
