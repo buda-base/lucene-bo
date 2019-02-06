@@ -30,13 +30,14 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.bdrc.lucene.sixtofour.CharArraySet;
+import io.bdrc.lucene.sixtofour.StopFilter;
 
 /**
  * An Analyzer that uses {@link TibSyllableTokenizer} and filters with
@@ -146,6 +147,19 @@ public final class TibetanAnalyzer extends Analyzer {
     }
 
     /**
+     * This constructor is required by eXist (3.4.1 may be higher as well)
+     * Apart from the version parameter, it is identical to the default constructor, and if required
+     * additional params may be added and specified in the appropriate lucene config file in eXist.
+     *
+     * @param version         Apache Lucene version that eXist employs
+     *
+     * @throws IOException the default constructor throws IOException
+     */
+    public TibetanAnalyzer(org.apache.lucene.util.Version version) throws IOException {
+        this();
+    }
+
+    /**
      * @param inputStream
      *            stream to the list of stopwords
      * @param comment
@@ -198,7 +212,7 @@ public final class TibetanAnalyzer extends Analyzer {
     }
 
     @Override
-    protected TokenStreamComponents createComponents(final String fieldName) {
+    protected TokenStreamComponents createComponents(final String fieldName, Reader reader) {
         Tokenizer source = null;
         TokenFilter filter = null;
 
@@ -230,6 +244,19 @@ public final class TibetanAnalyzer extends Analyzer {
                 filter = new StopFilter(source, tibStopSet);
             }
         }
+
+        // This is required for Lucene versions prior to 5.0.0
+        // as Lucene 5 (and later) Analyzer.tokenStream() *always* invokes components.setReader(r)
+        // no matter if it is a reused or a new components object,
+        // whereas Lucene up to 4.10.4 invokes it only on reused components object.
+        if (org.apache.lucene.util.Version.LATEST.major < 5) {
+            try {
+                source.setReader(reader);
+            } catch (IOException e) {
+                throw new RuntimeException("Unexpected: ", e);
+            }
+        }
+
         if (filter != null) {
             return new TokenStreamComponents(source, filter);
         } else {

@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
 
+import io.bdrc.lucene.sixtofour.Dummy;
+
 /**
  * A maximal-matching word tokenizer for Tibetan that uses a {@link Trie}.
  * 
@@ -81,6 +83,7 @@ public final class TibWordTokenizer extends Tokenizer {
      *             the file containing the lexicon cannot be read
      */
     public TibWordTokenizer() throws IOException {
+        super(Dummy.READER);
         if (defaultTrie != null) {
             this.scanner = defaultTrie;
             ioBuffer = new RollingCharBuffer();
@@ -107,12 +110,14 @@ public final class TibWordTokenizer extends Tokenizer {
      *            built with BuildCompiledTrie.java
      */
     public TibWordTokenizer(Trie trie) {
+        super(Dummy.READER);
         this.scanner = trie;
         ioBuffer = new RollingCharBuffer();
         ioBuffer.reset(input);
     }
 
     public TibWordTokenizer(String trieFile) throws FileNotFoundException, IOException {
+        super(Dummy.READER);
         System.out.println("\n\tcompiled Trie not found, building it.");
         long start = System.currentTimeMillis();
         this.scanner = BuildCompiledTrie.buildTrie(Arrays.asList(trieFile));
