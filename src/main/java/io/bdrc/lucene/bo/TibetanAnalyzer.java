@@ -147,16 +147,33 @@ public final class TibetanAnalyzer extends Analyzer {
     }
 
     /**
-     * This constructor is required by eXist (3.4.1 may be higher as well)
-     * Apart from the version parameter, it is identical to the default constructor, and if required
-     * additional params may be added and specified in the appropriate lucene config file in eXist.
+     * Creates a new {@link TibetanAnalyzer}s
+     * This constructor is required by eXist (3.4.x and 4.x, may be higher versions as well)
      *
-     * @param version         Apache Lucene version that eXist employs
+     * @param version  Apache Lucene version that eXist employs
      *
-     * @throws IOException the default constructor throws IOException
+     * @param segmentInWords
+     *            if the segmentation is on words instead of syllables
+     * @param lemmatize
+     *            if the analyzer should remove affixed particles, and normalize
+     *            words in words mode
+     * @param filterChars
+     *            if the text should be converted to NFD (necessary for texts
+     *            containing NFC strings)
+     * @throws IOException
+     *             if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(org.apache.lucene.util.Version version) throws IOException {
-        this();
+    public TibetanAnalyzer(org.apache.lucene.util.Version version,
+                           Boolean segmentInWords,
+                           Boolean lemmatize,
+                           Boolean filterChars) throws IOException {
+        this(segmentInWords, lemmatize, filterChars, INPUT_METHOD_DEFAULT,null);
+        CommonHelpers.logger.info("eXist -> new TibetanAnalyzer"
+            + "( version: " + version
+            + ", segmentInWords: " + segmentInWords
+            + ", lemmatize: " + lemmatize
+            + ", filterChars: " + filterChars
+            + " )");
     }
 
     /**
