@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [1.5.0] - 20190614
+### Added
+- added PaBaFilter and use it in the constructor
+
+### Changed
+- remove bo from the list of stop words to avoid side effects with the PaBaFilter
+
 ## [1.4.4] - 20181203
 ### Fixed
 - fixed fetching of jar file

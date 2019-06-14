@@ -19,7 +19,7 @@ Content summary:
     <dependency>
       <groupId>io.bdrc.lucene</groupId>
       <artifactId>lucene-bo</artifactId>
-      <version>1.4.4</version>
+      <version>1.5.0</version>
     </dependency>
 ```
 
@@ -57,7 +57,7 @@ There are two constructors. The nullary constructor and
     TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
 
     segmentInWords - if the segmentation is on words instead of syllables
-    lemmatize - if the analyzer should remove affixed particles, and normalize words in words mode
+    lemmatize - in syllable mode removes affixed particles and normalizes ba/bo in pa/po, in word segmentation uses lemmas
     filterChars - if the text should be converted to NFD (necessary for texts containing NFC strings)
     inputMode - "unicode" (default), "ewts", "dts" (Diacritics Transliteration Schema) or "alalc" ([ALA-LC](https://www.loc.gov/catdir/cpso/romanization/tibetan.pdf))
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
@@ -69,8 +69,10 @@ The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, fals
 
 This tokenizer produces words through a Maximal Matching algorithm. It builds on top of [this Trie implementation](https://github.com/BuddhistDigitalResourceCenter/stemmer).  
 
-Due to its design, this tokenizer doesn't deal with contextual ambiguities.<br>
-For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.<br>
+Due to its design, this tokenizer doesn't deal with contextual ambiguities.
+
+For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.
+
 The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected)
 
 #### TibSyllableTokenizer
@@ -80,6 +82,10 @@ This tokenizer produces syllable tokens (with no tshek) from the input Tibetan t
 #### TibAffixedFilter
 
 This filter removes non-ambiguous affixed particles (འི, འོ, འིའོ, འམ, འང and འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
+
+#### PaBaFilter
+
+This filter normalizes བ and བོ into པ and པོ. It does not look into affixed particles and thus should be used after `TibAffixedFilter`.
 
 ## Maven Build Options
 
