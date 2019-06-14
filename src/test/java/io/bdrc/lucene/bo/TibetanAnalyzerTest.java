@@ -135,9 +135,23 @@ public class TibetanAnalyzerTest {
     }
 
     @Test
+    public void pabaFilterTest() throws IOException {
+        System.out.println("Testing PaBaFilter()");
+        String input = "གསལ་བ གསལ་བོ གསལ་བོའི";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("གསལ", "པ", "གསལ", "པོ", "གསལ", "པོ");
+
+        System.out.print(input + " => ");
+        TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
+        TokenFilter res = new TibAffixedFilter(syllables);
+        res = new PaBaFilter(res);
+        assertTokenStream(res, expected);
+    }
+
+    @Test
     public void stopwordFilterTest() throws IOException {
         System.out.println("Testing TibetanAnalyzer.tibStopWords");
-        String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་བོ་ཏོ་གིན་ཀྱིན་གྱིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
+        String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་ཏོ་གིན་ཀྱིན་གྱིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("ཧ", "ཧ");
 
@@ -253,7 +267,7 @@ public class TibetanAnalyzerTest {
         res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
         while (res.incrementToken()) {
         } // with trigger the exception in case of a bug
-        // dts
+          // dts
         input = "Ḥdul-ba rnam-par-ḥbyed-pa";
         reader = new StringReader(input);
         expected = Arrays.asList("འདུལ", "བ", "རྣམ", "པར", "འབྱེད", "པ");
