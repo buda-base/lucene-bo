@@ -19,7 +19,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <slf4j.version>1.7.25</slf4j.version>
-        <lucene.version>6.6.0</lucene.version>
+        <lucene.version>8.3.0</lucene.version>
     </properties>
     <developers>
         <developer>
