@@ -156,10 +156,11 @@ public class TibAffixedFilter extends TokenFilter {
         final char[] buffer = termAtt.buffer();
         final int len = termAtt.length();
 
-        // if the token ends with "འིའོ" then decrement token length by 4
+        // if the token ends with "འིའོ", "འིའམ", "འིའང", "འོའམ", "འོའང" then decrement token length by 4
         if (len > 4) {
             if (buffer[len - 4] == '\u0F60'
-                    && (buffer[len - 3] == '\u0F72' && buffer[len - 2] == '\u0F60' && buffer[len - 1] == '\u0F7C')) {
+                    && ((buffer[len - 3] == '\u0F72' && buffer[len - 2] == '\u0F60' && (buffer[len - 1] == '\u0F7C' || buffer[len - 1] == '\u0F44' || buffer[len - 1] == '\u0F58')) ||
+                            (buffer[len - 3] == '\u0F7C' && buffer[len - 2] == '\u0F60' && (buffer[len - 1] == '\u0F44' || buffer[len - 1] == '\u0F58')))) {
                 // if the host syllable had a འ before the particle was affixed, do not remove
                 // it.
                 if (len == 6 && needsAASuffix(buffer[len - 6], buffer[len - 5])) {
@@ -198,6 +199,20 @@ public class TibAffixedFilter extends TokenFilter {
                     termAtt.setLength(len - 2);
                 }
             }
+        }
+
+        // if the token ends with "འུར" or "འུས" then decrement token length by 1
+        if (len > 4) { // the trick here is that we don't want the token to start with འུ so we test for a length of 4 instead of 3 
+            if (buffer[len - 3] == '\u0F60' && buffer[len - 2] == '\u0F74' && (buffer[len - 1] == '\u0F62' || buffer[len - 1] == '\u0F66')) {
+                termAtt.setLength(len - 1);
+            }
+        }
+
+        // if the token ends with "འ" and it doesn't need to, we shorten it by 1
+        if (len > 3 && buffer[len - 1] == '\u0F60') {
+            termAtt.setLength(len - 1);
+        } else if (len == 3 && buffer[len - 1] == '\u0F60' && !needsAASuffix(buffer[len - 3], buffer[len - 2])) {
+            termAtt.setLength(len - 1);
         }
         return true;
     }
