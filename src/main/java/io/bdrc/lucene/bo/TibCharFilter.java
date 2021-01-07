@@ -53,7 +53,6 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("ཎ", "ན");
             builder.add("ཱ", "");
             builder.add("ྂ", "ྃ");
-            builder.add("ཾ", "ྃ");
             builder.add("ྚ", "ྟ");
             builder.add("ྛ", "ྠ");
             builder.add("ྜ", "ྡ");
@@ -94,7 +93,6 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("མྱེ", "མེ");
             builder.add("གསྩན", "གསན");
             builder.add("གསྩང", "གསང");
-            builder.add("གསྩན", "གསན");
             builder.add("སྩོགས", "སོགས");
             builder.add("སྩུབ", "སུབ");
             builder.add("སྩང", "སང");

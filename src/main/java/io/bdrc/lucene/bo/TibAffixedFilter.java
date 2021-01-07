@@ -217,9 +217,8 @@ public class TibAffixedFilter extends TokenFilter {
         
         // Dadrag. Handled here instead of a regex as it's less costly and (almost) makes sense
         // [^གམ][ནལར])ད
-        if (len > 3 && buffer[len - 1] == '\u0F51' && (buffer[len - 2] == '\u0F53' || buffer[len - 2] == '\u0F62' || buffer[len - 2] == '\u0F63') && buffer[len - 3] != '\u0F42' && buffer[len - 3] != '\u0F58') {
+        if (len >= 3 && buffer[len - 1] == '\u0F51' && (buffer[len - 2] == '\u0F53' || buffer[len - 2] == '\u0F62' || buffer[len - 2] == '\u0F63') && buffer[len - 3] != '\u0F42' && buffer[len - 3] != '\u0F58') {
             termAtt.setLength(len - 1);
-            System.out.println("len: "+len);
         }
         return true;
     }
