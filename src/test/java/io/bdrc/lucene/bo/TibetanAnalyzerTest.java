@@ -124,9 +124,9 @@ public class TibetanAnalyzerTest {
     @Test
     public void affixedFilterTest() throws IOException {
         System.out.println("Testing TibAffixedFilter()");
-        String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ། ལེའུར། བཞིའ། གེའ། དགའོའམ། དགའིའམ། ཀུནད། རྒྱལད། འོནད། དལད། པརད།";
+        String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ། ལེའུར། བཞིའ། པའ། གེའ། དགའོའམ། དགའིའམ། ཀུནད། རྒྱལད། འོནད། དལད། པརད། པའས། གེའད།";
         Reader reader = new StringReader(input);
-        List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "ལེའུ", "བཞི", "གེ", "དགའ", "དགའ", "ཀུན", "རྒྱལ", "འོན", "དལ", "པར");
+        List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "ལེའུ", "བཞི", "པ", "གེ", "དགའ", "དགའ", "ཀུན", "རྒྱལ", "འོན", "དལ", "པར", "པས", "གེད");
 
         System.out.print(input + " => ");
         TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());

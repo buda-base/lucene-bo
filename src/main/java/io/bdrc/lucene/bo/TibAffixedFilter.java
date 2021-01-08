@@ -209,7 +209,7 @@ public class TibAffixedFilter extends TokenFilter {
         }
 
         // if the token ends with "འ" and it doesn't need to, we shorten it by 1
-        if (len > 3 && buffer[len - 1] == '\u0F60') {
+        if ((len > 3 || len == 2) && buffer[len - 1] == '\u0F60') {
             termAtt.setLength(len - 1);
         } else if (len == 3 && buffer[len - 1] == '\u0F60' && !needsAASuffix(buffer[len - 3], buffer[len - 2])) {
             termAtt.setLength(len - 1);
@@ -220,6 +220,13 @@ public class TibAffixedFilter extends TokenFilter {
         if (len >= 3 && buffer[len - 1] == '\u0F51' && (buffer[len - 2] == '\u0F53' || buffer[len - 2] == '\u0F62' || buffer[len - 2] == '\u0F63') && buffer[len - 3] != '\u0F42' && buffer[len - 3] != '\u0F58') {
             termAtt.setLength(len - 1);
         }
+        
+        // Medial འ. From Tibetan-nlp: In Old Tibetan we can find the presence of a medial འ (lost in Classical Tibetan) within syllables as xxའས་ / xxའད་ / xxའར་.
+        if (len >= 3 && buffer[len - 2] == '\u0F60' && (buffer[len - 1] == '\u0F51' || buffer[len - 1] == '\u0F62' || buffer[len - 1] == '\u0F66')) {
+            buffer[len-2] = buffer[len-1];
+            termAtt.setLength(len - 1);
+        }
+        
         return true;
     }
 }
