@@ -40,8 +40,10 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  */
 public class TibAffixedFilter extends TokenFilter {
 
-    public TibAffixedFilter(TokenStream input) {
+    boolean convertOldTib = false;
+    public TibAffixedFilter(TokenStream input, boolean convertOldTib) {
         super(input);
+        this.convertOldTib = convertOldTib;
     }
 
     /**
@@ -214,6 +216,10 @@ public class TibAffixedFilter extends TokenFilter {
         } else if (len == 3 && buffer[len - 1] == '\u0F60' && !needsAASuffix(buffer[len - 3], buffer[len - 2])) {
             termAtt.setLength(len - 1);
         }
+        
+        // next rules are Old Tibetan only:
+        if (!this.convertOldTib)
+            return true;
         
         // Dadrag. Handled here instead of a regex as it's less costly and (almost) makes sense
         // [^གམ][ནལར])ད

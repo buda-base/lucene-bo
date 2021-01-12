@@ -130,7 +130,7 @@ public class TibetanAnalyzerTest {
 
         System.out.print(input + " => ");
         TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
-        TokenFilter res = new TibAffixedFilter(syllables);
+        TokenFilter res = new TibAffixedFilter(syllables, true);
         assertTokenStream(res, expected);
     }
 
@@ -143,7 +143,7 @@ public class TibetanAnalyzerTest {
 
         System.out.print(input + " => ");
         TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
-        TokenFilter res = new TibAffixedFilter(syllables);
+        TokenFilter res = new TibAffixedFilter(syllables, true);
         res = new PaBaFilter(res);
         assertTokenStream(res, expected);
     }
@@ -211,7 +211,7 @@ public class TibetanAnalyzerTest {
     @Test
     public void mappingCharFilterTest() throws IOException {
         System.out.println("Testing TibCharFilter()");
-        String input = "\u0F00་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ།";
+        String input = "\u0F00་ཆོ༷ས་ཀྱི་རྒྱ༵་མཚོ། ";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("\u0F68\u0F7C\u0F7E", "ཆོས", "ཀྱི", "རྒྱ", "མཚོ");
         System.out.print(input + " => ");
@@ -219,6 +219,17 @@ public class TibetanAnalyzerTest {
         assertTokenStream(res, expected);
     }
 
+    @Test
+    public void pattFilterTest() throws IOException {
+        System.out.println("Testing TibPattFilter() for Old Tibetan");
+        String input = "དྲངསྟེ གཅལྟོ གགྀ པགི དགི བསྒའི དུསུ བཀུམོ";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("དྲངས", "ཏེ", "གཅལ", "ཏོ", "གག", "གྀ", "པག", "གི", "དགི", "བསྒའི", "དུས", "སུ", "བཀུམ", "མོ");
+        System.out.print(input + " => ");
+        TokenStream res = tokenize(TibPattFilter.plugFilters(reader), new TibSyllableTokenizer());
+        assertTokenStream(res, expected);
+    }
+    
     @Test
     public void ewtsOffsetBug() throws IOException {
         System.out.println("Testing TibEwtsFilter() offsets");

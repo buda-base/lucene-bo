@@ -9,6 +9,10 @@ public class TibCharFilter extends MappingCharFilter {
     public TibCharFilter(Reader in) {
         super(getTibNormalizeCharMap(true, true), in);
     }
+    
+    public TibCharFilter(Reader in, boolean lenient, boolean oldtib) {
+        super(getTibNormalizeCharMap(lenient, oldtib), in);
+    }
 
     public final static NormalizeCharMap getTibNormalizeCharMap(final boolean lenient, final boolean oldtib) {
         NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
@@ -142,6 +146,9 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("ཞལ་ཅེ", "ཞལ་ཆེ");
             builder.add("མེར་ཁེ", "མེར་ཀེ");
             builder.add("ལོ་ཆིག", "ལོ་གཅིག");
+            builder.add("ཆེད་པོ", "ཆེན་པོ");
+            builder.add("ཅེད་པོ", "ཆེན་པོ");
+            builder.add("ཅེན་པོ", "ཆེན་པོ");
         }
         return builder.build();
     }

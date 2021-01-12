@@ -60,6 +60,8 @@ public final class TibetanAnalyzer extends Analyzer {
     CharArraySet tibStopSet;
     boolean segmentInWords = false;
     boolean lemmatize = false;
+    boolean convertOldTib = false;
+    boolean lenient = false;
     boolean filterChars = false;
     String lexiconFileName = null;
     String inputMethod = INPUT_METHOD_DEFAULT;
@@ -191,8 +193,11 @@ public final class TibetanAnalyzer extends Analyzer {
             break;
         case INPUT_METHOD_UNICODE:
         default:
-            reader = new TibCharFilter(reader);
+            reader = new TibCharFilter(reader, this.lenient, this.convertOldTib);
             break;
+        }
+        if (this.convertOldTib) {
+            reader = TibPattFilter.plugFilters(reader);
         }
         return super.initReader(fieldName, reader);
     }
@@ -220,7 +225,7 @@ public final class TibetanAnalyzer extends Analyzer {
         } else {
             source = new TibSyllableTokenizer();
             if (lemmatize) {
-                filter = new TibAffixedFilter(source);
+                filter = new TibAffixedFilter(source, this.convertOldTib);
                 filter = new PaBaFilter(filter);
             }
         }
