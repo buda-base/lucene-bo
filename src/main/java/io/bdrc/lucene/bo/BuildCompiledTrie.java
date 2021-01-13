@@ -22,14 +22,11 @@ public class BuildCompiledTrie {
      * !!! Ensure to have enough Stack memory
      * 
      */
-    static String outFile = "src/main/resources/bo-compiled-trie.dump";
-    static List<String> inputFiles = Arrays.asList("resources/output/total_lexicon.txt");
 
     public static void main(String[] args) {
         try {
-            Trie trie = compileTrie();
-            storeTrie(trie, outFile);
-
+            compileTrie("src/main/resources/bo-compiled-trie.dump", Arrays.asList("resources/output/total_lexicon.txt"));
+            compileTrie("src/main/resources/verbs-compiled-trie.dump", Arrays.asList("resources/output/verbs_lemmas.csv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -38,11 +35,7 @@ public class BuildCompiledTrie {
         }
     }
 
-    public static Trie compileTrie() throws FileNotFoundException, IOException {
-        return compileTrie(true);
-    }
-
-    public static Trie compileTrie(boolean optimize) throws FileNotFoundException, IOException {
+    public static Trie compileTrie(String outFile, List<String> inputFiles) throws FileNotFoundException, IOException {
         Trie trie = buildTrie(inputFiles);
         storeTrie(trie, outFile);
         return trie;
