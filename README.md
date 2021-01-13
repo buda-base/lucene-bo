@@ -57,13 +57,31 @@ There are two constructors. The nullary constructor and
     TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
 
     segmentInWords - if the segmentation is on words instead of syllables
-    lemmatize - in syllable mode removes affixed particles and normalizes ba/bo in pa/po, in word segmentation uses lemmas
-    filterChars - if the text should be converted to NFD (necessary for texts containing NFC strings)
+    lemmatize - in syllable mode removes affixed particles and normalizes ba/bo in pa/po, and normalizes verbs in their present form; in word segmentation uses lemmas
+    normalize - "none", "min" (same as lucene-bo 1.5.0, minimal normalization), "ot" (Old Tibetan, see below), "l" (lenient, see below), "otl" (Old Tibetan + Lenient)
     inputMode - "unicode" (default), "ewts", "dts" (Diacritics Transliteration Schema) or "alalc" ([ALA-LC](https://www.loc.gov/catdir/cpso/romanization/tibetan.pdf))
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)
 ```
 
 The nullary constructor is equivalent to `TibetanAnalyzer(true, true, true, false, null)`
+
+#### Syllable normalization
+
+In syllable lemmatization, the lemmatization of verbs is taken from a list of inflected verbs with their corresponding present form. It's been extracted from Hill, Nathan (2010) "A Lexicon of Tibetan Verb Stems as Reported by the Grammatical Tradition" (Munich: Bayerische Akademie der Wissenschaften, ISBN 978-3-7696-1004-8). The list is derived from the version on https://github.com/tibetan-nlp/lexicon-of-tibetan-verb-stems/, with very minor adjustments and reformatting.
+
+#### Old Tibetan normalization
+
+The analyzer implements most of the patterns that have been listed in the context of Faggionato, C. & Garrett E., Constraint Grammars for Tibetan Language Processing, https://ep.liu.se/konferensartikel.aspx?series=&issue=168&Article_No=3 . The list of patterns can be found on https://github.com/tibetan-nlp/tibcg3/blob/master/Normalize_Old_Tibetan.txt .
+
+This mode also normalizes the gigu to just one form, removes the dadrag, and the medial འ in the TibAffixedFilter (see below).
+
+#### Lenient normalization
+
+The lenient normalization normalizes a number of features that are found mostly in Sanskrit text and normalize them to more regular Tibetan features. One of the goals is that the search is less case sensitive in EWTS. This includes:
+- retroflexes are "reversed": ཊ -> ཏ
+- graphical variants are normalized: ཪ (fixed R form) -> ར (regular r)
+- achung are removed
+- gigus are normalized in one direction
 
 #### TibWordTokenizer
 
@@ -74,6 +92,8 @@ Due to its design, this tokenizer doesn't deal with contextual ambiguities.
 For example, if both དོན and དོན་གྲུབ exist in the Trie, དོན་གྲུབ will be returned every time the sequence དོན + གྲུབ is found.
 
 The sentence སེམས་ཅན་གྱི་དོན་གྲུབ་པར་ཤོག will be tokenized into "སེམས་ཅན + གྱི + དོན་གྲུབ + པར + ཤོག" (སེམས་ཅན + གྱི + དོན + གྲུབ་པར + ཤོག expected)
+
+This mode removes the final འ when it's not necessary.
 
 #### TibSyllableTokenizer
 
