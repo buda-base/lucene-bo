@@ -226,6 +226,7 @@ public final class TibetanAnalyzer extends Analyzer {
             source = new TibSyllableTokenizer();
             if (lemmatize) {
                 filter = new TibAffixedFilter(source, this.convertOldTib);
+                filter = new TibSyllableLemmatizer(filter);
                 filter = new PaBaFilter(filter);
             }
         }

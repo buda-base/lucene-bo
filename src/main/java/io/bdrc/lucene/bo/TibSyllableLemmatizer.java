@@ -17,10 +17,10 @@ public class TibSyllableLemmatizer extends TokenFilter {
 
     private static Trie defaultTrie = null;
     
-    private Trie scanner;
+    private Trie scanner = null;
     static final Logger logger = LoggerFactory.getLogger(TibWordTokenizer.class);
     
-    protected TibSyllableLemmatizer(final TokenStream input) throws IOException {
+    protected TibSyllableLemmatizer(final TokenStream input) {
         super(input);
         if (defaultTrie != null) {
             this.scanner = defaultTrie;
@@ -32,9 +32,13 @@ public class TibSyllableLemmatizer extends TokenFilter {
             final String msg = "The syllables compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
                     + "\n\tAborting...";
             logger.error(msg);
-            throw new IOException(msg);
         } else {
-            this.scanner = new Trie(new DataInputStream(stream));
+            try {
+                this.scanner = new Trie(new DataInputStream(stream));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
             defaultTrie = scanner;
         }
         
@@ -46,16 +50,16 @@ public class TibSyllableLemmatizer extends TokenFilter {
     public String getReplacement(final char[] buffer, final int len) {
         int curidx = 0;
         int foundMatchCmdIndex = -1;
-        Row curRow = scanner.getRow(scanner.getRoot());
+        Row curRow = this.scanner.getRow(this.scanner.getRoot());
         while (curidx < len && curRow != null) {
             final char c = buffer[curidx];
             foundMatchCmdIndex = curRow.getCmd(c);
             int ref = curRow.getRef(c);
-            curRow = (ref >= 0) ? scanner.getRow(ref) : null;
+            curRow = (ref >= 0) ? this.scanner.getRow(ref) : null;
             curidx += 1;
         }
         if (curidx != len || foundMatchCmdIndex == -1) return null;
-        return scanner.getCommandVal(foundMatchCmdIndex);
+        return this.scanner.getCommandVal(foundMatchCmdIndex);
     }
     
     @Override
