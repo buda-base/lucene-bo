@@ -220,8 +220,20 @@ public class TibetanAnalyzerTest {
     }
 
     @Test
-    public void pattFilterTest() throws IOException {
+    public void syllableLemaTest() throws IOException {
         System.out.println("Testing TibPattFilter() for Old Tibetan");
+        String input = "བཀྲ་ཤིས་བདེ་ལེགས་དགར་ཁོར་ཁྲོ་ཁྲོས་འཐུ་གདུ་ཐེབ་ཐེབས";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "དགར", "དགར", "ཁྲོ", "ཁྲོ", "འཐུ", "འཐུ", "ཐེབས", "ཐེབས");
+        System.out.print(input + " => ");
+        TokenStream res = tokenize(reader, new TibSyllableTokenizer());
+        final TokenFilter resF = new TibSyllableLemmatizer(res);
+        assertTokenStream(resF, expected);
+    }
+    
+    @Test
+    public void pattFilterTest() throws IOException {
+        System.out.println("Testing TibSyllableLemmatizer()");
         String input = "དྲངསྟེ གཅལྟོ གགྀ པགི དགི བསྒའི དུསུ བཀུམོ";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("དྲངས", "ཏེ", "གཅལ", "ཏོ", "གག", "གྀ", "པག", "གི", "དགི", "བསྒའི", "དུས", "སུ", "བཀུམ", "མོ");
