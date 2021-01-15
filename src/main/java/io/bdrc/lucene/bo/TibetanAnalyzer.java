@@ -59,13 +59,24 @@ public final class TibetanAnalyzer extends Analyzer {
 
     CharArraySet tibStopSet;
     boolean segmentInWords = false;
-    boolean lemmatize = false;
+    String lemmatize = null;
     boolean convertOldTib = false;
+    boolean normalizeMin = false;
+    boolean lemmatizeAffixes = false;
+    boolean lemmatizePaba = false;
+    boolean lemmatizeVerbs = false;
+    boolean lemmatizeLemma = false;
     boolean lenient = false;
-    boolean filterChars = false;
+    String normalize = null;
     String lexiconFileName = null;
     String inputMethod = INPUT_METHOD_DEFAULT;
 
+    // compatibility layer for < 1.5.0
+    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean normalize, String inputMethod,
+            String stopFilename, String lexiconFileName) throws IOException {
+            this(segmentInWords, segmentInWords ? "lemmas" : "affix-paba", "min", inputMethod, stopFilename, lexiconFileName);
+    }
+    
     /**
      * Creates a new {@link TibetanAnalyzer}
      * 
@@ -74,7 +85,7 @@ public final class TibetanAnalyzer extends Analyzer {
      * @param lemmatize
      *            if the analyzer should remove affixed particles, and normalize
      *            words in words mode
-     * @param filterChars
+     * @param normalize
      *            if the text should be converted to NFD (necessary for texts
      *            containing NFC strings)
      * @param inputMethod
@@ -86,12 +97,24 @@ public final class TibetanAnalyzer extends Analyzer {
      * @throws IOException
      *             if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, String inputMethod,
+    public TibetanAnalyzer(boolean segmentInWords, String lemmatize, String normalize, String inputMethod,
             String stopFilename, String lexiconFileName) throws IOException {
         this.segmentInWords = segmentInWords;
         this.lemmatize = lemmatize;
-        this.filterChars = filterChars;
+        this.normalize = normalize;
         this.inputMethod = inputMethod;
+        if (this.normalize.contains("ot")) {
+            this.convertOldTib = true;
+            this.normalizeMin = true;
+        }
+        if (this.normalize.contains("l")) {
+            this.lenient = true;
+            this.normalizeMin = true;
+        }
+        this.lemmatizeLemma = this.lemmatize.contains("lemmas");
+        this.lemmatizeVerbs = this.lemmatize.contains("verbs");
+        this.lemmatizePaba = this.lemmatize.contains("paba");
+        this.lemmatizeAffixes = this.lemmatize.contains("affix");
         if (stopFilename != null) {
             if (stopFilename.isEmpty()) {
                 InputStream stream = null;
@@ -193,12 +216,12 @@ public final class TibetanAnalyzer extends Analyzer {
             break;
         case INPUT_METHOD_UNICODE:
         default:
-            reader = new TibCharFilter(reader, this.lenient, this.convertOldTib);
             break;
         }
-        if (this.convertOldTib) {
+        if (this.normalizeMin)
+            reader = new TibCharFilter(reader, this.lenient, this.convertOldTib);
+        if (this.convertOldTib)
             reader = TibPattFilter.plugFilters(reader);
-        }
         return super.initReader(fieldName, reader);
     }
 
@@ -214,7 +237,7 @@ public final class TibetanAnalyzer extends Analyzer {
                 } else {
                     source = new TibWordTokenizer();
                 }
-                ((TibWordTokenizer) source).setLemmatize(lemmatize);
+                ((TibWordTokenizer) source).setLemmatize(this.lemmatizeLemma);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return null;
@@ -224,11 +247,12 @@ public final class TibetanAnalyzer extends Analyzer {
             }
         } else {
             source = new TibSyllableTokenizer();
-            if (lemmatize) {
+            if (this.lemmatizeAffixes)
                 filter = new TibAffixedFilter(source, this.convertOldTib);
-                filter = new TibSyllableLemmatizer(filter);
-                filter = new PaBaFilter(filter);
-            }
+            if (this.lemmatizeVerbs)
+                filter = new TibSyllableLemmatizer(filter == null ? source : filter);
+            if (this.lemmatizePaba)
+                filter = new PaBaFilter(filter == null ? source : filter);
         }
         if (tibStopSet != null) {
             if (filter != null) {

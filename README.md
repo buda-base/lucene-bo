@@ -57,7 +57,7 @@ There are two constructors. The nullary constructor and
     TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean filterChars, boolean fromEwts, String lexiconFileName)
 
     segmentInWords - if the segmentation is on words instead of syllables
-    lemmatize - in syllable mode removes affixed particles and normalizes ba/bo in pa/po, and normalizes verbs in their present form; in word segmentation uses lemmas
+    lemmatize - in syllable mode, possible values are "affix" (removes affixed particles), "paba" (normalizes ba/bo in pa/po), "verbs" (normalizes verbs in their present form) or any combination separated by hyphens (ex: "affix-paba-verbs"); in word segmentation the only possible value is "lemmas"
     normalize - "none", "min" (same as lucene-bo 1.5.0, minimal normalization), "ot" (Old Tibetan, see below), "l" (lenient, see below), "otl" (Old Tibetan + Lenient)
     inputMode - "unicode" (default), "ewts", "dts" (Diacritics Transliteration Schema) or "alalc" ([ALA-LC](https://www.loc.gov/catdir/cpso/romanization/tibetan.pdf))
     stopFilename - file name of the stop word list (defaults to empty string for the shipped one, set to null for no stop words)

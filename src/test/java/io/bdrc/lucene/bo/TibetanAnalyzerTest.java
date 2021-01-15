@@ -112,10 +112,9 @@ public class TibetanAnalyzerTest {
     @Test
     public void sylTokenizerTest() throws IOException {
         System.out.println("Testing TibSyllableTokenizer()");
-        String input = "བཀྲ་ཤིས། བདེ་ལེགས།";
+        String input = "བཀྲ་ཤིས། བདེ་ལེགས། ཀཿཐོག ཀཿ་ཐོག";
         Reader reader = new StringReader(input);
-        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས");
-
+        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཀཿ", "ཐོག", "ཀཿ", "ཐོག");
         System.out.print(input + " => ");
         TokenStream res = tokenize(reader, new TibSyllableTokenizer());
         assertTokenStream(res, expected);
@@ -257,24 +256,45 @@ public class TibetanAnalyzerTest {
 
     @Test
     public void ewtsOffsetBug2() throws IOException, ParseException, InvalidTokenOffsetsException {
-        String input = "(cha) bka' bkan gnyis kyi lung";
-        String queryLucene = "test:\"bka'\"";
-        Analyzer indexingAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
-        Analyzer queryAnalyzer = new TibetanAnalyzer(false, true, false, "ewts", "");
+        String input = "(cha) bka' bkan gnyis kyi drang.ste lung";
+        Analyzer indexingAnalyzer = new TibetanAnalyzer(false, "affix-paba-verbs", "otl", "ewts", "", null);
+        Analyzer queryAnalyzer = new TibetanAnalyzer(false, "affix-paba-verbs", "otl", "ewts", "", null);
         TokenStream indexTk = indexingAnalyzer.tokenStream("", input);
         QueryParser queryParser = new QueryParser("test", queryAnalyzer);
-        Query query = queryParser.parse(queryLucene);
+        // test with bka'
+        Query query = queryParser.parse("test:\"bka'\"");
         SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("->", "<-");
         Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
         highlighter.setTextFragmenter(new SimpleFragmenter(10));
         TextFragment[] frags = highlighter.getBestTextFragments(indexTk, input, true, 128);
-        final String firstFrag = frags[0].toString();
-        System.out.println(firstFrag);
-        assert (firstFrag.equals("(cha) ->bka'<- bkan gnyis kyi lung"));
+        String firstFrag = frags[0].toString();
+        assert (firstFrag.equals("(cha) ->bka'<- bkan gnyis kyi drang.ste lung"));
+        // close
         indexingAnalyzer.close();
         queryAnalyzer.close();
     }
 
+    @Test
+    public void oldTibHighlight() throws IOException, ParseException, InvalidTokenOffsetsException {
+        String input = "(cha) bka' bkan gnyis kyi drang.ste gagi gatsalte lung";
+        Analyzer indexingAnalyzer = new TibetanAnalyzer(false, "affix-paba-verbs", "otl", "ewts", "", null);
+        Analyzer queryAnalyzer = new TibetanAnalyzer(false, "affix-paba-verbs", "otl", "ewts", "", null);
+        TokenStream indexTk = indexingAnalyzer.tokenStream("", input);
+        QueryParser queryParser = new QueryParser("test", queryAnalyzer);
+        SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("->", "<-");
+        // test with drang
+        Query query = queryParser.parse("test:\"gtsal\"");
+        Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
+        highlighter.setTextFragmenter(new SimpleFragmenter(10));
+        TextFragment[] frags = highlighter.getBestTextFragments(indexTk, input, true, 128);
+        String firstFrag = frags[0].toString();
+        System.out.println(firstFrag);
+        assert (firstFrag.equals("(cha) bka' bkan gnyis kyi drang.ste gagi ->gat<-salte lung"));
+        // close
+        indexingAnalyzer.close();
+        queryAnalyzer.close();
+    }
+    
     @Test
     public void ewtsFilterTest() throws IOException {
         System.out.println("Testing TibEwtsFilter()");
