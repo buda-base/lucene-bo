@@ -83,7 +83,18 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("རྦྦ", "རྦ");
             builder.add("རྒྒ", "རྒ");
             // padma = pad+ma, pandi = pan+di, ratna = rat+na
-            builder.add("པདམ", "པདྨ");
+            // https://github.com/buda-base/lucene-bo/issues/33
+            builder.add("པདམ", "པད་མ");
+            builder.add("པདྨ", "པད་མ");
+            builder.add("སེངྒེ", "སེང་གེ");
+            builder.add("སེངགེ", "སེང་གེ");
+            builder.add("ལིངྒ", "ལིང་ག");
+            builder.add("ཀུཎྜ", "ཀུ་ནྡ");
+            builder.add("ཀུནྡ", "ཀུ་ནྡ");
+            builder.add("བནྡྷ", "བན་དྷ");
+            builder.add("མནྟ", "མན་ཏ");
+            builder.add("ཀྲོདྷ", "ཀྲོ་དྷ");
+            builder.add("ཀྲོདྡྷ", "ཀྲོ་དྷ");
             builder.add("པནདི", "པནྡི");
             builder.add("རཏན", "རཏྣ");
             // dwags = dags, a bit risqué but should work
