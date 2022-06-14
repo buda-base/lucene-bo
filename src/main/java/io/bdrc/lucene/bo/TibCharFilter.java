@@ -60,6 +60,9 @@ public class TibCharFilter extends MappingCharFilter {
         if (lenient) {
             // not entirely sure about the following one:
             builder.add("ཾ", "ྃ");
+            // double vowels
+            builder.add("ེེ", "ཻ");
+            builder.add("ོོ", "ཽ");
             // mapping retroflex to "normal", so that the search is less case sensitive
             builder.add("ཊ", "ཏ");
             builder.add("ཋ", "ཐ");
