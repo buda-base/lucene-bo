@@ -223,7 +223,7 @@ public class TibetanAnalyzerTest {
         System.out.println("Testing TibPattFilter() for Old Tibetan");
         String input = "བཀྲ་ཤིས་བདེ་ལེགས་དགར་ཁོར་ཁྲོ་ཁྲོས་འཐུ་གདུ་གདུམ་ཐེབ་ཐེབས";
         Reader reader = new StringReader(input);
-        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "དགར", "དགར", "ཁྲོ", "ཁྲོ", "འཐུ", "འཐུ", "གདུམ", "ཐེབས", "ཐེབས");
+        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "དགར", "དགར", "ཁྲོ", "ཁྲོ", "འཐུ", "གདུ", "གདུམ", "ཐེབས", "ཐེབས");
         System.out.print(input + " => ");
         TokenStream res = tokenize(reader, new TibSyllableTokenizer());
         final TokenFilter resF = new TibSyllableLemmatizer(res);
@@ -238,6 +238,17 @@ public class TibetanAnalyzerTest {
         List<String> expected = Arrays.asList("དྲངས", "ཏེ", "གཅལ", "ཏོ", "གག", "གྀ", "པག", "གི", "དགི", "བསྒའི", "དུས", "སུ", "བཀུམ", "མོ");
         System.out.print(input + " => ");
         TokenStream res = tokenize(TibPattFilter.plugFilters(reader), new TibSyllableTokenizer());
+        assertTokenStream(res, expected);
+    }
+    
+    @Test
+    public void reorderTest() throws IOException {
+        System.out.println("Testing TibSyllableLemmatizer()");
+        String input = "ཀྲི ཀིྲ";
+        Reader reader = new StringReader(input);
+        List<String> expected = Arrays.asList("ཀྲི", "ཀྲི");
+        System.out.print(input + " => ");
+        TokenStream res = tokenize(new TibPattFilter.ReorderFilter(reader), new TibSyllableTokenizer());
         assertTokenStream(res, expected);
     }
     

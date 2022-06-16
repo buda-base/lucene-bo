@@ -80,6 +80,20 @@ public class TibPattFilter {
         }
     }
     
+    public static class ReorderFilter extends PatternReplaceCharFilter {
+        public ReorderFilter(Reader in) {
+            super(rReorder, repl, in);
+        }
+        // https://github.com/buda-base/lucene-bo/issues/17
+        // reorder vowel + subscript into subscript + vowel
+        public static final Pattern rReorder = Pattern.compile("([ཱ-྇]+)([ྍ-ྼ]+)");
+        public static final String repl = "$2$1";
+        public final static String normalizeR(final String in) {
+            final Matcher matcher = rReorder.matcher(in);
+            return matcher.replaceAll(repl);
+        }
+    }
+    
     public static Reader plugFilters(Reader in) {
         in = new MergedSylFilter1(in);
         in = new MergedSylFilter2(in);
