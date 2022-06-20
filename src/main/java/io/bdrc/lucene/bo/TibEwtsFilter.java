@@ -77,18 +77,18 @@ public class TibEwtsFilter extends BaseCharFilter {
         while (true) {
             final int c = buffer.get(inputOff);
             if (c == -1) {
-                replacement = tmpEwts.length() > 0 ? converter.toUnicode(tmpEwts.toString()) : null;
+                replacement = tmpEwts.length() > 0 ? converter.toUnicode(tmpEwts.toString(), null, false, true) : null;
                 break;
             }
             inputOff = inputOff + 1;
             tmpEwts.append((char) c);
             if (!isEwtsLetters(c)) {
-                replacement = converter.toUnicode(tmpEwts.toString());
+                replacement = converter.toUnicode(tmpEwts.toString(), null, false, true);
                 stoppedOnPunctuation = true;
                 break;
             }
             if (inputOff - initialInputOff > MAX_EWTS_LEN) {
-                replacement = converter.toUnicode(tmpEwts.toString());
+                replacement = converter.toUnicode(tmpEwts.toString(), null, false, true);
                 break;
             }
         }
