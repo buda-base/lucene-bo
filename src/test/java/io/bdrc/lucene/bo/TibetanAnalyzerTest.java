@@ -329,9 +329,9 @@ public class TibetanAnalyzerTest {
         res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
         assertTokenStream(res, expected);
         // ewts with hyphens and DTS features
-        input = "'dul-ba rnam-par-'byed-pa Ḥdul-ba ḥbyed-pa";
+        input = "'dul-ba rnam-par-'byed-pa Ḥdul-ba ḥbyed-pa bar-la br-i br-I";
         reader = new StringReader(input);
-        expected = Arrays.asList("འདུལ", "བ", "རྣམ", "པར", "འབྱེད", "པ", "འདུལ", "བ", "འབྱེད", "པ");
+        expected = Arrays.asList("འདུལ", "བ", "རྣམ", "པར", "འབྱེད", "པ", "འདུལ", "བ", "འབྱེད", "པ", "བར", "ལ", "བྲི", "བྲི");
         System.out.print(input + " => ");
         res = tokenize(new TibEwtsFilter(reader), new TibSyllableTokenizer());
         assertTokenStream(res, expected);
