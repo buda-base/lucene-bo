@@ -7,7 +7,7 @@
     <version>1.7.0</version>
     <name>lucene-bo</name>
     <description>Tibetan Lucene analyzer and components</description>
-    <url>https://github.com/BuddhistDigitalResourceCenter/lucene-bo</url>
+    <url>https://github.com/buda-base/lucene-bo</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -26,13 +26,13 @@
             <name>Chris Tomlinson</name>
             <email>chris.j.tomlinson@gmail.com</email>
             <organization>Buddhist Digital Resource Center</organization>
-            <organizationUrl>https://tbrc.org</organizationUrl>
+            <organizationUrl>https://bdrc.io</organizationUrl>
         </developer>
         <developer>
             <name>Hélios Hildt</name>
             <email>hhdrupchen@gmail.com</email>
             <organization>Buddhist Digital Resource Center</organization>
-            <organizationUrl>https://tbrc.org</organizationUrl>
+            <organizationUrl>https://bdrc.io</organizationUrl>
         </developer>
     </developers>
     <distributionManagement>
@@ -46,9 +46,9 @@
         </repository>
     </distributionManagement>
     <scm>
-        <connection>scm:git:git://github.com/BuddhistDigitalResourceCenter/lucene-bo.git</connection>
-        <developerConnection>scm:git:ssh://github.com:BuddhistDigitalResourceCenter/lucene-bo.git</developerConnection>
-        <url>http://github.com/BuddhistDigitalResourceCenter/lucene-bo/tree/master</url>
+        <connection>scm:git:git://github.com/buda-base/lucene-bo.git</connection>
+        <developerConnection>scm:git:ssh://github.com:buda-base/lucene-bo.git</developerConnection>
+        <url>http://github.com/buda-base/lucene-bo/tree/master</url>
     </scm>
     <dependencies>
         <dependency>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>io.bdrc.ewtsconverter</groupId>
             <artifactId>ewts-converter</artifactId>
-            <version>1.6.0</version>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
