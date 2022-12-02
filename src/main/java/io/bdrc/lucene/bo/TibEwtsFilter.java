@@ -18,8 +18,10 @@ import io.bdrc.ewtsconverter.EwtsConverter;
  **/
 public class TibEwtsFilter extends BaseCharFilter {
 
-    public static EwtsConverter converter;
-
+    public static final EwtsConverter converter_ewts = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
+    public static final EwtsConverter converter_dts = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
+    public static final EwtsConverter converter_alalc = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
+    
     private final RollingCharBuffer buffer = new RollingCharBuffer();
     private final int MAX_EWTS_LEN = 32;
     private String replacement = null;
@@ -27,6 +29,7 @@ public class TibEwtsFilter extends BaseCharFilter {
     private int replacementLen = -1;
     private int inputOff;
     StringBuilder tmpEwts;
+    public EwtsConverter converter;
 
     public TibEwtsFilter(Reader in) {
         this(in, TibetanAnalyzer.INPUT_METHOD_EWTS);
@@ -34,18 +37,17 @@ public class TibEwtsFilter extends BaseCharFilter {
 
     public TibEwtsFilter(final Reader in, final String inputMethod) {
         super(in);
-        EwtsConverter.Mode mode = EwtsConverter.Mode.EWTS;
+        this.converter = converter_ewts;
         switch (inputMethod) {
         case TibetanAnalyzer.INPUT_METHOD_DTS:
-            mode = EwtsConverter.Mode.DTS;
+            this.converter = converter_dts;
             break;
         case TibetanAnalyzer.INPUT_METHOD_ALALC:
-            mode = EwtsConverter.Mode.ALALC;
+            this.converter = converter_alalc;
             break;
         default:
             break;
         }
-        converter = new EwtsConverter(false, false, false, true, mode);
         buffer.reset(in);
         inputOff = 0;
     }
@@ -77,18 +79,18 @@ public class TibEwtsFilter extends BaseCharFilter {
         while (true) {
             final int c = buffer.get(inputOff);
             if (c == -1) {
-                replacement = tmpEwts.length() > 0 ? converter.toUnicode(tmpEwts.toString(), null, false, true) : null;
+                replacement = tmpEwts.length() > 0 ? this.converter.toUnicode(tmpEwts.toString(), null, false, true) : null;
                 break;
             }
             inputOff = inputOff + 1;
             tmpEwts.append((char) c);
             if (!isEwtsLetters(c)) {
-                replacement = converter.toUnicode(tmpEwts.toString(), null, false, true);
+                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, true);
                 stoppedOnPunctuation = true;
                 break;
             }
             if (inputOff - initialInputOff > MAX_EWTS_LEN) {
-                replacement = converter.toUnicode(tmpEwts.toString(), null, false, true);
+                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, true);
                 break;
             }
         }
