@@ -284,6 +284,17 @@ public class TibetanAnalyzerTest {
         indexingAnalyzer.close();
         queryAnalyzer.close();
     }
+    
+    @Test
+    public void testEwtsInitialSpace() throws IOException {
+        final Analyzer ewtsAnalyzer = new TibetanAnalyzer(false, true, true, "ewts", "");
+        String input = " pha)_pa la/_bka' babs lnga pa rjes dran gyi skor l";
+        TokenStream res = ewtsAnalyzer.tokenStream("", input);
+        List<String> expected = Arrays.asList("ཕ", "པ", "ལ", "བཀའ", "བབས", "ལྔ", "པ", "རྗེས", "དྲན", "གྱི", "སྐོར", "ལ");
+        System.out.print(input + " => ");
+        res.reset();
+        assertTokenStream(res, expected);
+    }
 
     @Test
     public void oldTibHighlight() throws IOException, ParseException, InvalidTokenOffsetsException {

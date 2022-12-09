@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [1.7.1] - 20221209
+### Fixed
+- fixed analysis of ewts string starting with space returning no token
+
 ## [1.5.0] - 20190614
 ### Added
 - added PaBaFilter and use it in the constructor

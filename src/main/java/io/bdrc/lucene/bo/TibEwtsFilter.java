@@ -18,9 +18,9 @@ import io.bdrc.ewtsconverter.EwtsConverter;
  **/
 public class TibEwtsFilter extends BaseCharFilter {
 
-    public static final EwtsConverter converter_ewts = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
-    public static final EwtsConverter converter_dts = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
-    public static final EwtsConverter converter_alalc = new EwtsConverter(false, false, false, true, EwtsConverter.Mode.EWTS);
+    public static final EwtsConverter converter_ewts = new EwtsConverter(false, false, false, false, EwtsConverter.Mode.EWTS);
+    public static final EwtsConverter converter_dts = new EwtsConverter(false, false, false, false, EwtsConverter.Mode.EWTS);
+    public static final EwtsConverter converter_alalc = new EwtsConverter(false, false, false, false, EwtsConverter.Mode.EWTS);
     
     private final RollingCharBuffer buffer = new RollingCharBuffer();
     private final int MAX_EWTS_LEN = 32;
