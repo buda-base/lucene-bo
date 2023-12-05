@@ -74,7 +74,7 @@ public final class TibetanAnalyzer extends Analyzer {
     // compatibility layer for < 1.5.0
     public TibetanAnalyzer(boolean segmentInWords, boolean lemmatize, boolean normalize, String inputMethod,
             String stopFilename, String lexiconFileName) throws IOException {
-            this(segmentInWords, segmentInWords ? "lemmas" : "affix-paba", "min", inputMethod, stopFilename, lexiconFileName);
+            this(segmentInWords, segmentInWords ? "lemmas" : "affix-paba", "l", inputMethod, stopFilename, lexiconFileName);
     }
     
     /**
@@ -101,13 +101,15 @@ public final class TibetanAnalyzer extends Analyzer {
             String stopFilename, String lexiconFileName) throws IOException {
         this.segmentInWords = segmentInWords;
         this.lemmatize = lemmatize;
-        this.normalize = normalize;
         this.inputMethod = inputMethod;
-        if (this.normalize.contains("ot")) {
+        if (normalize.contains("min")) {
+            this.normalizeMin = true;
+        }
+        if (normalize.contains("ot")) {
             this.convertOldTib = true;
             this.normalizeMin = true;
         }
-        if (this.normalize.contains("l")) {
+        if (normalize.contains("l")) {
             this.lenient = true;
             this.normalizeMin = true;
         }
