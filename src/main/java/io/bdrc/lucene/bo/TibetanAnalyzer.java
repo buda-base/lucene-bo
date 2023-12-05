@@ -133,7 +133,10 @@ public final class TibetanAnalyzer extends Analyzer {
         } else {
             this.tibStopSet = null;
         }
-        this.lexiconFileName = lexiconFileName;
+        if (lexiconFileName != null && lexiconFileName.isEmpty())
+            this.lexiconFileName = null;
+        else
+            this.lexiconFileName = lexiconFileName;
     }
 
     /**
