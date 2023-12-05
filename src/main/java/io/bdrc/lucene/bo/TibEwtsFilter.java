@@ -28,15 +28,17 @@ public class TibEwtsFilter extends BaseCharFilter {
     private int replacementIdx = -1;
     private int replacementLen = -1;
     private int inputOff;
+    private final boolean lenient;
     StringBuilder tmpEwts;
     public EwtsConverter converter;
 
     public TibEwtsFilter(Reader in) {
-        this(in, TibetanAnalyzer.INPUT_METHOD_EWTS);
+        this(in, TibetanAnalyzer.INPUT_METHOD_EWTS, true);
     }
 
-    public TibEwtsFilter(final Reader in, final String inputMethod) {
+    public TibEwtsFilter(final Reader in, final String inputMethod, final boolean lenient) {
         super(in);
+        this.lenient = lenient;
         this.converter = converter_ewts;
         switch (inputMethod) {
         case TibetanAnalyzer.INPUT_METHOD_DTS:
@@ -79,18 +81,18 @@ public class TibEwtsFilter extends BaseCharFilter {
         while (true) {
             final int c = buffer.get(inputOff);
             if (c == -1) {
-                replacement = tmpEwts.length() > 0 ? this.converter.toUnicode(tmpEwts.toString(), null, false, true) : null;
+                replacement = tmpEwts.length() > 0 ? this.converter.toUnicode(tmpEwts.toString(), null, false, this.lenient) : null;
                 break;
             }
             inputOff = inputOff + 1;
             tmpEwts.append((char) c);
             if (!isEwtsLetters(c)) {
-                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, true);
+                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, this.lenient);
                 stoppedOnPunctuation = true;
                 break;
             }
             if (inputOff - initialInputOff > MAX_EWTS_LEN) {
-                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, true);
+                replacement = this.converter.toUnicode(tmpEwts.toString(), null, false, this.lenient);
                 break;
             }
         }

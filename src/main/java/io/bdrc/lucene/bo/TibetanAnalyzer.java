@@ -212,7 +212,7 @@ public final class TibetanAnalyzer extends Analyzer {
         case INPUT_METHOD_EWTS:
         case INPUT_METHOD_DTS:
         case INPUT_METHOD_ALALC:
-            reader = new TibEwtsFilter(reader, this.inputMethod);
+            reader = new TibEwtsFilter(reader, this.inputMethod, this.lenient);
             break;
         case INPUT_METHOD_UNICODE:
         default:
