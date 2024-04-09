@@ -94,11 +94,48 @@ public class TibPattFilter {
         }
     }
     
+    public static class SktFilter1 extends PatternReplaceCharFilter {
+        public SktFilter1(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("[\u0F59\u0F5A]([\u0F71\u0F90-\u0FAC\u0FB3\u0FB7])");
+        public static final String repl = "\u0F45$1";
+    }
+    
+    public static class SktFilter2 extends PatternReplaceCharFilter {
+        public SktFilter2(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("[\u0FA9\u0FAA]([\u0F71\u0F90-\u0FAC\u0FB3\u0FB7])");
+        public static final String repl = "\u0F95$1";
+    }
+    
+    public static class SktFilter3 extends PatternReplaceCharFilter {
+        public SktFilter3(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("\u0F5B([\u0F71\u0F90-\u0FAC\u0FB3\u0FB7])");
+        public static final String repl = "\u0F47$1";
+    }
+    
+    public static class SktFilter4 extends PatternReplaceCharFilter {
+        public SktFilter4(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("\u0FAB([\u0F71\u0F90-\u0FAC\u0FB3\u0FB7])");
+        public static final String repl = "\u0F97$1";
+    }
+    
     public static Reader plugFilters(Reader in) {
+        in = new ReorderFilter(in);
         in = new MergedSylFilter1(in);
         in = new MergedSylFilter2(in);
         in = new MergedSylFilter3(in);
         in = new MergedSylFilter4(in);
+        in = new SktFilter1(in);
+        in = new SktFilter2(in);
+        in = new SktFilter3(in);
+        in = new SktFilter4(in);
         return in;
     }
 

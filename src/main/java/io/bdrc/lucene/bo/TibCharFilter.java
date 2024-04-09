@@ -92,6 +92,10 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("སེངྒེ", "སེང་གེ");
             builder.add("སེངགེ", "སེང་གེ");
             builder.add("ལིངྒ", "ལིང་ག");
+            builder.add("ལོཙ", "ལོ་ཙ");
+            builder.add("ལོཚ", "ལོ་ཙ");
+            builder.add("ལོ་ཙྭ", "ལོ་ཙ");
+            builder.add("ཙྪ", "ཙ");
             builder.add("ཀུཎྜ", "ཀུ་ནྡ");
             builder.add("ཀུནྡ", "ཀུ་ནྡ");
             builder.add("བནྡྷ", "བན་དྷ");
