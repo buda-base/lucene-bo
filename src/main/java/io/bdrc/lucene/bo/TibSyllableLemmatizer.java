@@ -20,7 +20,7 @@ public class TibSyllableLemmatizer extends TokenFilter {
     private Trie scanner = null;
     static final Logger logger = LoggerFactory.getLogger(TibWordTokenizer.class);
     
-    protected TibSyllableLemmatizer(final TokenStream input) {
+    public TibSyllableLemmatizer(final TokenStream input) {
         super(input);
         if (defaultTrie != null) {
             this.scanner = defaultTrie;
