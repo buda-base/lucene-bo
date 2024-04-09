@@ -6,12 +6,20 @@ import org.apache.lucene.analysis.charfilter.MappingCharFilter;
 import org.apache.lucene.analysis.charfilter.NormalizeCharMap;
 
 public class TibCharFilter extends MappingCharFilter {
-    public TibCharFilter(Reader in) {
-        super(getTibNormalizeCharMap(true, true), in);
+    public TibCharFilter(final Reader in) {
+        super(getTibNormalizeCharMapCached(true, true), in);
     }
     
-    public TibCharFilter(Reader in, boolean lenient, boolean oldtib) {
-        super(getTibNormalizeCharMap(lenient, oldtib), in);
+    public TibCharFilter(final Reader in, final boolean lenient, final boolean oldtib) {
+        super(getTibNormalizeCharMapCached(lenient, oldtib), in);
+    }
+    
+    private static final NormalizeCharMap[] cache = new NormalizeCharMap[] {null, null, null, null};
+    private static NormalizeCharMap getTibNormalizeCharMapCached(final boolean lenient, final boolean oldtib) {
+        final int idx = lenient ? (oldtib ? 0 : 1) : (oldtib ? 2 : 3);
+        if (cache[idx] == null)
+            cache[idx] = getTibNormalizeCharMap(lenient, oldtib);
+        return cache[idx];
     }
 
     public final static NormalizeCharMap getTibNormalizeCharMap(final boolean lenient, final boolean oldtib) {
