@@ -38,6 +38,8 @@ import org.apache.lucene.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.bdrc.lucene.bo.TibPattFilter.ReorderFilter;
+
 /**
  * An Analyzer that uses {@link TibSyllableTokenizer} and filters with
  * StopFilter
@@ -61,7 +63,6 @@ public final class TibetanAnalyzer extends Analyzer {
     boolean segmentInWords = false;
     String lemmatize = null;
     boolean convertOldTib = false;
-    boolean normalizeMin = false;
     boolean lemmatizeAffixes = false;
     boolean lemmatizePaba = false;
     boolean lemmatizeVerbs = false;
@@ -102,17 +103,10 @@ public final class TibetanAnalyzer extends Analyzer {
         this.segmentInWords = segmentInWords;
         this.lemmatize = lemmatize;
         this.inputMethod = inputMethod;
-        if (normalize.contains("min")) {
-            this.normalizeMin = true;
-        }
-        if (normalize.contains("ot")) {
+        if (normalize.contains("ot"))
             this.convertOldTib = true;
-            this.normalizeMin = true;
-        }
-        if (normalize.contains("l")) {
+        if (normalize.contains("l"))
             this.lenient = true;
-            this.normalizeMin = true;
-        }
         this.lemmatizeLemma = this.lemmatize.contains("lemmas");
         this.lemmatizeVerbs = this.lemmatize.contains("verbs");
         this.lemmatizePaba = this.lemmatize.contains("paba");
@@ -220,11 +214,12 @@ public final class TibetanAnalyzer extends Analyzer {
             reader = new TibEwtsFilter(reader, this.inputMethod, this.lenient);
             break;
         case INPUT_METHOD_UNICODE:
+            reader = new ReorderFilter(reader);
+            break;
         default:
             break;
         }
-        if (this.normalizeMin)
-            reader = new TibCharFilter(reader, this.lenient, this.convertOldTib);
+        reader = new TibCharFilter(reader, this.lenient, this.convertOldTib);
         if (this.convertOldTib)
             reader = TibPattFilter.plugFilters(reader);
         return super.initReader(fieldName, reader);
