@@ -116,9 +116,7 @@ public final class TibetanAnalyzer extends Analyzer {
                 InputStream stream = null;
                 stream = CommonHelpers.getResourceOrFile("bo-stopwords.txt");
                 if (stream == null) {
-                    final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
-                            + "\n\tAborting...";
-                    logger.error(msg);
+                    logger.error("The stop word file is not found");
                     this.tibStopSet = null;
                 } else {
                     this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
