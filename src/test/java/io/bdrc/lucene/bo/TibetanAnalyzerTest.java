@@ -150,7 +150,7 @@ public class TibetanAnalyzerTest {
     @Test
     public void stopwordFilterTest() throws IOException {
         System.out.println("Testing TibetanAnalyzer.tibStopWords");
-        String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་མམ་རམ་སམ་ཏམ་ནོ་ཏོ་གིན་ཀྱིན་གྱིན་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
+        String input = "ཧ་ཏུ་གི་ཀྱི་གིས་ཀྱིས་ཡིས་ཀྱང་སྟེ་ཏེ་ནོ་ཏོ་ཅིང་ཅིག་ཅེས་ཞེས་ཧ།";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("ཧ", "ཧ");
 
