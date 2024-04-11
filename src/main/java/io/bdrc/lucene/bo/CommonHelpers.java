@@ -3,6 +3,7 @@ package io.bdrc.lucene.bo;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.AccessControlException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class CommonHelpers {
             stream = new FileInputStream(fileBaseName);
             logger.info("found file {}", fileBaseName);
             return stream;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | AccessControlException e) {
             logger.info("could not find file {}", fileBaseName);
             return null;
         }
