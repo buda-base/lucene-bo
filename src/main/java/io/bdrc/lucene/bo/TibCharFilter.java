@@ -114,6 +114,8 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("རཏན", "རཏྣ");
             // dwags = dags, a bit risqué but should work
             builder.add("དྭགས", "དགས");
+            builder.add("\u0FC6", "");
+            builder.add("༸", "༧"); // often conflated
         }
         if (lenient || oldtib)
             builder.add("ྀ", "ི");
