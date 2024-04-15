@@ -24,6 +24,11 @@ public class CommonHelpers {
             logger.info("found resource /{} through thread context classloader", baseName);
             return stream;
         }
+        stream = CommonHelpers.class.getResourceAsStream(baseName);
+        if (stream != null) {
+            logger.info("found resource /{} through direct classloader", baseName);
+            return stream;
+        }
         final String fileBaseName = baseDir + baseName;
         try {
             stream = new FileInputStream(fileBaseName);
