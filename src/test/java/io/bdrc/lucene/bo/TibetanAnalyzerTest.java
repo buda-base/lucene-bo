@@ -112,7 +112,7 @@ public class TibetanAnalyzerTest {
     @Test
     public void sylTokenizerTest() throws IOException {
         System.out.println("Testing TibSyllableTokenizer()");
-        String input = "བཀྲ་ཤིས། བདེ་ལེགས། ཀཿཐོག ཀཿ་ཐོག";
+        String input = "བཀྲ་ཤིས། \nབདེ་ལེགས། ཀཿཐོག ཀཿ་ཐོག";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཀཿ", "ཐོག", "ཀཿ", "ཐོག");
         System.out.print(input + " => ");

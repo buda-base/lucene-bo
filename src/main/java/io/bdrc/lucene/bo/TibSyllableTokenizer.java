@@ -65,10 +65,6 @@ public final class TibSyllableTokenizer extends Tokenizer {
     protected boolean isTibLetterOrDigit(int c) {
         return ('\u0F40' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
     }
-
-    public final static int ST_INIT = 0;
-    public final static int ST_TIB = 0;
-    public final static int ST_NTIB = 0;
     
     @Override
     public final boolean incrementToken() throws IOException {
