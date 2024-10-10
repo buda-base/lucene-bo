@@ -6,26 +6,21 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
-public class StandardTibetanPhoneticFilter  extends TokenFilter{
+public final class StandardTibetanPhoneticFilter extends TokenFilter {
 
-    protected StandardTibetanPhoneticFilter(TokenStream input) {
+    public StandardTibetanPhoneticFilter(TokenStream input) {
         super(input);
     }
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     
     @Override
-    public boolean incrementToken() throws IOException {
-        if (!input.incrementToken()) {
+    public final boolean incrementToken() throws IOException {
+        if (!input.incrementToken())
             return false;
-        }
         
-        final char[] buffer = termAtt.buffer();
-        final int len = termAtt.length();
-        
-        
-        
-        return false;
+        PhoneticSystemStandardTibetan.INSTANCE.getPhonetics(termAtt);
+        return true;
     }
 
 }

@@ -29,6 +29,8 @@ public class PhoneticSystemStandardTibetan extends PhoneticSystem {
     public boolean ignoreSDSuffix = true;
     // also ignore long / short vowels
     public boolean ignoreLengthener = true;
+    // fold ä into e
+    public boolean foldAE = true; 
     
     public void addOnset(final String onset, String phonetic, final boolean canbefinal) {
         if (this.ignoreInitialNasalization && phonetic.startsWith("#"))
@@ -51,10 +53,12 @@ public class PhoneticSystemStandardTibetan extends PhoneticSystem {
             phonetic = phonetic.substring(0, phonetic.length()-1);
         if (this.ignoreLengthener && phonetic.contains(":"))
             phonetic = phonetic.replace(":", "");
+        if (this.foldAE && phonetic.contains("ä"))
+            phonetic = phonetic.replace("ä", "e");
         this.vowelCodaRoot.put(vowelCoda, phonetic.toCharArray());
     }
     
-    public static PhoneticSystemStandardTibetan INSTANCE = new PhoneticSystemStandardTibetan();
+    public static final PhoneticSystemStandardTibetan INSTANCE = new PhoneticSystemStandardTibetan();
     
     public PhoneticSystemStandardTibetan() {
         this.onsetTrie = new BasicTrie();

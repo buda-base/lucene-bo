@@ -38,7 +38,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  * @author Chris Tomlinson
  * @author Hélios Hildt
  */
-public class TibAffixedFilter extends TokenFilter {
+public final class TibAffixedFilter extends TokenFilter {
 
     boolean convertOldTib = false;
     public TibAffixedFilter(TokenStream input, boolean convertOldTib) {

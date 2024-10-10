@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import io.bdrc.lucene.stemmer.Row;
 import io.bdrc.lucene.stemmer.Trie;
 
-public class TibSyllableLemmatizer extends TokenFilter {
+public final class TibSyllableLemmatizer extends TokenFilter {
 
     private static Trie defaultTrie = null;
     
