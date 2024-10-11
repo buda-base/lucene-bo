@@ -41,9 +41,9 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                 return false;
             final String inputText = inputStringBuilder.toString().trim();
             tokenizeText(inputText);
-            for (final TokenWithIncrement twi : tokens) {
-                System.out.println("found token "+twi.token);
-            }
+            //for (final TokenWithIncrement twi : tokens) {
+            //    System.out.println("found token "+twi.token);
+            //}
         }
 
         if (tokenIndex < tokens.size()) {
@@ -68,7 +68,6 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         final String[] words = inputText.split("\\s+");
         for (final String word : words) {
             if (word.isEmpty()) continue;
-            System.out.println("debug0"+word);
             final List<List<String>> syllables = processWord(word.toCharArray(), 0, word.length());
             for (final List<String> possibleSyllables : syllables) {
                 // increment is 1 for the first in the possible syllables, then 0
@@ -86,7 +85,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         // For now, just return one possible cut for demonstration.
         // Here we are returning a single cut as an example.
         final String ch = String.copyValueOf(b, start, end-start);
-        if ("cfhjstvw".indexOf(b[start]) != -1) {
+        if ("cfhjstTDSvw".indexOf(b[start]) != -1) {
             // if starts with a letter that cannot be a suffix, then cut before
             return Collections.singletonList(new String[] { "", ch });
         }
@@ -97,10 +96,6 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             // if just 1 character that is ambiguously a start or end of a syllable:
             return List.of(new String[] {"", ch}, new String[] {ch, ""}, new String[] {ch, ch});
         }
-        if (ch.startsWith("ngng")) {
-            // special case of repition, unambiguous
-            return Collections.singletonList(new String[] { "N", "N"+String.copyValueOf(b, start+4, end-start-4) });
-        }
         // if a character is repeated, we cut between the repetition
         char previouschar = '.';
         int pos = start;
@@ -110,22 +105,22 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             previouschar = b[pos];
             pos += 1;
         }
-        if (ch.startsWith("ngy")) {
-            final String rest = String.copyValueOf(b, start+3, end-start-3);
+        if (ch.startsWith("nG")) {
+            final String rest = String.copyValueOf(b, start+2, end-start-2);
             return List.of(new String[] {"N", "y"+rest}, new String[] {"n", "G"+rest}, new String[] {"N", "G"+rest});
         }
-        if (ch.equals("ng")) {
+        if (ch.equals("N")) {
             // this one is pretty nasty...
-            final String rest = String.copyValueOf(b, start+2, end-start-2);
+            final String rest = String.copyValueOf(b, start+1, end-start-1);
             return List.of(new String[] {"", "N"+rest}, new String[] {"N", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"N", "N"+rest}, new String[] {"N", "g"+rest}, new String[] {"n", "N"+rest});
         }
-        if (ch.startsWith("ng")) {
+        if (ch.startsWith("N")) {
             // like "wangpo"
-            final String rest = String.copyValueOf(b, start+2, end-start-2);
+            final String rest = String.copyValueOf(b, start+1, end-start-1);
             return Collections.singletonList(new String[] {"N", rest});
         }
-        if (ch.startsWith("ny")) {
-            final String rest = String.copyValueOf(b, start+2, end-start-2);
+        if (ch.startsWith("Y")) {
+            final String rest = String.copyValueOf(b, start+1, end-start-1);
             return List.of(new String[] {"n", "y"+rest}, new String[] {"", "Y"+rest});
         }
         // for the rest we cut after the first (ex: palden)

@@ -46,7 +46,7 @@ public class PhoneticSystem {
         // just copy the two arrays:
         System.arraycopy(onset.phonetic, 0, b, 0, onset.phonetic.length);  // Copy starting at index 0
         System.arraycopy(vowelCodaPhonetic, 0, b, onset.phonetic.length, vowelCodaPhonetic.length);
-        termAtt.setLength(onset.phonetic.length + vowelCodaPhonetic.length);
+        termAtt.setLength(newLength);
         return true;
     }
 }

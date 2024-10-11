@@ -130,9 +130,9 @@ public class PhoneticsFilterTest {
     }
     
     // Function to check if the token streams from both analyzers match
-    public void checkMatch(String queryInput, String indexInput) throws IOException {
-        List<String> queryTokens = getQueryTokens(queryInput);
-        List<String> indexTokens = getIndexTokens(indexInput);
+    public void checkMatch(final String queryInput, final String indexInput) throws IOException {
+        final List<String> queryTokens = getQueryTokens(queryInput);
+        final List<String> indexTokens = getIndexTokens(indexInput);
         assertEquals("Token streams do not match! Query input: " + queryInput + ", Index input: " + indexInput, queryTokens, indexTokens);
     }
     
@@ -147,6 +147,12 @@ public class PhoneticsFilterTest {
         checkMatch("Selwè", "gsal ba'i");
         checkMatch("Padma Jungné", "pad+ma 'byung gnas");
         checkMatch("Péma Jungné", "pad+ma 'byung gnas");
+        checkMatch("Tenzin Gyatso", "bstan 'dzin rgya mtsho");
+        checkMatch("Tenzin Gyamtso", "bstan 'dzin rgya mtsho");
+        checkMatch("Panchen Lama", "paN chen bla ma");
+        checkMatch("Paṇchen Lama", "paN chen bla ma");
+        
+        
         
     }
     

@@ -12,7 +12,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
      * - gy = G
      * - ng = N (when unambiguous)
      * - ny = Y (when unambiguous)
-     * - dz = Z
+     * - ts = T
      * - sh = S
      * - tr = D
      */
@@ -86,11 +86,11 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("zh", "S");
         builder.add("sh", "S");
         builder.add("shy", "S"); // Nyingtik Yabshyi
-        builder.add("dz", "ts"); // to avoid confusion between dz and z
-        builder.add("dzh", "ts");
+        builder.add("dz", "T"); // to avoid confusion between dz and z
+        // builder.add("dzh", "T"); // not sure it's really cogent
         // z to dz in some cases
-        builder.add("nz", "nts"); // tenzin
-        builder.add("ngz", "Nts"); // 
+        builder.add("nz", "nT"); // tenzin
+        builder.add("ngz", "NT"); // 
         // but in most cases s (lobzang -> lobsang)
         builder.add("z", "s");
         // remove aspiration
@@ -99,7 +99,8 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ch", "c");
         builder.add("j", "c");
         builder.add("jh", "c");
-        builder.add("tsh", "ts");
+        builder.add("tsh", "T");
+        builder.add("ts", "T");
         builder.add("ph", "b");
         builder.add("p", "b");
         builder.add("thr", ignoreRetroflex ? "d" : "D");
@@ -116,9 +117,14 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ky", "G");
         // these are usually pronounced the same, example: Chöki -> chos kyi
         builder.add("kyi", "gi");
-        builder.add("ngyi", "N yi"); // exception sangyik sang yig
+        builder.add("ngyi", "N yi"); // exception sangyik sang yig?
         builder.add("gyi", "gi");
         builder.add("khyi", "gi");
+        // complicated, see tokenizer
+        builder.add("ngy", "nG");
+        builder.add("gy", "G");
+        builder.add("ng", "N");
+        builder.add("ny", "Y");
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
@@ -135,10 +141,10 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("sengge", "seN ge");
         builder.add("senggé", "seN ge");
         builder.add("singha", "siN ha");
-        builder.add("ringdzin", "rig tsin");
-        builder.add("ringzin", "rig tsin");
-        builder.add("rindzin", "rig tsin");
-        builder.add("rinzin", "rig tsin");
+        builder.add("ringdzin", "rig Tin");
+        builder.add("ringzin", "rig Tin");
+        builder.add("rindzin", "rig Tin");
+        builder.add("rinzin", "rig Tin");
         builder.add("diki", "de gi");
         builder.add("dicki", "de gi");
         builder.add("karmay", "gar meu"); // མཁར་རྨེའུ -> Karmay
@@ -151,7 +157,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // chos rgya pronounced chögyam as a short for chos kyi rgya mtsho
         builder.add("chogyam", "cho Ga");
         builder.add("chögyam", "cho Ga");
-        builder.add("gyamtso", "Ga tso");
+        builder.add("gyamtso", "Ga To");
         builder.add("khandro", "ga Do");
         builder.add("amdo", "a do");
         builder.add("chorten", "cho den");
@@ -164,8 +170,8 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("urgyen", "u Gen");
         builder.add("lharje", "lha je");
         builder.add("lharjé", "lha je");
-        builder.add("gyantse", "Gal tse");
-        builder.add("gyantsé", "Gal tse");
+        builder.add("gyantse", "Gal Te");
+        builder.add("gyantsé", "Gal Te");
         builder.add("lobzang", "lo saN");
         builder.add("lopzang", "lo saN");
         builder.add("lobsang", "lo saN");

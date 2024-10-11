@@ -6,7 +6,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
     
     public boolean ignoreRetroflex = true;
     public boolean alntoeln = true;
-    public boolean foldnasals = true;
+    public boolean foldnasals = false;
     
     public void addOnset(final String onset, String phonetic, final boolean canbefinal) {
         if (this.ignoreRetroflex && phonetic.startsWith("D"))
@@ -26,8 +26,8 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
                 phonetic = phonetic.replace("ä", "a");
         }
         if (this.foldnasals) {
-            phonetic = phonetic.replace("m", ",n");
-            phonetic = phonetic.replace("N", ",n");
+            phonetic = phonetic.replace("m", "n");
+            phonetic = phonetic.replace("N", "n");
         }
         this.vowelCodaRoot.put(vowelCoda, phonetic.toCharArray());
     }
@@ -40,6 +40,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         // ng = N
         // ny = Y
         // dr = D
+        // ts = T
         this.onsetTrie = new BasicTrie();
         this.addOnset("ཀ", "g");
         this.addOnset("ཀྱ", "G");
@@ -198,21 +199,21 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addOnset("རྨྱ", "Y");
         this.addOnset("སྨ", "m");
         this.addOnset("སྨྱ", "Y");
-        this.addOnset("ཙ", "ts");
-        this.addOnset("གཙ", "ts");
-        this.addOnset("བཙ", "ts");
-        this.addOnset("རྩ", "ts");
-        this.addOnset("སྩ", "ts");
-        this.addOnset("བརྩ", "ts");
-        this.addOnset("བསྩ", "ts");
-        this.addOnset("ཚ", "ts");
-        this.addOnset("མཚ", "ts");
-        this.addOnset("འཚ", "ts");
-        this.addOnset("ཛ", "ts");
-        this.addOnset("མཛ", "ts");
-        this.addOnset("འཛ", "ts");
-        this.addOnset("རྫ", "ts");
-        this.addOnset("བརྫ", "ts");
+        this.addOnset("ཙ", "T");
+        this.addOnset("གཙ", "T");
+        this.addOnset("བཙ", "T");
+        this.addOnset("རྩ", "T");
+        this.addOnset("སྩ", "T");
+        this.addOnset("བརྩ", "T");
+        this.addOnset("བསྩ", "T");
+        this.addOnset("ཚ", "T");
+        this.addOnset("མཚ", "T");
+        this.addOnset("འཚ", "T");
+        this.addOnset("ཛ", "T");
+        this.addOnset("མཛ", "T");
+        this.addOnset("འཛ", "T");
+        this.addOnset("རྫ", "T");
+        this.addOnset("བརྫ", "T");
         this.addOnset("ཝ", "w");
         this.addOnset("ཞ", "S");
         this.addOnset("གཞ", "S");
@@ -263,10 +264,10 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addOnset("དྲྭ", "D");
         this.addOnset("ཕྱྭ", "c");
         this.addOnset("མྭ", "m");
-        this.addOnset("ཙྭ", "ts");
-        this.addOnset("རྩྭ", "ts");
-        this.addOnset("ཚྭ", "ts");
-        this.addOnset("ཛྭ", "ts");
+        this.addOnset("ཙྭ", "T");
+        this.addOnset("རྩྭ", "T");
+        this.addOnset("ཚྭ", "T");
+        this.addOnset("ཛྭ", "T");
         this.addOnset("ཞྭ", "S");
         this.addOnset("ཟྭ", "s");
         this.addOnset("རྭ", "r");
