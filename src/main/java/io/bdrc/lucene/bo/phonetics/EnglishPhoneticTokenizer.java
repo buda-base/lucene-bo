@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class EnglishPhoneticTokenizer extends Tokenizer {
+public final class EnglishPhoneticTokenizer extends Tokenizer {
     
     // made by ChatGPT, quite unoptimized, but this direction is less critical than the other one for performance
 
@@ -30,7 +30,7 @@ public class EnglishPhoneticTokenizer extends Tokenizer {
     private int tokenIndex = 0;
 
     @Override
-    public boolean incrementToken() throws IOException {
+    public final boolean incrementToken() throws IOException {
         if (tokens.isEmpty()) {
             StringBuilder inputStringBuilder = new StringBuilder();
             int ch;
@@ -82,7 +82,7 @@ public class EnglishPhoneticTokenizer extends Tokenizer {
         // Here we are returning a single cut as an example.
         final String ch = String.copyValueOf(b, start, end);
         if ("cfhjstvw".indexOf(b[start]) != -1) {
-            // if starts with a letter that cannot be a prefix, then cut before
+            // if starts with a letter that cannot be a suffix, then cut before
             return Collections.singletonList(new String[] { "", ch });
         }
         if (end == start+1) {
@@ -106,10 +106,15 @@ public class EnglishPhoneticTokenizer extends Tokenizer {
             final String rest = String.copyValueOf(b, start+3, end);
             return List.of(new String[] {"ng", "y"+rest}, new String[] {"n", "gy"+rest}, new String[] {"ng", "gy"+rest});
         }
-        if (ch.startsWith("ng")) {
+        if (ch.equals("ng")) {
             // this one is pretty nasty...
             final String rest = String.copyValueOf(b, start+2, end);
             return List.of(new String[] {"", "ng"+rest}, new String[] {"ng", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"ng", "ng"+rest}, new String[] {"ng", "g"+rest}, new String[] {"n", "ng"+rest});
+        }
+        if (ch.startsWith("ng")) {
+            // like "wangpo"
+            final String rest = String.copyValueOf(b, start+2, end);
+            return Collections.singletonList(new String[] {"ng", rest});
         }
         if (ch.startsWith("ny")) {
             final String rest = String.copyValueOf(b, start+2, end);

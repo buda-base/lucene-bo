@@ -29,16 +29,16 @@ public class TibCharFilter extends MappingCharFilter {
         builder.add("\u0fD2", "\u0F0B");
         // we map latin digits to Tibetan instead of the opposite because
         // TibSyllableTokenizer remove non-Tibetan (including latin digits)
-        builder.add("0", "༠");
-        builder.add("1", "༡");
-        builder.add("2", "༢");
-        builder.add("3", "༣");
-        builder.add("4", "༤");
-        builder.add("5", "༥");
-        builder.add("6", "༦");
-        builder.add("7", "༧");
-        builder.add("8", "༨");
-        builder.add("9", "༩");
+        builder.add("༠", "0");
+        builder.add("༡", "1");
+        builder.add("༢", "2");
+        builder.add("༣", "3");
+        builder.add("༤", "4");
+        builder.add("༥", "5");
+        builder.add("༦", "6");
+        builder.add("༧", "7");
+        builder.add("༨", "8");
+        builder.add("༩", "9");
         // Characters to delete: the markers found under selected syllables
         builder.add("\u0F35", ""); // ༵
         builder.add("\u0F37", ""); // ༷
