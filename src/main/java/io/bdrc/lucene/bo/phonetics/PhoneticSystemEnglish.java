@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class PhoneticSystemEnglish extends PhoneticSystem {
     
-    public boolean ignoreRetroflex = false;
+    public boolean ignoreRetroflex = true;
     public boolean alntoeln = true;
     public boolean foldnasals = true;
     

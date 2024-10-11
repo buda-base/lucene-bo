@@ -138,7 +138,16 @@ public class PhoneticsFilterTest {
     
     @Test
     public void integratedPhoneticTest() throws IOException {
-        checkMatch("dalailama", "tA la'i bla ma");
+        checkMatch("Dalailama", "tA la'i bla ma");
+        checkMatch("Dalaï Lama", "tA la'i bla ma");
+        checkMatch("Kangyur", "bka' 'gyur");
+        checkMatch("Kanjur", "bka' 'gyur");
+        checkMatch("Ösel", "'od gsal");
+        checkMatch("Wösel", "'od gsal");
+        checkMatch("Selwè", "gsal ba'i");
+        checkMatch("Padma Jungné", "pad+ma 'byung gnas");
+        checkMatch("Péma Jungné", "pad+ma 'byung gnas");
+        
     }
     
 }

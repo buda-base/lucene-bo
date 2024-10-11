@@ -32,14 +32,18 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
     @Override
     public final boolean incrementToken() throws IOException {
         if (tokens.isEmpty()) {
-            StringBuilder inputStringBuilder = new StringBuilder();
+            final StringBuilder inputStringBuilder = new StringBuilder();
             int ch;
             while ((ch = input.read()) != -1) {
                 inputStringBuilder.append((char) ch);
             }
-
-            String inputText = inputStringBuilder.toString().trim();
+            if (inputStringBuilder.isEmpty())
+                return false;
+            final String inputText = inputStringBuilder.toString().trim();
             tokenizeText(inputText);
+            for (final TokenWithIncrement twi : tokens) {
+                System.out.println("found token "+twi.token);
+            }
         }
 
         if (tokenIndex < tokens.size()) {
@@ -64,6 +68,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         final String[] words = inputText.split("\\s+");
         for (final String word : words) {
             if (word.isEmpty()) continue;
+            System.out.println("debug0"+word);
             final List<List<String>> syllables = processWord(word.toCharArray(), 0, word.length());
             for (final List<String> possibleSyllables : syllables) {
                 // increment is 1 for the first in the possible syllables, then 0
@@ -80,48 +85,51 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         // This is where you implement your logic for determining possible cuts between vowels.
         // For now, just return one possible cut for demonstration.
         // Here we are returning a single cut as an example.
-        final String ch = String.copyValueOf(b, start, end);
+        final String ch = String.copyValueOf(b, start, end-start);
         if ("cfhjstvw".indexOf(b[start]) != -1) {
             // if starts with a letter that cannot be a suffix, then cut before
             return Collections.singletonList(new String[] { "", ch });
         }
         if (end == start+1) {
+            // not 100% sure it's always true, but "ala" -> "a la" and "ama" -> "a ma"
+            if (b[start] == 'l' || b[start] == 'm')
+                return Collections.singletonList(new String[] { "", ch });
             // if just 1 character that is ambiguously a start or end of a syllable:
-            return List.of(new String[] {"", ch}, new String[] {ch, ""});
+            return List.of(new String[] {"", ch}, new String[] {ch, ""}, new String[] {ch, ch});
         }
         if (ch.startsWith("ngng")) {
             // special case of repition, unambiguous
-            return Collections.singletonList(new String[] { "ng", String.copyValueOf(b, start+2, end) });
+            return Collections.singletonList(new String[] { "N", "N"+String.copyValueOf(b, start+4, end-start-4) });
         }
         // if a character is repeated, we cut between the repetition
         char previouschar = '.';
         int pos = start;
         while (pos < end) {
             if (b[pos] == previouschar)
-                return Collections.singletonList(new String[] { String.copyValueOf(b, start, pos), String.copyValueOf(b, pos, end) });
+                return Collections.singletonList(new String[] { String.copyValueOf(b, start, pos-start), String.copyValueOf(b, pos, end-pos) });
             previouschar = b[pos];
             pos += 1;
         }
         if (ch.startsWith("ngy")) {
-            final String rest = String.copyValueOf(b, start+3, end);
-            return List.of(new String[] {"ng", "y"+rest}, new String[] {"n", "gy"+rest}, new String[] {"ng", "gy"+rest});
+            final String rest = String.copyValueOf(b, start+3, end-start-3);
+            return List.of(new String[] {"N", "y"+rest}, new String[] {"n", "G"+rest}, new String[] {"N", "G"+rest});
         }
         if (ch.equals("ng")) {
             // this one is pretty nasty...
-            final String rest = String.copyValueOf(b, start+2, end);
-            return List.of(new String[] {"", "ng"+rest}, new String[] {"ng", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"ng", "ng"+rest}, new String[] {"ng", "g"+rest}, new String[] {"n", "ng"+rest});
+            final String rest = String.copyValueOf(b, start+2, end-start-2);
+            return List.of(new String[] {"", "N"+rest}, new String[] {"N", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"N", "N"+rest}, new String[] {"N", "g"+rest}, new String[] {"n", "N"+rest});
         }
         if (ch.startsWith("ng")) {
             // like "wangpo"
-            final String rest = String.copyValueOf(b, start+2, end);
-            return Collections.singletonList(new String[] {"ng", rest});
+            final String rest = String.copyValueOf(b, start+2, end-start-2);
+            return Collections.singletonList(new String[] {"N", rest});
         }
         if (ch.startsWith("ny")) {
-            final String rest = String.copyValueOf(b, start+2, end);
-            return List.of(new String[] {"n", "y"+rest}, new String[] {"", "ny"+rest});
+            final String rest = String.copyValueOf(b, start+2, end-start-2);
+            return List.of(new String[] {"n", "y"+rest}, new String[] {"", "Y"+rest});
         }
-        // not sure what would fall in this case...
-        return List.of(new String[] {"", ch}, new String[] {ch, ""});
+        // for the rest we cut after the first (ex: palden)
+        return Collections.singletonList(new String[] { String.copyValueOf(b, start, 1), String.copyValueOf(b, start+1, end-start-1)});
         
     }
 
@@ -135,6 +143,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             if ("aeiou".indexOf(b[i]) != -1) {
                 if (!previousisvowel)
                     vowelgroupstart = i;
+                previousisvowel = true;
             } else {
                 if (previousisvowel) {
                     final int[] vowelPosition = new int[2];
@@ -156,10 +165,10 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         
         if (vowelCount < 2) {
             // If there is only one vowel, return the whole word as a token
-            return List.of(List.of(String.copyValueOf(b, start, end)));
+            return List.of(List.of(String.copyValueOf(b, start, end-start)));
         } else {
             // we initialize the list of possible onsets to what's before the first vowel group + the first vowel group
-            List<String> possibleOnsets = List.of(String.copyValueOf(b, start, vowelPositions.get(0)[1]));
+            List<String> possibleOnsets = List.of(String.copyValueOf(b, start, vowelPositions.get(0)[1]-start));
             List<List<String>> syllableGroups = new ArrayList<>(); // the final result
             
             for (int i = 0; i < vowelCount - 1; i++) {
@@ -182,7 +191,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                     // if we're at the end, just finish:
                     if (i == vowelCount -2) {
                         syllableGroup = new ArrayList<>();
-                        final String ending = String.copyValueOf(b, vowelPositions.get(i + 1)[0], end);
+                        final String ending = String.copyValueOf(b, vowelPositions.get(i + 1)[0], end-vowelPositions.get(i + 1)[0]);
                         for (String[] cut : possibleCuts) {
                             // for all possible cuts, create the new set of possible onsets
                             syllableGroup.add(cut[1]+ending);
@@ -192,7 +201,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                     
                     // otherwise create the new list of possible onsets:
                     possibleOnsets = new ArrayList<>();
-                    final String afternextvowel = String.copyValueOf(b, vowelPositions.get(i + 1)[0], vowelPositions.get(i + 1)[1]);
+                    final String afternextvowel = String.copyValueOf(b, vowelPositions.get(i + 1)[0], vowelPositions.get(i + 1)[1]-vowelPositions.get(i + 1)[0]);
                     for (String[] cut : possibleCuts) {
                         // for all possible cuts, create the new set of possible onsets
                         possibleOnsets.add(cut[1]+afternextvowel);
@@ -203,6 +212,8 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             return syllableGroups;
         }
     }
+    
+    // TODO: test with Gomnyam
 
     @Override
     public void reset() throws IOException {

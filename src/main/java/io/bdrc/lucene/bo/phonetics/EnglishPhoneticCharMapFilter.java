@@ -18,6 +18,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
      */
     
     private static NormalizeCharMap cache = null;
+    private static boolean ignoreRetroflex = true;
 
     public EnglishPhoneticCharMapFilter(final Reader in) {
         super(getCharMapCached(), in);
@@ -32,6 +33,9 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
     public final static NormalizeCharMap getNormalizeCharMap() {
         NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
         builder.add("ae", "e");
+        builder.add("ai", "e"); // a'i is sometimes pronounced aï (as in Dalai Lama) or e (more common)
+        builder.add("aï", "e");
+        builder.add("ee", "i"); // shree
         builder.add("oe", "o"); // Damchoe
         builder.add("ue", "u"); // Tsondue
         // remove different diacritics
@@ -78,7 +82,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("t\u0323", "t");
         builder.add("ḍ", "d");
         builder.add("d\u0323", "d");
-        builder.add("dj", "j"); // dordje -> dorje
+        builder.add("dj", "j"); // Dudjom
         builder.add("zh", "S");
         builder.add("sh", "S");
         builder.add("shy", "S"); // Nyingtik Yabshyi
@@ -90,19 +94,20 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // but in most cases s (lobzang -> lobsang)
         builder.add("z", "s");
         // remove aspiration
-        builder.add("chh", "c"); //
+        builder.add("hl", "lh"); // hl is a bit closer to pronounciation 
+        builder.add("chh", "c");
         builder.add("ch", "c");
         builder.add("j", "c");
         builder.add("jh", "c");
         builder.add("tsh", "ts");
         builder.add("ph", "b");
         builder.add("p", "b");
-        builder.add("thr", "D");
+        builder.add("thr", ignoreRetroflex ? "d" : "D");
         builder.add("th", "d");
         builder.add("dh", "d"); // Dhondup
-        builder.add("tr", "D");
-        builder.add("dr", "D");
-        builder.add("dhr", "D");
+        builder.add("tr", ignoreRetroflex ? "d" : "D");
+        builder.add("dr", ignoreRetroflex ? "d" : "D");
+        builder.add("dhr", ignoreRetroflex ? "d" : "D");
         builder.add("t", "d");
         builder.add("kh", "g");
         builder.add("k", "g");
@@ -115,22 +120,21 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("gyi", "gi");
         builder.add("khyi", "gi");
         // exceptions
-        builder.add("patrul", "pal Dul");
-        builder.add("patrül", "pal Dul");
+        builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
+        builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("wose", "o se");
-        builder.add("kanjur", "ka Gur");
-        builder.add("kangyur", "ka Gur");
-        builder.add("tanjur", "ten Gur");
-        builder.add("tenjur", "ten Gur");
+        builder.add("wöse", "o se");
+        builder.add("kanjur", "ga Gur");
+        builder.add("kangyur", "ga Gur");
+        builder.add("tanjur", "den Gur");
+        builder.add("tenjur", "den Gur");
         builder.add("sangye", "saN Ge");
         builder.add("sangyé", "saN Ge");
         builder.add("senge", "seN ge");
         builder.add("sengé", "seN ge");
         builder.add("sengge", "seN ge");
         builder.add("senggé", "seN ge");
-        builder.add("tashi", "Da Si");
-        builder.add("tulku", "Dul ku");
-        builder.add("tülku", "Dul ku");
+        builder.add("singha", "siN ha");
         builder.add("ringdzin", "rig tsin");
         builder.add("ringzin", "rig tsin");
         builder.add("rindzin", "rig tsin");
@@ -170,7 +174,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("labrang", "la daN");
         builder.add("agsar", "a sar");
         builder.add("chugsum", "chu sum");
-        builder.add("padm", "pe m");
+        builder.add("padm", "be m");
         builder.add("gendun", "ge dun");
         builder.add("bonjong", "bo joN");
         builder.add("ganden", "ga den");
@@ -179,8 +183,13 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ngondzin", "No Zin");
         builder.add("yabshi", "ya Si");
         builder.add("sabche", "sa ce");
-        builder.add("chonjug", "co jug");
-        builder.add("kenjug", "ge jug");
+        builder.add("chonjug", "co cug");
+        builder.add("kenjug", "ge cug");
+        if (!ignoreRetroflex) {
+            builder.add("tashi", "da Si");
+            builder.add("tulku", "dul gu");
+            builder.add("tülku", "dul gu");
+        }
         return builder.build(); 
     }
 }
