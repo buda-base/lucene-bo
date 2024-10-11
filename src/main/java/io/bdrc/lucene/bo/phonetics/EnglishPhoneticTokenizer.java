@@ -89,9 +89,14 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             // if starts with a letter that cannot be a suffix, then cut before
             return Collections.singletonList(new String[] { "", ch });
         }
+        if (ch.equals("N")) {
+            // this one is pretty nasty...
+            final String rest = String.copyValueOf(b, start+1, end-start-1);
+            return List.of(new String[] {"", "N"+rest}, new String[] {"N", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"N", "N"+rest}, new String[] {"N", "g"+rest}, new String[] {"n", "N"+rest});
+        }
         if (end == start+1) {
             // not 100% sure it's always true, but "ala" -> "a la" and "ama" -> "a ma"
-            if (b[start] == 'l' || b[start] == 'm')
+            if (b[start] == 'l' || b[start] == 'm'  || b[start] == 'g')
                 return Collections.singletonList(new String[] { "", ch });
             // if just 1 character that is ambiguously a start or end of a syllable:
             return List.of(new String[] {"", ch}, new String[] {ch, ""}, new String[] {ch, ch});
@@ -108,11 +113,6 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         if (ch.startsWith("nG")) {
             final String rest = String.copyValueOf(b, start+2, end-start-2);
             return List.of(new String[] {"N", "y"+rest}, new String[] {"n", "G"+rest}, new String[] {"N", "G"+rest});
-        }
-        if (ch.equals("N")) {
-            // this one is pretty nasty...
-            final String rest = String.copyValueOf(b, start+1, end-start-1);
-            return List.of(new String[] {"", "N"+rest}, new String[] {"N", ""+rest}, new String[] {"n", "g"+rest}, new String[] {"N", "N"+rest}, new String[] {"N", "g"+rest}, new String[] {"n", "N"+rest});
         }
         if (ch.startsWith("N")) {
             // like "wangpo"

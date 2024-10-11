@@ -153,11 +153,9 @@ public class PhoneticsFilterTest {
         checkMatch("Paṇchen Lama", "paN chen bla ma");
         checkMatch("Phurpa Netik", "phur pa gnad tig");
         checkMatch("Jamyang Khyentse Wangpo", "'jam dbyangs mkhyen brtse'i dbang po");
-        
-        
-        
-        
-        
+        checkMatch("Marpa Lotsawa", "mar pa lo tsA ba");
+        checkMatch("Marpa Lotsawa", "mar pa lotsA ba");
+        checkMatch("Tsokar Gyaltsen", "mtsho skar rgyal mtshan");
     }
     
 }
