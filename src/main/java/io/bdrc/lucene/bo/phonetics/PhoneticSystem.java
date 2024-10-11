@@ -10,6 +10,7 @@ public class PhoneticSystem {
 
     protected BasicTrie onsetTrie;
     protected Map<String,char[]> vowelCodaRoot;
+    private static final char[] wa = "w".toCharArray();
 
     // Convenience function, not used in production
     public String getPhonetics(final String s) {
@@ -40,12 +41,16 @@ public class PhoneticSystem {
         final char[] vowelCodaPhonetic = vowelCodaRoot.getOrDefault(secondPart, null);
         if (vowelCodaPhonetic == null)
             return false;
-        final int newLength = onset.phonetic.length + vowelCodaPhonetic.length;
+        char[] phonetic = onset.phonetic;
+        // hack: dba = wa (but dbu != wu), this is the only case that doesn't fit in this algorithm
+        if (onset.nbchar == 2 && b[0] == 'ད' && b[1] == 'བ' && len > 2 && b[2] != '\u0f72' && b[2] != '\u0f74' && b[2] != '\u0f7a' && b[2] != '\u0f7c')
+            phonetic = wa;
+        final int newLength = phonetic.length + vowelCodaPhonetic.length;
         if (b.length < newLength)
             b = termAtt.resizeBuffer(newLength);
         // just copy the two arrays:
-        System.arraycopy(onset.phonetic, 0, b, 0, onset.phonetic.length);  // Copy starting at index 0
-        System.arraycopy(vowelCodaPhonetic, 0, b, onset.phonetic.length, vowelCodaPhonetic.length);
+        System.arraycopy(phonetic, 0, b, 0, phonetic.length);  // Copy starting at index 0
+        System.arraycopy(vowelCodaPhonetic, 0, b, phonetic.length, vowelCodaPhonetic.length);
         termAtt.setLength(newLength);
         return true;
     }

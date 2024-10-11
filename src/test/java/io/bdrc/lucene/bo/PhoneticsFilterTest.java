@@ -151,6 +151,10 @@ public class PhoneticsFilterTest {
         checkMatch("Tenzin Gyamtso", "bstan 'dzin rgya mtsho");
         checkMatch("Panchen Lama", "paN chen bla ma");
         checkMatch("Paṇchen Lama", "paN chen bla ma");
+        checkMatch("Phurpa Netik", "phur pa gnad tig");
+        checkMatch("Jamyang Khyentse Wangpo", "'jam dbyangs mkhyen brtse'i dbang po");
+        
+        
         
         
         

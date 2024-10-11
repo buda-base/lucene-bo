@@ -85,7 +85,7 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         // For now, just return one possible cut for demonstration.
         // Here we are returning a single cut as an example.
         final String ch = String.copyValueOf(b, start, end-start);
-        if ("cfhjstTDSvw".indexOf(b[start]) != -1) {
+        if ("cfhjstdTDSvw".indexOf(b[start]) != -1) {
             // if starts with a letter that cannot be a suffix, then cut before
             return Collections.singletonList(new String[] { "", ch });
         }

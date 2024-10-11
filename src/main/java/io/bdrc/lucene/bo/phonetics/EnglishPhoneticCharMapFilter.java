@@ -191,6 +191,10 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("sabche", "sa ce");
         builder.add("chonjug", "co cug");
         builder.add("kenjug", "ge cug");
+        builder.add("panchen", "ben cen");
+        builder.add("paṇchen", "ben cen");
+        builder.add("pandit", "ben dit");
+        builder.add("paṇḍit", "ben dit");
         if (!ignoreRetroflex) {
             builder.add("tashi", "da Si");
             builder.add("tulku", "dul gu");
