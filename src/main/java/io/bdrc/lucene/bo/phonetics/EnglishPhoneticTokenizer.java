@@ -72,7 +72,16 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             for (final List<String> possibleSyllables : syllables) {
                 // increment is 1 for the first in the possible syllables, then 0
                 boolean first = true;
-                for (final String possibleSyllable : possibleSyllables) {
+                for (String possibleSyllable : possibleSyllables) {
+                    /*
+                     * Important hack: we transform al and an into el and en. We can't do that earlier
+                     * because we don't want to change "pala" ("pa" "la") into "pela" ("pe" "la"). We need
+                     * to do it at a stage where we need if the l is suffix or not. That stage is here. 
+                     */
+                    if (possibleSyllable.endsWith("al"))
+                        possibleSyllable = possibleSyllable.substring(0,possibleSyllable.length()-2)+"el";
+                    else if (possibleSyllable.endsWith("an"))
+                        possibleSyllable = possibleSyllable.substring(0,possibleSyllable.length()-2)+"en";
                     tokens.add(new TokenWithIncrement(possibleSyllable, first ? 1 : 0));
                     first = false;
                 }

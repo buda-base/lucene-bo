@@ -51,8 +51,8 @@ public class PhoneticsFilterTest {
     
     @Test
     public void testCharMapFilter() throws IOException {
-        testPhoneticMapping("dzongsar", "tsongsar");
-        testPhoneticMapping("tenzin", "dentsin");
+        testPhoneticMapping("dzongsar", "ToNsar");
+        testPhoneticMapping("tenzin", "denTin");
         testPhoneticMapping("lobzang", "lo saN");
         testPhoneticMapping("lopzang", "lo saN");
     }
@@ -156,6 +156,10 @@ public class PhoneticsFilterTest {
         checkMatch("Marpa Lotsawa", "mar pa lo tsA ba");
         checkMatch("Marpa Lotsawa", "mar pa lotsA ba");
         checkMatch("Tsokar Gyaltsen", "mtsho skar rgyal mtshan");
+        checkMatch("Tsokar Gyeltsen", "mtsho skar rgyal mtshan");
+        checkMatch("Samding Dorje Phagmo", "bsam sding rdo rje phag mo");
+        checkMatch("Orgyen", "o rgyan");
+        checkMatch("Khandro Nyingtik", "mkha' 'gro snying thig");
     }
     
 }
