@@ -29,16 +29,18 @@ public class VeryBasicTrie {
     public int findLongestMatchPos(final char[] b, final int start, final int end) {
         TrieNode node = root;
         int longestMatchPos = -1;
+        if (node.canMatch)
+            longestMatchPos = start;
         for (int i = start; i < end; i++) {
-            if (node.canMatch) {
-                longestMatchPos = i+1;
-            }
             char ch = b[i];
             if (!node.children.containsKey(ch)) {
                 break;
             }
             node = node.children.get(ch);
+            if (node.canMatch)
+                longestMatchPos = i+1;
         }
+
         return longestMatchPos;
     }
     

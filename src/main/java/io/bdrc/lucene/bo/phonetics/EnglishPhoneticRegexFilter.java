@@ -26,7 +26,7 @@ public final class EnglishPhoneticRegexFilter {
             super(rCatcherMerged2, repl, in);
         }
         // wa not at the beginning -> ba
-        public static final Pattern rCatcherMerged2 = Pattern.compile("([a-z])w([aeo])");
+        public static final Pattern rCatcherMerged2 = Pattern.compile("([a-z])w([aeo])(?![nN])");
         public static final String repl = "$1 b$2";
         public final static String normalizeR(final String in) {
             final Matcher matcher = rCatcherMerged2.matcher(in);

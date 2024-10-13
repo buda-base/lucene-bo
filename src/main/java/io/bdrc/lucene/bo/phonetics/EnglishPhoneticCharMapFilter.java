@@ -41,7 +41,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // remove different diacritics
         builder.add("ü", "u"); // \\uFC
         builder.add("u\u0308", "u"); // decomposed version
-        builder.add("ö", "u"); // \\uF6
+        builder.add("ö", "o"); // \\uF6
         builder.add("o\u0308", "o"); // decomposed version
         builder.add("ä", "e"); // \\uE4
         builder.add("a\u0308", "e"); // decomposed version
@@ -94,7 +94,8 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // but in most cases s (lobzang -> lobsang)
         builder.add("z", "s");
         // remove aspiration
-        builder.add("hl", "lh"); // hl is a bit closer to pronounciation 
+        builder.add("hl", "l"); // hl is a bit closer to pronounciation
+        builder.add("lh", "l");
         builder.add("chh", "c");
         builder.add("ch", "c");
         builder.add("j", "c");
@@ -129,6 +130,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
+        builder.add("karma", "ga rma");
         builder.add("wose", "o se");
         builder.add("wöse", "o se");
         builder.add("kanjur", "ga Gur");
@@ -148,6 +150,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("rinzin", "rig Tin");
         builder.add("diki", "de gi");
         builder.add("dicki", "de gi");
+        builder.add("dickie", "de gi");
         builder.add("karmay", "gar meu"); // མཁར་རྨེའུ -> Karmay
         builder.add("amnye", "a Ye");
         builder.add("amnyé", "a Ye");
@@ -194,8 +197,9 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("kenjug", "ge cug");
         builder.add("panchen", "ben cen");
         builder.add("paṇchen", "ben cen");
-        builder.add("pandit", "ben dit");
-        builder.add("paṇḍit", "ben dit");
+        builder.add("pandita", "ba ndida");
+        builder.add("paṇḍita", "ba ndida");
+        builder.add("vajra", "ba Tra"); // ts -> c (dz -> j) is a bit difficult...
         if (!ignoreRetroflex) {
             builder.add("tashi", "da Si");
             builder.add("tulku", "dul gu");

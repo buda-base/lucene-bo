@@ -5,12 +5,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -27,6 +30,7 @@ import io.bdrc.lucene.bo.phonetics.LowerCaseCharFilter;
 import io.bdrc.lucene.bo.phonetics.StandardTibetanPhoneticFilter;
 
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.pattern.PatternReplaceCharFilter;
 
 public class PhoneticsFilterTest {
 
@@ -160,6 +164,18 @@ public class PhoneticsFilterTest {
         checkMatch("Samding Dorje Phagmo", "bsam sding rdo rje phag mo");
         checkMatch("Orgyen", "o rgyan");
         checkMatch("Khandro Nyingtik", "mkha' 'gro snying thig");
+        checkMatch("Karma", "kar+ma");
+        checkMatch("vajra", "ba dz+ra");
+        checkMatch("Sakya Pandita", "sa skya paN+Di ta");
+        checkMatch("Gyalwang Drukpa", "rgyal dbang 'brug pa");
+        checkMatch("Gyalwa Gyamtso", "rgyal ba rgya mtsho");
+        checkMatch("Ladakh", "la dwags");
+        checkMatch("Trinley", "'phrin les");
+        checkMatch("Rinchen Terdzö", "rin chen gter mdzod");
+        checkMatch("Lhatsün Jangchub Ö", "lha btsun byang chub 'od");
+        //checkMatch("Katog", "kaHthog");
+        //checkMatch("kunga", "kun dga'");
+        
     }
     
 }
