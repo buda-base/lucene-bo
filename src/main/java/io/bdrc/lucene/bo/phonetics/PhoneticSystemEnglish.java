@@ -430,7 +430,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addSkt('ཅ', "c");
         this.addSkt('ཆ', "c");
         this.addSkt('ཇ', "c");
-        this.addSkt('ཉ', "N");
+        this.addSkt('ཉ', "Y");
         this.addSkt('ཐ', "d");
         this.addSkt('ཏ', "d");
         this.addSkt('ད', "d");
@@ -487,7 +487,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addSkt('ྩ', "T");
         this.addSkt('ྪ', "T");
         this.addSkt('ྫ', "T");
-        this.addSkt('ྭ', "b");
+        this.addSkt('ྭ', "");
         this.addSkt('ྮ', "S");
         this.addSkt('ྯ', "s");
         this.addSkt('ྰ', "");

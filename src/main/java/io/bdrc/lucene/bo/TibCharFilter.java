@@ -92,6 +92,8 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("ཥ", "ཤ");
             builder.add("ྵ" , "ྴ");
             // a few Sanskrit stacks:
+            builder.add("ནྱ", "ཉ");
+            builder.add("ྣྱ", "ྙ");
             builder.add("རྨྨ", "རྨ");
             builder.add("རྦྦ", "རྦ");
             builder.add("རྒྒ", "རྒ");
