@@ -3,20 +3,20 @@ package io.bdrc.lucene.bo.phonetics;
 import java.util.HashMap;
 import java.util.Map;
 
-class BasicTrie {
+public class BasicTrie {
     
     public static final class TrieNode {
-        Map<Character, TrieNode> children = new HashMap<>();
+        final Map<Character, TrieNode> children = new HashMap<>();
         char[] phonetic = null; // Stores the phonetic representation of the syllable part
         boolean canbefinal = false;
     }
     
     public static final class TrieMatch {
-        char[] phonetic = null;
-        int nbchar = 0;
+        public char[] phonetic = null;
+        public int nbchar = 0;
     }
 
-    private TrieNode root;
+    private final TrieNode root;
 
     public BasicTrie() {
         this.root = new TrieNode();

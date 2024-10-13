@@ -14,6 +14,10 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.onsetTrie.add(onset,  phonetic, canbefinal);
     }
     
+    public void addSkt(final char c, String sktPhonetic) {
+        this.sktPhonetic.put(c, sktPhonetic.toCharArray());
+    }
+    
     public void addOnset(final String onset, final String phonetic) {
         this.addOnset(onset, phonetic, true);
     }
@@ -35,6 +39,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
     public static final PhoneticSystemEnglish INSTANCE = new PhoneticSystemEnglish();
     
     public PhoneticSystemEnglish() {
+        super("a");
         // we ignore tones, aspiration, voicing
         // gy = G
         // ng = N
@@ -416,6 +421,87 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addVowelCoda("ོའུའམ", "ouam");
         this.addVowelCoda("ོའུར", "our");
         this.addVowelCoda("ོའུས", "ou");
+        
+        this.sktPhonetic = new HashMap<>();
+        this.addSkt('ཀ', "g");
+        this.addSkt('ཁ', "g");
+        this.addSkt('ག', "g");
+        this.addSkt('ང', "N");
+        this.addSkt('ཅ', "c");
+        this.addSkt('ཆ', "c");
+        this.addSkt('ཇ', "c");
+        this.addSkt('ཉ', "N");
+        this.addSkt('ཐ', "d");
+        this.addSkt('ཏ', "d");
+        this.addSkt('ད', "d");
+        this.addSkt('ན', "n");
+        this.addSkt('པ', "b");
+        this.addSkt('ཕ', "b");
+        this.addSkt('བ', "b");
+        this.addSkt('མ', "m");
+        this.addSkt('ཙ', "T");
+        this.addSkt('ཚ', "T");
+        this.addSkt('ཛ', "T");
+        this.addSkt('ཝ', "b");
+        this.addSkt('ཞ', "S");
+        this.addSkt('ཟ', "s");
+        this.addSkt('འ', "");
+        this.addSkt('ཡ', "y");
+        this.addSkt('ར', "r");
+        this.addSkt('ལ', "l");
+        this.addSkt('ཤ', "S");
+        this.addSkt('ཥ', "S");
+        this.addSkt('ས', "s");
+        this.addSkt('ཧ', "");
+        this.addSkt('ཨ', "");
+        this.addSkt('ཪ', "r");
+        this.addSkt('ཱ', "");
+        this.addSkt('ི', "i");
+        this.addSkt('ུ', "u");
+        this.addSkt('ེ', "e");
+        this.addSkt('ཻ', "e");
+        this.addSkt('ོ', "o");
+        this.addSkt('ཽ', "o");
+        this.addSkt('ཾ', "n");
+        this.addSkt('ཿ', "");
+        this.addSkt('ྀ', "i");
+        this.addSkt('ྂ', "n");
+        this.addSkt('ྃ', "n");
+        this.addSkt('྄', "");
+        this.addSkt('ྐ', "g");
+        this.addSkt('ྑ', "g");
+        this.addSkt('ྒ', "g");
+        this.addSkt('ྔ', "N");
+        this.addSkt('ྕ', "c");
+        this.addSkt('ྖ', "c");
+        this.addSkt('ྗ', "c");
+        this.addSkt('ྙ', "Y");
+        this.addSkt('ྟ', "d");
+        this.addSkt('ྠ', "d");
+        this.addSkt('ྡ', "d");
+        this.addSkt('ྣ', "n");
+        this.addSkt('ྤ', "b");
+        this.addSkt('ྥ', "b");
+        this.addSkt('ྦ', "b");
+        this.addSkt('ྨ', "m");
+        this.addSkt('ྩ', "T");
+        this.addSkt('ྪ', "T");
+        this.addSkt('ྫ', "T");
+        this.addSkt('ྭ', "b");
+        this.addSkt('ྮ', "S");
+        this.addSkt('ྯ', "s");
+        this.addSkt('ྰ', "");
+        this.addSkt('ྱ', "y");
+        this.addSkt('ྲ', "r");
+        this.addSkt('ླ', "l");
+        this.addSkt('ྴ', "S");
+        this.addSkt('ྵ', "S");
+        this.addSkt('ྶ', "s");
+        this.addSkt('ྷ', "");
+        this.addSkt('ྸ', "");
+        this.addSkt('ྺ', "b");
+        this.addSkt('ྻ', "y");
+        this.addSkt('ྼ', "r");
     }
 
 }

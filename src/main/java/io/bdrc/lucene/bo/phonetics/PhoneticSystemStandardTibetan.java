@@ -61,6 +61,7 @@ public class PhoneticSystemStandardTibetan extends PhoneticSystem {
     public static final PhoneticSystemStandardTibetan INSTANCE = new PhoneticSystemStandardTibetan();
     
     public PhoneticSystemStandardTibetan() {
+        super("");
         this.onsetTrie = new BasicTrie();
         this.addOnset("ཀ", "k+");
         this.addOnset("ཀྱ", "ky+");

@@ -125,6 +125,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("gy", "G");
         builder.add("ng", "N");
         builder.add("ny", "Y");
+        builder.add("v", "b");
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");

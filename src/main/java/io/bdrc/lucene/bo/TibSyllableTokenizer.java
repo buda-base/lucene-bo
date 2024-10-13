@@ -20,6 +20,8 @@
 package io.bdrc.lucene.bo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.CharacterUtils.CharacterBuffer;
@@ -42,9 +44,7 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
  * 
  */
 public final class TibSyllableTokenizer extends Tokenizer {
-    
-    
-    
+
     private int offset = 0, bufferIndex = 0, dataLen = 0, finalOffset = 0;
     public static final int DEFAULT_MAX_WORD_LEN = 255;
     private static final int IO_BUFFER_SIZE = 4096;
@@ -52,14 +52,21 @@ public final class TibSyllableTokenizer extends Tokenizer {
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
+    private final IsStandardTibetanAttribute istAtt = addAttribute(IsStandardTibetanAttribute.class);
 
     private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
+    
+    private final List<Integer> stackBreaks = new ArrayList<>();  // To store stack break positions
+    private int stackBreakIndex = 0;  // To track the current stack break being processed
+    private int stackStart = -1;
+    private int stackEnd = -1;
+    
+    private boolean tokenizeNonStandardTibIntoStacks = true;
     
     /**
      * Construct a new TibSyllableTokenizer.
      */
-    public TibSyllableTokenizer() {
-    }
+    public TibSyllableTokenizer() { }
 
     // see http://jrgraphix.net/r/Unicode/0F00-0FFF
     protected boolean isTibLetterOrDigit(int c) {
@@ -68,55 +75,101 @@ public final class TibSyllableTokenizer extends Tokenizer {
     
     @Override
     public final boolean incrementToken() throws IOException {
-      clearAttributes();
-      int length = 0;
-      int start = -1; // this variable is always initialized
-      int end = -1;
-      char[] buffer = termAtt.buffer();
-      while (true) {
-        if (bufferIndex >= dataLen) {
-          offset += dataLen;
-          CharacterUtils.fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
-          if (ioBuffer.getLength() == 0) {
-            dataLen = 0; // so next offset += dataLen won't decrement offset
-            if (length > 0) {
-              break;
-            } else {
-              finalOffset = correctOffset(offset);
-              return false;
-            }
-          }
-          dataLen = ioBuffer.getLength();
-          bufferIndex = 0;
-        }
-        // use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based
-        // methods are gone
-        final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
-        final int charCount = Character.charCount(c);
-        bufferIndex += charCount;
-        if (isTibLetterOrDigit(c)) { // if it's a token char
-          if (length == 0) { // start of token
-            start = offset + bufferIndex - charCount;
-            end = start;
-          } else if (length >= buffer.length - 1) { // supplementary could run out of bounds?
-            // make sure a supplementary fits in the buffer
-            buffer = termAtt.resizeBuffer(2 + length);
-          }
-          end += charCount;
-          length += Character.toChars(c, buffer, length); // buffer it, normalized
-          // buffer overflow! make sure to check for >= surrogate pair could break == test
-          // XXX: manual change here to cut after 0F7F
-          if (c == '\u0f7f' || length >= maxTokenLen) {
-            break;
-          }
-        } else if (length > 0) { // at non-Letter w/ chars
-          break; // return 'em
-        }
-      }
+        clearAttributes();
 
-      termAtt.setLength(length);
-      offsetAtt.setOffset(correctOffset(start), finalOffset = correctOffset(end));
-      return true;
+        // If there are remaining stack breaks, return the next token based on stack breaks
+        if (stackBreakIndex < stackBreaks.size()) {
+            int start = stackStart;
+            int end = stackBreaks.get(stackBreakIndex);
+            termAtt.copyBuffer(termAtt.buffer(), start, end - start);
+            istAtt.set(false);
+            offsetAtt.setOffset(correctOffset(start), correctOffset(end));
+            stackStart = end;  // Move the start to the next break
+            stackBreakIndex++;
+            return true;
+        } else {
+            istAtt.set(true);
+        }
+
+        // Normal tokenization process
+        int length = 0;
+        int start = -1;
+        int end = -1;
+        char[] buffer = termAtt.buffer();
+
+        while (true) {
+            if (bufferIndex >= dataLen) {
+                offset += dataLen;
+                CharacterUtils.fill(ioBuffer, input); // Fill buffer
+                if (ioBuffer.getLength() == 0) {
+                    dataLen = 0;
+                    if (length > 0) {
+                        break;
+                    } else {
+                        finalOffset = correctOffset(offset);
+                        return false;
+                    }
+                }
+                dataLen = ioBuffer.getLength();
+                bufferIndex = 0;
+            }
+
+            final int c = Character.codePointAt(ioBuffer.getBuffer(), bufferIndex, ioBuffer.getLength());
+            final int charCount = Character.charCount(c);
+            bufferIndex += charCount;
+
+            if (isTibLetterOrDigit(c)) {  // Token character
+                if (length == 0) {
+                    start = offset + bufferIndex - charCount;
+                    end = start;
+                } else if (length >= buffer.length - 1) {
+                    buffer = termAtt.resizeBuffer(2 + length);
+                }
+
+                end += charCount;
+                length += Character.toChars(c, buffer, length);
+
+                if (c == '\u0f7f' || length >= maxTokenLen) {
+                    break;
+                }
+            } else if (length > 0) {
+                break;
+            }
+        }
+
+        // Check if the token is a valid Tibetan syllable
+        if (length > 0) {
+            if (tokenizeNonStandardTibIntoStacks && !CommonHelpers.isStandardTibetan(buffer, start, end)) {
+                // It's not a valid Tibetan syllable, so split it into smaller tokens
+                stackBreaks.clear();  // Clear any previous stack breaks
+                stackStart = start;  // Initialize the start of the stack
+                int currentStackBreak = start;
+
+                while (currentStackBreak < end) {
+                    int nextBreak = CommonHelpers.nextStackBreak(buffer, currentStackBreak, end);
+                    stackBreaks.add(nextBreak);  // Add the break position
+                    currentStackBreak = nextBreak;
+                }
+
+                stackBreakIndex = 0;  // Reset the stack break index
+
+                // Return the first stack as the token
+                stackEnd = stackBreaks.get(stackBreakIndex);
+                istAtt.set(false);
+                termAtt.copyBuffer(buffer, stackStart, stackEnd - stackStart);
+                offsetAtt.setOffset(correctOffset(stackStart), correctOffset(stackEnd));
+                stackStart = stackEnd;  // Move to the next break
+                stackBreakIndex++;
+                return true;
+            } else {
+                // Valid syllable, return it as a single token
+                termAtt.copyBuffer(buffer, 0, length);
+                offsetAtt.setOffset(correctOffset(start), correctOffset(end));
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

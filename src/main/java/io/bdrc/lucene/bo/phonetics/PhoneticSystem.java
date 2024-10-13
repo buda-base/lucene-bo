@@ -10,7 +10,13 @@ public class PhoneticSystem {
 
     protected BasicTrie onsetTrie;
     protected Map<String,char[]> vowelCodaRoot;
+    protected Map<Character,char[]> sktPhonetic;
     private static final char[] wa = "w".toCharArray();
+    private char[] implicitA;
+    
+    PhoneticSystem(final String implicitA) {
+        this.implicitA = implicitA.toCharArray();
+    }
 
     // Convenience function, not used in production
     public String getPhonetics(final String s) {
@@ -51,6 +57,30 @@ public class PhoneticSystem {
         // just copy the two arrays:
         System.arraycopy(phonetic, 0, b, 0, phonetic.length);  // Copy starting at index 0
         System.arraycopy(vowelCodaPhonetic, 0, b, phonetic.length, vowelCodaPhonetic.length);
+        termAtt.setLength(newLength);
+        return true;
+    }
+    
+    public boolean getSktPhonetics(final CharTermAttribute termAtt) {
+        char[] b = termAtt.buffer();
+        final int len = termAtt.length();
+        if (len == 0)
+            return false;
+        // substitute character by character
+        final StringBuilder phonetic = new StringBuilder();
+        for (int i = 0 ; i < len ; i++) {
+            char c = b[i];
+            if (sktPhonetic.containsKey(c))
+                phonetic.append(sktPhonetic.get(c));
+            else
+                phonetic.append(c);
+        }
+        if ("iou".indexOf(phonetic.charAt(phonetic.length()-1)) == -1)
+            phonetic.append(this.implicitA);
+        final int newLength = phonetic.length();
+        if (b.length < newLength)
+            b = termAtt.resizeBuffer(newLength);
+        System.arraycopy(phonetic, 0, b, 0, phonetic.length());
         termAtt.setLength(newLength);
         return true;
     }
