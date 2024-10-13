@@ -8,5 +8,8 @@ public interface IsStandardTibetanAttribute extends Attribute {
      * Just a boolean attribute set to true if the syllable is following
      * spelling rules of Standard Tibetan. Set by the tokenizer.
      */
+    
+    void setIsStandardTibetan(boolean result);
+    boolean getIsStandardTibetan();
 
 }

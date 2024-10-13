@@ -26,7 +26,7 @@ public final class EnglishPhoneticFilter extends TokenFilter {
         if (!input.incrementToken())
             return false;
         
-        if (istAtt.get())
+        if (istAtt.getIsStandardTibetan())
             PhoneticSystemEnglish.INSTANCE.getPhonetics(termAtt);
         else
             PhoneticSystemEnglish.INSTANCE.getSktPhonetics(termAtt);

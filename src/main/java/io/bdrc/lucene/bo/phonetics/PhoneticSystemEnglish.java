@@ -15,7 +15,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
     }
     
     public void addSkt(final char c, String sktPhonetic) {
-        this.sktPhonetic.put(c, sktPhonetic.toCharArray());
+        this.sktPhonetic.put(c, sktPhonetic);
     }
     
     public void addOnset(final String onset, final String phonetic) {

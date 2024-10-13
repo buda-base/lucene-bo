@@ -55,6 +55,7 @@ public final class TibSyllableTokenizer extends Tokenizer {
     private final IsStandardTibetanAttribute istAtt = addAttribute(IsStandardTibetanAttribute.class);
 
     private final CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
+    private char[] bufferForStacks = null;
     
     private final List<Integer> stackBreaks = new ArrayList<>();  // To store stack break positions
     private int stackBreakIndex = 0;  // To track the current stack break being processed
@@ -81,14 +82,14 @@ public final class TibSyllableTokenizer extends Tokenizer {
         if (stackBreakIndex < stackBreaks.size()) {
             int start = stackStart;
             int end = stackBreaks.get(stackBreakIndex);
-            termAtt.copyBuffer(termAtt.buffer(), start, end - start);
-            istAtt.set(false);
+            termAtt.copyBuffer(bufferForStacks, start, end - start);
+            istAtt.setIsStandardTibetan(false);
             offsetAtt.setOffset(correctOffset(start), correctOffset(end));
             stackStart = end;  // Move the start to the next break
             stackBreakIndex++;
             return true;
         } else {
-            istAtt.set(true);
+            istAtt.setIsStandardTibetan(true);
         }
 
         // Normal tokenization process
@@ -139,36 +140,35 @@ public final class TibSyllableTokenizer extends Tokenizer {
 
         // Check if the token is a valid Tibetan syllable
         if (length > 0) {
-            if (tokenizeNonStandardTibIntoStacks && !CommonHelpers.isStandardTibetan(buffer, start, end)) {
+            if (tokenizeNonStandardTibIntoStacks && !CommonHelpers.isStandardTibetan(buffer, 0, length)) {
                 // It's not a valid Tibetan syllable, so split it into smaller tokens
                 stackBreaks.clear();  // Clear any previous stack breaks
-                stackStart = start;  // Initialize the start of the stack
-                int currentStackBreak = start;
+                stackStart = 0;  // Initialize the start of the stack
+                int currentStackBreak = 0;
 
-                while (currentStackBreak < end) {
-                    int nextBreak = CommonHelpers.nextStackBreak(buffer, currentStackBreak, end);
+                while (currentStackBreak < length) {
+                    int nextBreak = CommonHelpers.nextStackBreak(buffer, currentStackBreak, length);
                     stackBreaks.add(nextBreak);  // Add the break position
                     currentStackBreak = nextBreak;
                 }
-
-                stackBreakIndex = 0;  // Reset the stack break index
-
-                // Return the first stack as the token
-                stackEnd = stackBreaks.get(stackBreakIndex);
-                istAtt.set(false);
+                // Return the first stack as the token                
+                stackEnd = stackBreaks.get(0);
+                istAtt.setIsStandardTibetan(false);
+                bufferForStacks = new char[length];
+                System.arraycopy(buffer, 0, bufferForStacks, 0, length);
                 termAtt.copyBuffer(buffer, stackStart, stackEnd - stackStart);
                 offsetAtt.setOffset(correctOffset(stackStart), correctOffset(stackEnd));
                 stackStart = stackEnd;  // Move to the next break
-                stackBreakIndex++;
+                stackBreakIndex = 1;
                 return true;
             } else {
                 // Valid syllable, return it as a single token
                 termAtt.copyBuffer(buffer, 0, length);
+                istAtt.setIsStandardTibetan(true);
                 offsetAtt.setOffset(correctOffset(start), correctOffset(end));
                 return true;
             }
         }
-
         return false;
     }
 

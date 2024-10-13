@@ -10,7 +10,7 @@ public class PhoneticSystem {
 
     protected BasicTrie onsetTrie;
     protected Map<String,char[]> vowelCodaRoot;
-    protected Map<Character,char[]> sktPhonetic;
+    protected Map<Character,String> sktPhonetic;
     private static final char[] wa = "w".toCharArray();
     private char[] implicitA;
     
@@ -70,17 +70,18 @@ public class PhoneticSystem {
         final StringBuilder phonetic = new StringBuilder();
         for (int i = 0 ; i < len ; i++) {
             char c = b[i];
-            if (sktPhonetic.containsKey(c))
+            if (sktPhonetic.containsKey(c)) {
                 phonetic.append(sktPhonetic.get(c));
-            else
+            }  else {
                 phonetic.append(c);
+            }
         }
-        if ("iou".indexOf(phonetic.charAt(phonetic.length()-1)) == -1)
+        if (phonetic.length() == 0 || "ieou".indexOf(phonetic.charAt(phonetic.length() - 1)) == -1)
             phonetic.append(this.implicitA);
         final int newLength = phonetic.length();
         if (b.length < newLength)
             b = termAtt.resizeBuffer(newLength);
-        System.arraycopy(phonetic, 0, b, 0, phonetic.length());
+        phonetic.getChars(0, newLength, b, 0);
         termAtt.setLength(newLength);
         return true;
     }

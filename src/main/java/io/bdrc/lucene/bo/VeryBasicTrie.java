@@ -30,14 +30,14 @@ public class VeryBasicTrie {
         TrieNode node = root;
         int longestMatchPos = -1;
         for (int i = start; i < end; i++) {
+            if (node.canMatch) {
+                longestMatchPos = i+1;
+            }
             char ch = b[i];
             if (!node.children.containsKey(ch)) {
                 break;
             }
             node = node.children.get(ch);
-            if (node.canMatch) {
-                longestMatchPos = start+i+1;
-            }
         }
         return longestMatchPos;
     }

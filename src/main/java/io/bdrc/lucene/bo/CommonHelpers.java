@@ -428,7 +428,7 @@ public class CommonHelpers {
             return false;
         if (longestMatchPos == end)
             return true;
-        longestMatchPos = onsetTrie.findLongestMatchPos(b, longestMatchPos, end);
+        longestMatchPos = vowelCodaTrie.findLongestMatchPos(b, longestMatchPos, end);
         return longestMatchPos == end;
     }
     
@@ -447,7 +447,4 @@ public class CommonHelpers {
         }
         return pos;
     }
-    
-    
-
 }
