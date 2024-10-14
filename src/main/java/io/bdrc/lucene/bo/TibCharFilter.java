@@ -116,6 +116,10 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("ཀྲོདྡྷ", "ཀྲོ་དྷ");
             builder.add("པནདི", "པནྡི");
             builder.add("རཏན", "རཏྣ");
+            builder.add("ཀརྨ", "ཀར་མ");
+            builder.add("བནྡེ", "བན་དེ");
+            
+            builder.add("ལྡེའུ་བཙན", "ལྡེ་བཙན");
             // dwags = dags, a bit risqué but should work
             //builder.add("དྭགས", "དགས");
             builder.add("\u0FC6", "");

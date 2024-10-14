@@ -130,7 +130,10 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
-        builder.add("karma", "ga rma");
+        builder.add("mingyur", "mi Gur");
+        builder.add("pakshi", "ba gSi");
+        builder.add("rakshi", "ra gSi");
+        builder.add("amchi ", "em ci ");
         builder.add("wose", "o se");
         builder.add("wöse", "o se");
         builder.add("kanjur", "ga Gur");

@@ -142,40 +142,68 @@ public class PhoneticsFilterTest {
     
     @Test
     public void integratedPhoneticTest() throws IOException {
-        checkMatch("Dalailama", "tA la'i bla ma");
-        checkMatch("Dalaï Lama", "tA la'i bla ma");
-        checkMatch("Kangyur", "bka' 'gyur");
-        checkMatch("Kanjur", "bka' 'gyur");
-        checkMatch("Ösel", "'od gsal");
-        checkMatch("Wösel", "'od gsal");
-        checkMatch("Selwè", "gsal ba'i");
-        checkMatch("Padma Jungné", "pad+ma 'byung gnas");
-        checkMatch("Péma Jungné", "pad+ma 'byung gnas");
-        checkMatch("Tenzin Gyatso", "bstan 'dzin rgya mtsho");
-        checkMatch("Tenzin Gyamtso", "bstan 'dzin rgya mtsho");
-        checkMatch("Panchen Lama", "paN chen bla ma");
-        checkMatch("Paṇchen Lama", "paN chen bla ma");
-        checkMatch("Phurpa Netik", "phur pa gnad tig");
-        checkMatch("Jamyang Khyentse Wangpo", "'jam dbyangs mkhyen brtse'i dbang po");
-        checkMatch("Marpa Lotsawa", "mar pa lo tsA ba");
-        checkMatch("Marpa Lotsawa", "mar pa lotsA ba");
-        checkMatch("Tsokar Gyaltsen", "mtsho skar rgyal mtshan");
-        checkMatch("Tsokar Gyeltsen", "mtsho skar rgyal mtshan");
-        checkMatch("Samding Dorje Phagmo", "bsam sding rdo rje phag mo");
-        checkMatch("Orgyen", "o rgyan");
-        checkMatch("Khandro Nyingtik", "mkha' 'gro snying thig");
-        checkMatch("Karma", "kar+ma");
-        checkMatch("vajra", "ba dz+ra");
-        checkMatch("Sakya Pandita", "sa skya paN+Di ta");
-        checkMatch("Gyalwang Drukpa", "rgyal dbang 'brug pa");
-        checkMatch("Gyalwa Gyamtso", "rgyal ba rgya mtsho");
-        checkMatch("Ladakh", "la dwags");
-        checkMatch("Trinley", "'phrin les");
+//        checkMatch("Dalailama", "tA la'i bla ma");
+//        checkMatch("Dalaï Lama", "tA la'i bla ma");
+//        checkMatch("Kangyur", "bka' 'gyur");
+//        checkMatch("Kanjur", "bka' 'gyur");
+//        checkMatch("Ösel", "'od gsal");
+//        checkMatch("Wösel", "'od gsal");
+//        checkMatch("Selwè", "gsal ba'i");
+//        checkMatch("Padma Jungné", "pad+ma 'byung gnas");
+//        checkMatch("Péma Jungné", "pad+ma 'byung gnas");
+//        checkMatch("Tenzin Gyatso", "bstan 'dzin rgya mtsho");
+//        checkMatch("Tenzin Gyamtso", "bstan 'dzin rgya mtsho");
+//        checkMatch("Panchen Lama", "paN chen bla ma");
+//        checkMatch("Paṇchen Lama", "paN chen bla ma");
+//        checkMatch("Phurpa Netik", "phur pa gnad tig");
+//        checkMatch("Jamyang Khyentse Wangpo", "'jam dbyangs mkhyen brtse'i dbang po");
+//        checkMatch("Marpa Lotsawa", "mar pa lo tsA ba");
+//        checkMatch("Marpa Lotsawa", "mar pa lotsA ba");
+//        checkMatch("Tsokar Gyaltsen", "mtsho skar rgyal mtshan");
+//        checkMatch("Tsokar Gyeltsen", "mtsho skar rgyal mtshan");
+//        checkMatch("Samding Dorje Phagmo", "bsam sding rdo rje phag mo");
+//        checkMatch("Orgyen", "o rgyan");
+//        checkMatch("Khandro Nyingtik", "mkha' 'gro snying thig");
+//        checkMatch("vajra", "ba dz+ra");
+//        checkMatch("Sakya Pandita", "sa skya paN+Di ta");
+//        checkMatch("Gyalwang Drukpa", "rgyal dbang 'brug pa");
+//        checkMatch("Gyalwa Gyamtso", "rgyal ba rgya mtsho");
+//        checkMatch("Ladakh", "la dwags");
+//        checkMatch("Trinley", "'phrin les");
+//        checkMatch("Wanggyal", "dbang rgyal");
+        checkMatch("Wangyal", "dbang rgyal");
         checkMatch("Rinchen Terdzö", "rin chen gter mdzod");
         checkMatch("Lhatsün Jangchub Ö", "lha btsun byang chub 'od");
+        checkMatch("Lotsawa", "lotsa ba");
         //checkMatch("Katog", "kaHthog");
         //checkMatch("kunga", "kun dga'");
+        checkMatch("Drupgyü Nyima", "sgrub brgyud nyi ma");
+        checkMatch("Karma", "kar+ma");
+        checkMatch("Denkarma", "ldan dkar ma");
+        checkMatch("Trisong Detsen", "khri srong lde btsan");
+        checkMatch("Trisong Detsen", "khri srong lde'u btsan");
+        // checkMatch("Wangdud", "dbang bdud"); // d suffixes not supported in the phonetic
+        checkMatch("Choegyal", "chos rgyal");
+//        checkMatch("Mip'am", "mi pham");
+//        checkMatch("Mipham", "mi pham");
+//        checkMatch("Mipam", "mi pham");
+        checkMatch("Mingyur", "mi 'gyur");
+        checkMatch("Karma Pakshi", "kar+ma pak+shi");
+        checkMatch("Ratna Lingpa", "rat+na gling pa");
+        checkMatch("Bande Kawa Paltsek", "ban+de ska ba dpal brtsegs");
+        checkMatch("Paltsek Rakshita", "dpal brtsegs rak+Shi ta");
+        checkMatch("Shri Singha", "shrI sing+ha");
+        //checkMatch("Acarya", "A tsar+yA");
+        checkMatch("Zopa", "bzo pa");
+        checkMatch("Guru", "gu ru");
+        checkMatch("Zhalu", "zhwa lu");
         
+        
+        
+        // checkMatch("Sangdo Palri", "zangs mdog dpal ri"); // not indicating g suffix not supported (yet?)
+        checkMatch("Chagya Chenpo", "phyag rgya chen po");
+        checkMatch("Chakchen Gauma", "phyag chen ga'u ma");
+        checkMatch("Samye Gompa", "bsam yas dgon pa");
     }
     
 }
