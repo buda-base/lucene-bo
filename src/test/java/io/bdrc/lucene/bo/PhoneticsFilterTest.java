@@ -239,6 +239,12 @@ public class PhoneticsFilterTest {
         checkMatch("Senyig", "gsan yig");
         checkMatch("Minyak", "mi nyag");
         checkMatch("Gomnyam Drugpa", "sgom nyams drug pa");
+        checkMatch("Longchen Nyingtik", "klong chen snying thig");
+        checkMatch("Jikmé Lingpa", "'jigs med gling pa");
+        checkMatch("Jigmé Lingpa", "'jigs med gling pa");
+        checkMatch("Tulku Thondup", "sprul sku don grub");
+        checkMatch("Golok", "mgo log");
+        checkMatch("Derge", "sde dge");
     }
     
 }
