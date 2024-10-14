@@ -32,6 +32,16 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
     
     public final static NormalizeCharMap getNormalizeCharMap() {
         NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
+        builder.add("0", "༠");
+        builder.add("1", "༡");
+        builder.add("2", "༢");
+        builder.add("3", "༣");
+        builder.add("4", "༤");
+        builder.add("5", "༥");
+        builder.add("6", "༦");
+        builder.add("7", "༧");
+        builder.add("8", "༨");
+        builder.add("9", "༩");
         builder.add("ae", "e");
         builder.add("ai", "e"); // a'i is sometimes pronounced aï (as in Dalai Lama) or e (more common)
         builder.add("aï", "e");
@@ -55,6 +65,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ṇ", "n"); // Paṇchen
         builder.add("n\u0323", "n");
         builder.add("aht", "a d"); // kaHtog
+        builder.add("ahth", "a d"); // kaHtog
         builder.add("ḥ", " "); // kaḥtog
         builder.add("h\u0323", " ");
         builder.add("'", ""); // ka'tog, Mip'am
@@ -114,8 +125,11 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("kh", "g");
         builder.add("k", "g");
         builder.add("ck", "g"); // dicki
+        builder.add("ngh", " N"); // Sengha / Singha
         builder.add("khy", "G");
         builder.add("ky", "G");
+        builder.add("nkhy", "n G"); // Kunkhyab
+        builder.add("nky", "n G");
         // these are usually pronounced the same, example: Chöki -> chos kyi
         builder.add("kyi", "gi");
         builder.add("ngyi", "N yi"); // exception sangyik sang yig?
@@ -126,13 +140,14 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("gy", "G");
         builder.add("ng", "N");
         builder.add("ny", "Y");
-        builder.add("v", "b");
+        builder.add("v", " b");
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("mingyur", "mi Gur");
         builder.add("pakshi", "ba gSi");
         builder.add("rakshi", "ra gSi");
+        builder.add("dharma", "da rma");
         builder.add("amchi ", "em ci ");
         builder.add("wose", "o se");
         builder.add("wöse", "o se");
@@ -146,7 +161,6 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("sengé", "seN ge");
         builder.add("sengge", "seN ge");
         builder.add("senggé", "seN ge");
-        builder.add("singha", "siN ha");
         builder.add("ringdzin", "rig Tin");
         builder.add("ringzin", "rig Tin");
         builder.add("rindzin", "rig Tin");
@@ -160,7 +174,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("derge", "de ge");
         builder.add("dergé", "de ge");
         builder.add("chamdo", "cab do");
-        builder.add("gompa", "gon pa"); // this one is a bit difficult
+        builder.add("gompa", "gon ba"); // this one is a bit difficult
         // chos rgya pronounced chögyam as a short for chos kyi rgya mtsho
         builder.add("chogyam", "cho Ga");
         builder.add("chögyam", "cho Ga");

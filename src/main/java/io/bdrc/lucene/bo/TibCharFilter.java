@@ -27,18 +27,20 @@ public class TibCharFilter extends MappingCharFilter {
         // The non-breaking tsheg and double tsheg are replaced with the normal one
         builder.add("\u0f0C", "\u0F0B");
         builder.add("\u0fD2", "\u0F0B");
+        // we want to cut syllables after each Namche
+        builder.add("\u0f7f", "\u0f7f\u0f0b");
         // we map latin digits to Tibetan instead of the opposite because
         // TibSyllableTokenizer remove non-Tibetan (including latin digits)
-        builder.add("༠", "0");
-        builder.add("༡", "1");
-        builder.add("༢", "2");
-        builder.add("༣", "3");
-        builder.add("༤", "4");
-        builder.add("༥", "5");
-        builder.add("༦", "6");
-        builder.add("༧", "7");
-        builder.add("༨", "8");
-        builder.add("༩", "9");
+        builder.add("0", "༠");
+        builder.add("1", "༡");
+        builder.add("2", "༢");
+        builder.add("3", "༣");
+        builder.add("4", "༤");
+        builder.add("5", "༥");
+        builder.add("6", "༦");
+        builder.add("7", "༧");
+        builder.add("8", "༨");
+        builder.add("9", "༩");
         // Characters to delete: the markers found under selected syllables
         builder.add("\u0F35", ""); // ༵
         builder.add("\u0F37", ""); // ༷
@@ -118,7 +120,6 @@ public class TibCharFilter extends MappingCharFilter {
             builder.add("རཏན", "རཏྣ");
             builder.add("ཀརྨ", "ཀར་མ");
             builder.add("བནྡེ", "བན་དེ");
-            
             builder.add("ལྡེའུ་བཙན", "ལྡེ་བཙན");
             // dwags = dags, a bit risqué but should work
             //builder.add("དྭགས", "དགས");

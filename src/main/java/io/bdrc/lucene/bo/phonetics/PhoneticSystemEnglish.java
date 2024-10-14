@@ -369,8 +369,8 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addVowelCoda("ོངས", "oN");
         this.addVowelCoda("ོད", "o");
         this.addVowelCoda("ོན", "on");
-        this.addVowelCoda("ོབ", "op");
-        this.addVowelCoda("ོབས", "op");
+        this.addVowelCoda("ོབ", "ob");
+        this.addVowelCoda("ོབས", "ob");
         this.addVowelCoda("ོམ", "om");
         this.addVowelCoda("ོམས", "om");
         this.addVowelCoda("ོལ", "ol");

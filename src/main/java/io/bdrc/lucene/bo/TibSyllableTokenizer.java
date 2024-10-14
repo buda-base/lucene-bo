@@ -130,7 +130,7 @@ public final class TibSyllableTokenizer extends Tokenizer {
                 end += charCount;
                 length += Character.toChars(c, buffer, length);
 
-                if (c == '\u0f7f' || length >= maxTokenLen) {
+                if (length >= maxTokenLen) {
                     break;
                 }
             } else if (length > 0) {
