@@ -93,14 +93,15 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("t\u0323", "t");
         builder.add("ḍ", "d");
         builder.add("d\u0323", "d");
-        builder.add("dj", "j"); // Dudjom
+        builder.add("dj", "c"); // Dudjom
         builder.add("zh", "S");
         builder.add("sh", "S");
         builder.add("shy", "S"); // Nyingtik Yabshyi
         builder.add("dz", "T"); // to avoid confusion between dz and z
         // builder.add("dzh", "T"); // not sure it's really cogent
         // z to dz in some cases
-        builder.add("nz", "nT"); // tenzin
+        builder.add("gz", "gT"); // Rigzin
+        builder.add("nz", "nT"); // Tenzin
         builder.add("ngz", "NT"); // 
         // but in most cases s (lobzang -> lobsang)
         builder.add("z", "s");
@@ -130,11 +131,6 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ky", "G");
         builder.add("nkhy", "n G"); // Kunkhyab
         builder.add("nky", "n G");
-        // these are usually pronounced the same, example: Chöki -> chos kyi
-        builder.add("kyi", "gi");
-        builder.add("ngyi", "N yi"); // exception sangyik sang yig?
-        builder.add("gyi", "gi");
-        builder.add("khyi", "gi");
         // complicated, see tokenizer
         builder.add("ngy", "nG");
         builder.add("gy", "G");

@@ -12,6 +12,8 @@ public class PhoneticSystem {
     protected Map<String,char[]> vowelCodaRoot;
     protected Map<Character,String> sktPhonetic;
     private static final char[] wa = "w".toCharArray();
+    private static final char[] ga = "g".toCharArray();
+    private static final char[] na = "n".toCharArray();
     private char[] implicitA;
     
     PhoneticSystem(final String implicitA) {
@@ -51,6 +53,13 @@ public class PhoneticSystem {
         // hack: dba = wa (but dbu != wu), this is the only case that doesn't fit in this algorithm
         if (onset.nbchar == 2 && b[0] == 'ད' && b[1] == 'བ' && len > 2 && b[2] != '\u0f72' && b[2] != '\u0f74' && b[2] != '\u0f7a' && b[2] != '\u0f7c')
             phonetic = wa;
+        // Gi -> gi, Ni -> ni
+        if (phonetic.length == 1 && vowelCodaPhonetic.length > 0 && vowelCodaPhonetic[0] == 'i') {
+            if (phonetic[0] == 'G')
+                phonetic = ga;
+            else if (phonetic[0] == 'Y')
+                phonetic = na;
+        }
         final int newLength = phonetic.length + vowelCodaPhonetic.length;
         if (b.length < newLength)
             b = termAtt.resizeBuffer(newLength);

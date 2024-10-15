@@ -82,6 +82,10 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                         possibleSyllable = possibleSyllable.substring(0,possibleSyllable.length()-2)+"el";
                     else if (possibleSyllable.endsWith("an"))
                         possibleSyllable = possibleSyllable.substring(0,possibleSyllable.length()-2)+"en";
+                    if (possibleSyllable.startsWith("Gi"))
+                        possibleSyllable = "gi" + possibleSyllable.substring(2);
+                    else if (possibleSyllable.startsWith("Yi"))
+                        possibleSyllable = "ni" + possibleSyllable.substring(2);
                     tokens.add(new TokenWithIncrement(possibleSyllable, first ? 1 : 0));
                     first = false;
                 }
