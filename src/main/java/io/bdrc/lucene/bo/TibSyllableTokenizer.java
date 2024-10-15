@@ -58,8 +58,10 @@ public final class TibSyllableTokenizer extends Tokenizer {
     private char[] bufferForStacks = null;
     
     private final List<Integer> stackBreaks = new ArrayList<>();  // To store stack break positions
+    private final List<Integer> stackBreakOffsets = new ArrayList<>();  // To store stack break positions
     private int stackBreakIndex = 0;  // To track the current stack break being processed
     private int stackStart = -1;
+    private int stackStartOffset = -1;
     private int stackEnd = -1;
     
     private boolean tokenizeNonStandardTibIntoStacks = true;
@@ -85,10 +87,12 @@ public final class TibSyllableTokenizer extends Tokenizer {
         // If there are remaining stack breaks, return the next token based on stack breaks
         if (stackBreakIndex < stackBreaks.size()) {
             int start = stackStart;
+            int startOffset = stackStartOffset;
             int end = stackBreaks.get(stackBreakIndex);
+            int endOffset = stackBreaks.get(stackBreakIndex);
             termAtt.copyBuffer(bufferForStacks, start, end - start);
             istAtt.setIsStandardTibetan(false);
-            offsetAtt.setOffset(correctOffset(start), correctOffset(end));
+            offsetAtt.setOffset(startOffset, endOffset);
             stackStart = end;  // Move the start to the next break
             stackBreakIndex++;
             return true;
@@ -148,21 +152,26 @@ public final class TibSyllableTokenizer extends Tokenizer {
                 //System.out.println(String.copyValueOf(buffer, 0, length)+" is not standard Tibetan");
                 // It's not a valid Tibetan syllable, so split it into smaller tokens
                 stackBreaks.clear();  // Clear any previous stack breaks
+                stackBreakOffsets.clear();
+                stackBreakIndex = 0;
                 stackStart = 0;  // Initialize the start of the stack
+                stackStartOffset = correctOffset(start);
                 int currentStackBreak = 0;
 
                 while (currentStackBreak < length) {
                     int nextBreak = CommonHelpers.nextStackBreak(buffer, currentStackBreak, length);
                     stackBreaks.add(nextBreak);  // Add the break position
+                    stackBreakOffsets.add(correctOffset(start+nextBreak));
                     currentStackBreak = nextBreak;
                 }
+                stackBreakOffsets.add(correctOffset(end));
                 // Return the first stack as the token                
                 stackEnd = stackBreaks.get(0);
                 istAtt.setIsStandardTibetan(false);
                 bufferForStacks = new char[length];
                 System.arraycopy(buffer, 0, bufferForStacks, 0, length);
                 termAtt.copyBuffer(buffer, stackStart, stackEnd - stackStart);
-                offsetAtt.setOffset(correctOffset(stackStart), correctOffset(stackEnd));
+                offsetAtt.setOffset(stackStartOffset, correctOffset(stackEnd));
                 stackStart = stackEnd;  // Move to the next break
                 stackBreakIndex = 1;
                 return true;
@@ -192,6 +201,9 @@ public final class TibSyllableTokenizer extends Tokenizer {
       dataLen = 0;
       finalOffset = 0;
       ioBuffer.reset(); // make sure to reset the IO buffer!!
+      stackBreaks.clear();
+      stackBreakOffsets.clear();
+      stackBreakIndex = 0;
     }
 
 }
