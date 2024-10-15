@@ -114,10 +114,12 @@ public class TibetanAnalyzerTest {
         System.out.println("Testing TibSyllableTokenizer()");
         String input = "བཀྲ་ཤིས། \nབདེ་ལེགས། ཀཿཐོག ཀཿ་ཐོག";
         Reader reader = new StringReader(input);
+        reader = new TibCharFilter(reader);
         List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "ལེགས", "ཀཿ", "ཐོག", "ཀཿ", "ཐོག");
         System.out.print(input + " => ");
         TokenStream res = tokenize(reader, new TibSyllableTokenizer());
         assertTokenStream(res, expected);
+        reader.close();
     }
 
     @Test
@@ -126,9 +128,8 @@ public class TibetanAnalyzerTest {
         String input = "དག། གའམ། གའིའོ། དགའ། དགའི། དགའོ། དགའིས། དགའང་། དགའམ། དགའིའོ། ལེའུར། བཞིའ། པའ། གེའ། དགའོའམ། དགའིའམ། ཀུནད། རྒྱལད། འོནད། དལད། པརད། པའས། གེའད།";
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "ལེའུ", "བཞི", "པ", "གེ", "དགའ", "དགའ", "ཀུན", "རྒྱལ", "འོན", "དལ", "པར", "པས", "གེད");
-
         System.out.print(input + " => ");
-        TokenStream syllables = tokenize(reader, new TibSyllableTokenizer());
+        TokenStream syllables = tokenize(reader, new TibSyllableTokenizer(false));
         TokenFilter res = new TibAffixedFilter(syllables, true);
         assertTokenStream(res, expected);
     }
@@ -324,7 +325,7 @@ public class TibetanAnalyzerTest {
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("བོད", "རྒྱལ", "ལོ", "ཨིནབ", "ལིད", "བོད");
         System.out.print(input + " => ");
-        TokenStream res = tokenize(new TibEwtsFilter(reader, "ewts", true), new TibSyllableTokenizer());
+        TokenStream res = tokenize(new TibEwtsFilter(reader, "ewts", true), new TibSyllableTokenizer(false));
         assertTokenStream(res, expected);
         // nA ro, see https://github.com/buda-base/lucene-bo/issues/42
         input = "dpal ldan nA ro pa'i rnam/";

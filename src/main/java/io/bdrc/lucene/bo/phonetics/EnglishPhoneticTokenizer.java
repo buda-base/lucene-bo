@@ -6,7 +6,6 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class EnglishPhoneticTokenizer extends Tokenizer {

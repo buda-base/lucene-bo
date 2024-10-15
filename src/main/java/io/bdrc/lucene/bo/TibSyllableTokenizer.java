@@ -68,6 +68,10 @@ public final class TibSyllableTokenizer extends Tokenizer {
      * Construct a new TibSyllableTokenizer.
      */
     public TibSyllableTokenizer() { }
+    
+    public TibSyllableTokenizer(final boolean tokenizeNonStandardTibIntoStacks) {
+        this.tokenizeNonStandardTibIntoStacks = tokenizeNonStandardTibIntoStacks;
+    }
 
     // see http://jrgraphix.net/r/Unicode/0F00-0FFF
     protected boolean isTibLetterOrDigit(int c) {
@@ -141,6 +145,7 @@ public final class TibSyllableTokenizer extends Tokenizer {
         // Check if the token is a valid Tibetan syllable
         if (length > 0) {
             if (tokenizeNonStandardTibIntoStacks && !CommonHelpers.isStandardTibetan(buffer, 0, length)) {
+                //System.out.println(String.copyValueOf(buffer, 0, length)+" is not standard Tibetan");
                 // It's not a valid Tibetan syllable, so split it into smaller tokens
                 stackBreaks.clear();  // Clear any previous stack breaks
                 stackStart = 0;  // Initialize the start of the stack
