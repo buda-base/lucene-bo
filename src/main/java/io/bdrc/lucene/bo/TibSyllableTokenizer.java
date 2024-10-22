@@ -89,11 +89,13 @@ public final class TibSyllableTokenizer extends Tokenizer {
             int start = stackStart;
             int startOffset = stackStartOffset;
             int end = stackBreaks.get(stackBreakIndex);
-            int endOffset = stackBreaks.get(stackBreakIndex);
+            int endOffset = stackBreakOffsets.get(stackBreakIndex);
+            //System.out.println(String.format("start=%d, startOffset=%d, end=%d, endOffset=%d", start, startOffset, end, endOffset));
             termAtt.copyBuffer(bufferForStacks, start, end - start);
             istAtt.setIsStandardTibetan(false);
             offsetAtt.setOffset(startOffset, endOffset);
             stackStart = end;  // Move the start to the next break
+            stackStartOffset = endOffset;
             stackBreakIndex++;
             return true;
         } else {
@@ -160,6 +162,7 @@ public final class TibSyllableTokenizer extends Tokenizer {
 
                 while (currentStackBreak < length) {
                     int nextBreak = CommonHelpers.nextStackBreak(buffer, currentStackBreak, length);
+                    // System.out.println(String.format("currentStackBreak=%d, length=%d -> nextBreak=%d", currentStackBreak, length, nextBreak));
                     stackBreaks.add(nextBreak);  // Add the break position
                     stackBreakOffsets.add(correctOffset(start+nextBreak));
                     currentStackBreak = nextBreak;
@@ -167,11 +170,12 @@ public final class TibSyllableTokenizer extends Tokenizer {
                 stackBreakOffsets.add(correctOffset(end));
                 // Return the first stack as the token                
                 stackEnd = stackBreaks.get(0);
+                // System.out.println(String.format("stackend=%d, stackendoffset=%d", stackEnd, stackBreakOffsets.get(0)));
                 istAtt.setIsStandardTibetan(false);
                 bufferForStacks = new char[length];
                 System.arraycopy(buffer, 0, bufferForStacks, 0, length);
                 termAtt.copyBuffer(buffer, stackStart, stackEnd - stackStart);
-                offsetAtt.setOffset(stackStartOffset, correctOffset(stackEnd));
+                offsetAtt.setOffset(stackStartOffset, stackBreakOffsets.get(0));
                 stackStart = stackEnd;  // Move to the next break
                 stackBreakIndex = 1;
                 return true;
