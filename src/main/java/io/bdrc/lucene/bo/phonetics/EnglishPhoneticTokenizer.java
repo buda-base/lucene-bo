@@ -101,6 +101,15 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
             // if starts with a letter that cannot be a suffix, then cut before
             return List.of(new String[] { "" }, new String[] { ch });
         }
+        if (ch.endsWith("z")) {
+            final String rest = String.copyValueOf(b, start, end-start-1);
+            return List.of(new String[] {rest}, new String[] {"T", "s"});
+        }
+        if (ch.startsWith("z")) {
+            final String rest = String.copyValueOf(b, start+1, end-start-1);
+            return List.of(new String[] {""}, new String[] {"T"+rest, "s"+rest});
+        }
+        // TODO: replace in the middle
         if (ch.startsWith("G")) {
             final String rest = String.copyValueOf(b, start+1, end-start-1);
             return List.of(new String[] {"g", ""}, new String[] {"G"+rest});

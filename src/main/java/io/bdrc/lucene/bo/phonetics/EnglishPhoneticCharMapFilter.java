@@ -99,12 +99,6 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("shy", "S"); // Nyingtik Yabshyi
         builder.add("dz", "T"); // to avoid confusion between dz and z
         // builder.add("dzh", "T"); // not sure it's really cogent
-        // z to dz in some cases
-        builder.add("gz", "gT"); // Rigzin
-        builder.add("nz", "nT"); // Tenzin
-        builder.add("ngz", "NT"); // 
-        // but in most cases s (lobzang -> lobsang)
-        builder.add("z", "s");
         // remove aspiration
         builder.add("hl", "l"); // hl is a bit closer to pronounciation
         builder.add("lh", "l");
@@ -151,6 +145,10 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("kangyur", "ga Gur");
         builder.add("tanjur", "den Gur");
         builder.add("tenjur", "den Gur");
+        builder.add("umdze", "u Te");
+        builder.add("umze", "u Te");
+        builder.add("umdzé", "u Te");
+        builder.add("umzé", "u Te");
         builder.add("sangye", "saN Ge");
         builder.add("sangyé", "saN Ge");
         builder.add("senge", "seN ge");
@@ -203,7 +201,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ganden", "ga den");
         builder.add("kundun", "gu dun");
         builder.add("kundün", "gu dun");
-        builder.add("ngondzin", "No Zin");
+        builder.add("ngondzin", "No Tin");
         builder.add("yabshi", "ya Si");
         builder.add("sabche", "sa ce");
         builder.add("chonjug", "co cug");

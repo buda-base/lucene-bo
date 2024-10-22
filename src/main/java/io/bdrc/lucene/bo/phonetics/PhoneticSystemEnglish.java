@@ -452,7 +452,7 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addSkt('ཤ', "S");
         this.addSkt('ཥ', "S");
         this.addSkt('ས', "s");
-        this.addSkt('ཧ', "");
+        this.addSkt('ཧ', "h");
         this.addSkt('ཨ', "");
         this.addSkt('ཪ', "r");
         this.addSkt('ཱ', "");

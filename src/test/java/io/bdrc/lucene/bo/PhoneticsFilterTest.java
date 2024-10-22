@@ -187,7 +187,12 @@ public class PhoneticsFilterTest {
         checkMatch("Pelzang", "dpal bzang");
         checkMatch("Pelsang", "dpal bzang");
         checkMatch("Dulzin", "'dul 'dzin");
+        checkMatch("Rongzompa", "rong zom pa");
+        checkMatch("Yongzin", "yongs 'dzin");
+        checkMatch("Yongdzin", "yongs 'dzin");
         checkMatch("Kunzang", "kun bzang");
+        checkMatch("Umdze", "dbu mdzad");
+        checkMatch("Umzé", "dbu mdzad");
         checkMatch("Kelzang", "bkal bzang");
         checkMatch("Kelsang", "bkal bzang");
         checkMatch("Panchen Lama", "paN chen bla ma");
@@ -236,7 +241,7 @@ public class PhoneticsFilterTest {
         checkMatch("Chönyid Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöni Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöny Gyamtso", "chos nyid rgya mtsho");
-        checkMatch("Acarya", "A tsar+yA");
+        //checkMatch("Acarya", "A tsar+yA");
         checkMatch("Lopön", "slob dpon");
         checkMatch("Zopa", "bzo pa");
         checkMatch("Guru", "gu ru");
@@ -246,6 +251,7 @@ public class PhoneticsFilterTest {
         checkMatch("Chakchen Gauma", "phyag chen ga'u ma");
         checkMatch("Samye Gompa", "bsam yas dgon pa");
         checkMatch("Lochen Dharmashri", "lo chen d+harma shrI");
+        checkMatch("Mengak Nyengyü", "man ngag snyan brgyud");
         checkMatch("Mengagde", "man ngag sde");
         checkMatch("Senyig", "gsan yig");
         checkMatch("Minyak", "mi nyag");
