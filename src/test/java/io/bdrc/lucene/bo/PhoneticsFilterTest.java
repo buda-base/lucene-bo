@@ -493,5 +493,6 @@ public class PhoneticsFilterTest {
         checkMatch("Tsarchen", "tshar chen");
         checkMatch("Tsechok Samten Ling", "tshe mchog bsam gtan gling");
         checkMatch("Wang Rab", "dbang rab");
+        checkMatch("Kunzang lame shelung" , "kun bzang bla ma'i zhal lung");
     }   
 }
