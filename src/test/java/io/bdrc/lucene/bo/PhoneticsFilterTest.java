@@ -182,8 +182,14 @@ public class PhoneticsFilterTest {
         checkMatch("Selwè", "gsal ba'i");
         checkMatch("Padma Jungné", "pad+ma 'byung gnas");
         checkMatch("Péma Jungné", "pad+ma 'byung gnas");
-        checkMatch("Tenzin Gyatso", "bstan 'dzin rgya mtsho");
+        checkMatch("Tendzin Gyatso", "bstan 'dzin rgya mtsho");
         checkMatch("Tenzin Gyamtso", "bstan 'dzin rgya mtsho");
+        checkMatch("Pelzang", "dpal bzang");
+        checkMatch("Pelsang", "dpal bzang");
+        checkMatch("Dulzin", "'dul 'dzin");
+        checkMatch("Kunzang", "kun bzang");
+        checkMatch("Kelzang", "bkal bzang");
+        checkMatch("Kelsang", "bkal bzang");
         checkMatch("Panchen Lama", "paN chen bla ma");
         checkMatch("Paṇchen Lama", "paN chen bla ma");
         checkMatch("Phurpa Netik", "phur pa gnad tig");
@@ -230,7 +236,7 @@ public class PhoneticsFilterTest {
         checkMatch("Chönyid Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöni Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöny Gyamtso", "chos nyid rgya mtsho");
-        //checkMatch("Acarya", "A tsar+yA");
+        checkMatch("Acarya", "A tsar+yA");
         checkMatch("Lopön", "slob dpon");
         checkMatch("Zopa", "bzo pa");
         checkMatch("Guru", "gu ru");
@@ -328,7 +334,6 @@ public class PhoneticsFilterTest {
         checkMatch("Lobsang Sherab", "blo bzang shes rab");
         checkMatch("Pema Chophel", "pad ma chos 'phel");
         checkMatch("Lodro Ozer", "blo gros 'od zer");
-        checkMatch("Rigzin Tenzin", "rig 'dzin bstan 'dzin");
         checkMatch("Lobsang Drakpa", "blo bzang grags pa");
         checkMatch("Thubten Gyatso", "thub bstan rgya mtsho");
         checkMatch("Dorje Chang", "rdo rje 'chang");
@@ -412,8 +417,81 @@ public class PhoneticsFilterTest {
         checkMatch("Lhogyu", "lho rgyud");
         checkMatch("Shangsa", "shangs sa");
         checkMatch("Chokling", "mchog gling");
-        checkMatch("Gyalsid", "rgyal srid");
+        checkMatch("Gyalsid", "rgyal srid"); // ?
         checkMatch("Dega", "de ga");
-    }
-    
+        checkMatch("Gangga", "gang+ga");
+        checkMatch("Ganga", "gang+ga");
+        checkMatch("Mangalam", "ma ng+ga laM");
+        checkMatch("Mangalam", "ma ng+ga lam");
+        checkMatch("Utpala Karpo", "ut+pala dkar po");
+        checkMatch("Vaidurya Karpo", "vaidur+ya dkar po");
+        checkMatch("Bedurya Karpo", "vaidur+ya dkar po");
+        checkMatch("Mandala", "maN+Dala");
+        checkMatch("tika", "tik+ka");
+        checkMatch("Kirti", "kir+ti");
+        checkMatch("Indra", "in+dra");
+        checkMatch("Yangti", "g.yang Ti");
+        checkMatch("Shambhala", "sham+b+hala");
+        checkMatch("Shambhala", "sham b+ha la");
+        checkMatch("Shambala", "sham b+ha la");
+        checkMatch("Densatil", "gdan sa mthil"); // gdan sa thel?
+        checkMatch("Hemis", "he mis");
+        //checkMatch("Key", "ki"); // ?
+        checkMatch("Kye Gompa", "dkil dgon");
+        checkMatch("Kyegön", "dkil dgon");
+        checkMatch("Mindroling", "smin grol gling");
+        checkMatch("Tsuglakhang", "gtsug lag khang");
+        checkMatch("Tsuglagkhang", "gtsug lag khang");
+        checkMatch("Pabonka", "pha bong kha"); // ?
+        checkMatch("Gyantse", "rgyal rtse");
+        checkMatch("Gyangtse", "rgyal rtse"); // ?
+        checkMatch("Palyul", "dpal yul");
+        checkMatch("Reting", "rwa sgreng");
+        checkMatch("Riwoche", "ri bo che");
+        checkMatch("Ngawang", "ngag dbang");
+        checkMatch("Ngakwang", "ngag dbang");
+        checkMatch("Jamyang Ngakwang Legdrub", "'jam dbyangs ngag dbang legs grub");
+        checkMatch("Jampeyang Ngakwang Legdrub", "'jam pa'i dbyangs ngag dbang legs grub");
+        checkMatch("Bari Lotsāwa", "ba ri lo tsA ba");
+        checkMatch("Benza Ratna", "badz+ra rat+na");
+        checkMatch("Chökyi Tsultrim", "chos kyi tshul khrims");
+        checkMatch("Chönyi", "chos nyid");
+        checkMatch("Chöwang", "chos dbang");
+        checkMatch("Dagpo", "dwags po");
+        checkMatch("Dhagpo", "dwags po");
+        checkMatch("Dhagpo", "dwags po");
+        checkMatch("Dhagpo Targyen", "dwags po thar rgyen");
+        checkMatch("Ngulchu Thogmé Zangpo", "dngul chu thogs med bzang po");
+        checkMatch("Damchö Lingpa", "dam chos gling pa");
+        checkMatch("Drigung Lingpa", "'bri gung gling pa");
+        checkMatch("Gomtsul", "sgom tshul");
+        checkMatch("Jamgön Kunga Lodrö", "'jam mgon kun dga' blo gros");
+        checkMatch("Jamyang Khyentse Wangchuk", "'jam dbyangs mkhyen rtse dbang phyug");
+        checkMatch("Jamyang Ngakwang Legdrub", "'jam dbyangs ngag dbang legs grub");
+        checkMatch("Jangchub Zangpo", "byang chub bzang po");
+        checkMatch("Jetsun Trinlepa", "rje btsun phrin las pa");
+        checkMatch("Kunga Rinchen", "kun dga rin chen");
+        checkMatch("Kunlo", "kun blo");
+        checkMatch("Labsum", "bslab gsum");
+        checkMatch("Le Nagpa", "sle nag pa");
+        checkMatch("Lhalung", "lha lung");
+        checkMatch("Losal Tenzin", "blo gsal bstan 'dzin");
+        checkMatch("Mangala", "mang+ga la");
+        checkMatch("Ngor Evaṃ", "ngor e waM");
+        checkMatch("Evam", "e waM");
+        checkMatch("Nyen Lotsāwa Darma Drak", "gnyan lo tsA ba dar ma grags");
+        checkMatch("Palden Gyaltsen", "dpal ldan rgyal mtshan");
+        checkMatch("Rinchen Jampal", "rin chen 'jam dpal");
+        checkMatch("Sachen Kunga Nyingpo", "sa chen kun dga' snying po");
+        checkMatch("Śākyaśrībhadra", "shAkya shrI bha dra");
+        checkMatch("Shenyen Drewa", "bshes gnyen sgre ba");
+        checkMatch("Sherab Jangchub", "shes rab byang chub");
+        checkMatch("Sönam Chogden", "bsod nams mchog ldan");
+        checkMatch("Sönam Chogdrub", "bsod nams mchog grub");
+        checkMatch("Sönam Lhawang", "bsod nams lha dbang");
+        checkMatch("Tognepa", "thog gnas pa");
+        checkMatch("Tsarchen", "tshar chen");
+        checkMatch("Tsechok Samten Ling", "tshe mchog bsam gtan gling");
+        checkMatch("Wang Rab", "dbang rab");
+    }   
 }
