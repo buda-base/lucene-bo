@@ -85,6 +85,12 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                         possibleSyllable = "gi" + possibleSyllable.substring(2);
                     else if (possibleSyllable.startsWith("Yi"))
                         possibleSyllable = "ni" + possibleSyllable.substring(2);
+                    if (possibleSyllable.contains("z")) {
+                        // z can be either T (ts) or s
+                        tokens.add(new TokenWithIncrement(possibleSyllable.replace('z', 'T'), first ? 1 : 0));
+                        tokens.add(new TokenWithIncrement(possibleSyllable.replace('z', 's'), 0));
+                        first = false;
+                    }
                     tokens.add(new TokenWithIncrement(possibleSyllable, first ? 1 : 0));
                     first = false;
                 }
@@ -97,40 +103,28 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
         // first the list of possible codas of the last syllable
         // second the list of possible onsets of the next syllable
         final String ch = String.copyValueOf(b, start, end-start);
-        if ("cfhjstdTDSvw".indexOf(b[start]) != -1) {
+        if ("cfhjstdTDSvzw".indexOf(b[start]) != -1) {
             // if starts with a letter that cannot be a suffix, then cut before
             return List.of(new String[] { "" }, new String[] { ch });
         }
-        if (ch.endsWith("z")) {
-            final String rest = String.copyValueOf(b, start, end-start-1);
-            return List.of(new String[] {rest}, new String[] {"T", "s"});
-        }
-        if (ch.startsWith("z")) {
-            final String rest = String.copyValueOf(b, start+1, end-start-1);
-            return List.of(new String[] {""}, new String[] {"T"+rest, "s"+rest});
-        }
-        // TODO: replace in the middle
         if (ch.startsWith("G")) {
             final String rest = String.copyValueOf(b, start+1, end-start-1);
             return List.of(new String[] {"g", ""}, new String[] {"G"+rest});
         }
         if (ch.equals("N")) {
             // this one is pretty nasty...
-            return List.of(new String[] {"N", "", "n"}, new String[] {"g", "N"});
+            return List.of(new String[] {"N", "", "n"}, new String[] {"g", "N", "ng", "Ng"});
         }
         if (ch.startsWith("N")) {
             // like "wangpo"
             final String rest = String.copyValueOf(b, start+1, end-start-1);
-            return List.of(new String[] {"N"}, new String[] {rest});
+            return List.of(new String[] {"N", ""}, new String[] {rest, "N"+rest});
         }
         if (ch.startsWith("Y")) {
             final String rest = String.copyValueOf(b, start+1, end-start-1);
             return List.of(new String[] {"", "n" }, new String[] {"y"+rest, "Y"+rest});
         }
         if (end == start+1) {
-            // not 100% sure it's always true, but "ala" -> "a la" and "ama" -> "a ma"
-            if (b[start] == 'l' || b[start] == 'm'  || b[start] == 'g')
-                return List.of(new String[] { "" } , new String[] { ch });
             // if just 1 character that is ambiguously a start or end of a syllable:
             return List.of(new String[] {"", ch}, new String[] {"", ch});
         }

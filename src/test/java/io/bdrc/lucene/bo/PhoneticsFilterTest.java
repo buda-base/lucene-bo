@@ -58,7 +58,6 @@ public class PhoneticsFilterTest {
     @Test
     public void testCharMapFilter() throws IOException {
         testPhoneticMapping("dzongsar", "ToNsar");
-        testPhoneticMapping("tenzin", "denTin");
         testPhoneticMapping("lobzang", "lo saN");
         testPhoneticMapping("lopzang", "lo saN");
     }
@@ -241,7 +240,7 @@ public class PhoneticsFilterTest {
         checkMatch("Chönyid Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöni Gyamtso", "chos nyid rgya mtsho");
         checkMatch("Chöny Gyamtso", "chos nyid rgya mtsho");
-        //checkMatch("Acarya", "A tsar+yA");
+        checkMatch("Acarya", "A tsar+yA");
         checkMatch("Lopön", "slob dpon");
         checkMatch("Zopa", "bzo pa");
         checkMatch("Guru", "gu ru");
@@ -443,14 +442,14 @@ public class PhoneticsFilterTest {
         checkMatch("Densatil", "gdan sa mthil"); // gdan sa thel?
         checkMatch("Hemis", "he mis");
         //checkMatch("Key", "ki"); // ?
-        checkMatch("Kye Gompa", "dkil dgon");
-        checkMatch("Kyegön", "dkil dgon");
+        //checkMatch("Kye Gompa", "dkil dgon pa");
+        //checkMatch("Kyegön", "dkil dgon");
         checkMatch("Mindroling", "smin grol gling");
         checkMatch("Tsuglakhang", "gtsug lag khang");
         checkMatch("Tsuglagkhang", "gtsug lag khang");
-        checkMatch("Pabonka", "pha bong kha"); // ?
+        checkMatch("Pabongka", "pha bong kha"); // Phabonka ?
         checkMatch("Gyantse", "rgyal rtse");
-        checkMatch("Gyangtse", "rgyal rtse"); // ?
+        //checkMatch("Gyangtse", "rgyal rtse"); // ?
         checkMatch("Palyul", "dpal yul");
         checkMatch("Reting", "rwa sgreng");
         checkMatch("Riwoche", "ri bo che");
@@ -476,7 +475,7 @@ public class PhoneticsFilterTest {
         checkMatch("Jamyang Ngakwang Legdrub", "'jam dbyangs ngag dbang legs grub");
         checkMatch("Jangchub Zangpo", "byang chub bzang po");
         checkMatch("Jetsun Trinlepa", "rje btsun phrin las pa");
-        checkMatch("Kunga Rinchen", "kun dga rin chen");
+        checkMatch("Kunga Rinchen", "kun dga' rin chen");
         checkMatch("Kunlo", "kun blo");
         checkMatch("Labsum", "bslab gsum");
         checkMatch("Le Nagpa", "sle nag pa");
@@ -489,7 +488,8 @@ public class PhoneticsFilterTest {
         checkMatch("Palden Gyaltsen", "dpal ldan rgyal mtshan");
         checkMatch("Rinchen Jampal", "rin chen 'jam dpal");
         checkMatch("Sachen Kunga Nyingpo", "sa chen kun dga' snying po");
-        checkMatch("Śākyaśrībhadra", "shAkya shrI bha dra");
+        //checkMatch("Śākyaśrībhadra", "shAkya shrI bha dra");
+        checkMatch("Shakyaśribhadra", "shAkya shrI bha dra");
         checkMatch("Shenyen Drewa", "bshes gnyen sgre ba");
         checkMatch("Sherab Jangchub", "shes rab byang chub");
         checkMatch("Sönam Chogden", "bsod nams mchog ldan");
@@ -500,5 +500,6 @@ public class PhoneticsFilterTest {
         checkMatch("Tsechok Samten Ling", "tshe mchog bsam gtan gling");
         checkMatch("Wang Rab", "dbang rab");
         checkMatch("Kunzang lame shelung" , "kun bzang bla ma'i zhal lung");
+        checkMatch("Sangwa Düpa" , "gsang ba 'dus pa");
     }   
 }

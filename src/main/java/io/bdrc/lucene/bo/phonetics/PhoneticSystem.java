@@ -85,8 +85,15 @@ public class PhoneticSystem {
                 phonetic.append(c);
             }
         }
-        if (phonetic.length() == 0 || "ieou".indexOf(phonetic.charAt(phonetic.length() - 1)) == -1)
+        if (phonetic.length() == 0 || "ieouM".indexOf(phonetic.charAt(phonetic.length() - 1)) == -1)
             phonetic.append(this.implicitA);
+        else if (phonetic.length() > 1 && phonetic.charAt(phonetic.length() - 1) == 'M' && "aieou".indexOf(phonetic.charAt(phonetic.length() - 2)) == -1) {
+            // tM -> taM
+            phonetic.delete(phonetic.length()-1, phonetic.length());
+            phonetic.append("am");
+        } else if (phonetic.charAt(phonetic.length() - 1) == 'M') {
+            phonetic.replace(phonetic.length() - 1, phonetic.length(), "m");
+        }
         final int newLength = phonetic.length();
         if (b.length < newLength)
             b = termAtt.resizeBuffer(newLength);

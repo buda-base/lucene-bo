@@ -72,6 +72,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("-", " "); // 
         // various diactitics
         builder.add("ś", "S");
+        builder.add("Ś", "S");
         builder.add("s\u0301", "S");
         builder.add("ṣ", "S");
         builder.add("s\u0323", "S");
@@ -134,6 +135,12 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         // exceptions
         builder.add("patrul", ignoreRetroflex ? "bal dul" : "bal Dul");
         builder.add("patrül", ignoreRetroflex ? "bal dul" : "bal Dul");
+        builder.add("acarya", "a Ta rya");
+        builder.add("acharya", "a Ta rya");
+        builder.add("rya", " rya"); // arya
+        // builder.add("kye gompa", "gil gon ba"); //?
+        builder.add("indra", "i ndra");
+        builder.add("mbha", "mba"); // Shambhala
         builder.add("mingyur", "mi Gur");
         builder.add("pakshi", "ba gSi");
         builder.add("rakshi", "ra gSi");
@@ -185,12 +192,14 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("urgyen", "u Gen");
         builder.add("lharje", "lha ce");
         builder.add("lharjé", "lha ce");
-        builder.add("gyantse", "Gal Te");
-        builder.add("gyantsé", "Gal Te");
+        builder.add("gyantse", "Gel Te");
+        builder.add("gyantsé", "Gel Te");
+        builder.add("reting", ignoreRetroflex ? "ra deN" : "ra DeN");
         builder.add("lobzang", "lo saN");
         builder.add("lopzang", "lo saN");
         builder.add("lobsang", "lo saN");
         builder.add("lopsang", "lo saN");
+        builder.add("ngawang", "Nag waN");
         builder.add("chod ", "cho");
         builder.add("labrang", "la daN");
         builder.add("agsar", "a sar");
@@ -208,9 +217,17 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("kenjug", "ge cug");
         builder.add("panchen", "ben cen");
         builder.add("paṇchen", "ben cen");
-        builder.add("pandita", "ba ndida");
-        builder.add("paṇḍita", "ba ndida");
+        builder.add("pandita", "ba ndi da");
+        builder.add("mandala", "ma nda la");
+        builder.add("aṇḍ", "a nd");
         builder.add("vajra", "ba Tra"); // ts -> c (dz -> j) is a bit difficult...
+        builder.add("benza", "ba Tra");
+        builder.add("bendza", "ba Tra");
+        builder.add("evam", "e bam");
+        builder.add("evaṃ", "e bam");
+        builder.add("shakya", "Sa gya");
+        builder.add("shribhadra", "Sri ba dra");
+        builder.add("śribhadra", "Sri ba dra");
         if (!ignoreRetroflex) {
             builder.add("tashi", "da Si");
             builder.add("tulku", "dul gu");

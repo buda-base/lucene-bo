@@ -462,11 +462,11 @@ public class PhoneticSystemEnglish extends PhoneticSystem {
         this.addSkt('ཻ', "e");
         this.addSkt('ོ', "o");
         this.addSkt('ཽ', "o");
-        this.addSkt('ཾ', "n");
+        this.addSkt('ཾ', "M");
         this.addSkt('ཿ', "");
         this.addSkt('ྀ', "i");
-        this.addSkt('ྂ', "n");
-        this.addSkt('ྃ', "n");
+        this.addSkt('ྂ', "M");
+        this.addSkt('ྃ', "M");
         this.addSkt('྄', "");
         this.addSkt('ྐ', "g");
         this.addSkt('ྑ', "g");

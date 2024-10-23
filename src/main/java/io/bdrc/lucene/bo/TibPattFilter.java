@@ -131,7 +131,7 @@ public class TibPattFilter {
         in = new MergedSylFilter1(in);
         in = new MergedSylFilter2(in);
         in = new MergedSylFilter3(in);
-        in = new MergedSylFilter4(in);
+//        in = new MergedSylFilter4(in);
         in = new SktFilter1(in);
         in = new SktFilter2(in);
         in = new SktFilter3(in);
