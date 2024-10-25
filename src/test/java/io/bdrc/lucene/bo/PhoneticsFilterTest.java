@@ -501,5 +501,7 @@ public class PhoneticsFilterTest {
         checkMatch("Wang Rab", "dbang rab");
         checkMatch("Kunzang lame shelung" , "kun bzang bla ma'i zhal lung");
         checkMatch("Sangwa Düpa" , "gsang ba 'dus pa");
+        checkMatch("Pema Bhum" , "pad+ma 'bum");
+        checkMatch("Nyandak" , "snyan grags");
     }   
 }

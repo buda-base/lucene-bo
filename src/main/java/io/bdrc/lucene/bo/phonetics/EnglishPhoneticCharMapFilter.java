@@ -111,6 +111,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ts", "T");
         builder.add("ph", "b");
         builder.add("p", "b");
+        builder.add("bh", "b");
         builder.add("thr", ignoreRetroflex ? "d" : "D");
         builder.add("th", "d");
         builder.add("dh", "d"); // Dhondup
@@ -119,6 +120,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("dhr", ignoreRetroflex ? "d" : "D");
         builder.add("t", "d");
         builder.add("kh", "g");
+        builder.add("gh", "g");
         builder.add("k", "g");
         builder.add("ck", "g"); // dicki
         builder.add("ngh", " N"); // Sengha / Singha
