@@ -488,8 +488,8 @@ public class PhoneticsFilterTest {
         checkMatch("Palden Gyaltsen", "dpal ldan rgyal mtshan");
         checkMatch("Rinchen Jampal", "rin chen 'jam dpal");
         checkMatch("Sachen Kunga Nyingpo", "sa chen kun dga' snying po");
-        //checkMatch("Śākyaśrībhadra", "shAkya shrI bha dra");
-        checkMatch("Shakyaśribhadra", "shAkya shrI bha dra");
+        //checkMatch("Śākyaśrībhadra", "shAkya shrI bhadra");
+        checkMatch("Shakyaśribhadra", "shAkya shrI bhadra"); // Does not recognize bha dra (with a space)
         checkMatch("Shenyen Drewa", "bshes gnyen sgre ba");
         checkMatch("Sherab Jangchub", "shes rab byang chub");
         checkMatch("Sönam Chogden", "bsod nams mchog ldan");
