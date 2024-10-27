@@ -90,9 +90,11 @@ public final class EnglishPhoneticTokenizer extends Tokenizer {
                         tokens.add(new TokenWithIncrement(possibleSyllable.replace('z', 'T'), first ? 1 : 0));
                         tokens.add(new TokenWithIncrement(possibleSyllable.replace('z', 's'), 0));
                         first = false;
+                    } else {
+                        // general case
+                        tokens.add(new TokenWithIncrement(possibleSyllable, first ? 1 : 0));
+                        first = false;
                     }
-                    tokens.add(new TokenWithIncrement(possibleSyllable, first ? 1 : 0));
-                    first = false;
                 }
             }
         }
