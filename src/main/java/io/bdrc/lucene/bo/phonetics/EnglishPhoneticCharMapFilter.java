@@ -214,6 +214,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("kundün", "gu dun");
         builder.add("ngondzin", "No Tin");
         builder.add("yabshi", "ya Si");
+        builder.add("yabzhi", "ya Si");
         builder.add("sabche", "sa ce");
         builder.add("chonjug", "co cug");
         builder.add("kenjug", "ge cug");
