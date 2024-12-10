@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -129,7 +130,7 @@ public class TibetanAnalyzerTest {
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("དག", "ག", "ག", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "དགའ", "ལེའུ", "བཞི", "པ", "གེ", "དགའ", "དགའ", "ཀུན", "རྒྱལ", "འོན", "དལ", "པར", "པས", "གེད");
         System.out.print(input + " => ");
-        TokenStream syllables = tokenize(reader, new TibSyllableTokenizer(false));
+        TokenStream syllables = tokenize(reader, new TibSyllableTokenizer(false, false));
         TokenFilter res = new TibAffixedFilter(syllables, true);
         assertTokenStream(res, expected);
     }
@@ -325,7 +326,7 @@ public class TibetanAnalyzerTest {
         Reader reader = new StringReader(input);
         List<String> expected = Arrays.asList("བོད", "རྒྱལ", "ལོ", "ཨིནབ", "ལིད", "བོད");
         System.out.print(input + " => ");
-        TokenStream res = tokenize(new TibEwtsFilter(reader, "ewts", true), new TibSyllableTokenizer(false));
+        TokenStream res = tokenize(new TibEwtsFilter(reader, "ewts", true), new TibSyllableTokenizer(false, false));
         assertTokenStream(res, expected);
         // nA ro, see https://github.com/buda-base/lucene-bo/issues/42
         input = "dpal ldan nA ro pa'i rnam/";
@@ -402,6 +403,38 @@ public class TibetanAnalyzerTest {
         List<String> expected = Arrays.asList("བཀྲ་ཤིས་བདེ", "ལེགས");
         System.out.println(input + " => ");
         TibWordTokenizer tibWordTokenizer = new TibWordTokenizer("src/test/resources/non-max-match-test.txt");
+        TokenStream syllables = tokenize(reader, tibWordTokenizer);
+        assertTokenStream(syllables, expected);
+    }
+    
+    public static StringReader readPrintAndCreateNewReader(Reader reader) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        int c;
+        while ((c = reader.read()) != -1)
+            stringWriter.write(c);
+        reader.close();
+        String content = stringWriter.toString();
+        System.out.println(content);
+        // Create and return a new StringReader with the same content
+        return new StringReader(content);
+    }
+    
+    @Test
+    public void tokenizeShads() throws IOException {
+        System.out.println("Testing shad tokenization");
+        String input = "བཀྲ་ཤིས\n༄༅། །བདེ༔ལེགས";
+        Reader reader = new StringReader(input);
+        System.out.println("orig:");
+        reader = readPrintAndCreateNewReader(reader);
+        reader = new TibPattFilter.PunctFilter1(reader);
+        System.out.println("after PunctFilter1:");
+        reader = readPrintAndCreateNewReader(reader);
+        reader = new TibPattFilter.PunctFilter2(reader);
+        System.out.println("after PunctFilter2:");
+        reader = readPrintAndCreateNewReader(reader);
+        List<String> expected = Arrays.asList("བཀྲ", "ཤིས", "བདེ", "།", "ལེགས");
+        System.out.println(input + " => ");
+        TibSyllableTokenizer tibWordTokenizer = new TibSyllableTokenizer(false, true);
         TokenStream syllables = tokenize(reader, tibWordTokenizer);
         assertTokenStream(syllables, expected);
     }

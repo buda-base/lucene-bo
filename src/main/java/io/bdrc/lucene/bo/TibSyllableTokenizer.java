@@ -22,6 +22,7 @@ package io.bdrc.lucene.bo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.CharacterUtils.CharacterBuffer;
@@ -64,20 +65,30 @@ public final class TibSyllableTokenizer extends Tokenizer {
     private int stackStartOffset = -1;
     private int stackEnd = -1;
     
-    private boolean tokenizeNonStandardTibIntoStacks = true;
+    private final boolean tokenizeNonStandardTibIntoStacks;
+    private final Predicate<Integer> isTibLetterOrDigit;
     
     /**
      * Construct a new TibSyllableTokenizer.
      */
-    public TibSyllableTokenizer() { }
+    public TibSyllableTokenizer() {
+        this(true, false); 
+    }
     
-    public TibSyllableTokenizer(final boolean tokenizeNonStandardTibIntoStacks) {
+    public TibSyllableTokenizer(final boolean tokenizeNonStandardTibIntoStacks, final boolean tokenizeShads) {
         this.tokenizeNonStandardTibIntoStacks = tokenizeNonStandardTibIntoStacks;
+        this.isTibLetterOrDigit = tokenizeShads 
+                ? this::isTibLetterOrDigitOrShad 
+                : this::isTibLetterOrDigitNoShad;
     }
 
     // see http://jrgraphix.net/r/Unicode/0F00-0FFF
-    protected boolean isTibLetterOrDigit(int c) {
+    protected final boolean isTibLetterOrDigitNoShad(final int c) {
         return ('\u0F40' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00');
+    }
+    
+    protected final boolean isTibLetterOrDigitOrShad(final int c) {
+        return ('\u0F40' <= c && c <= '\u0FBC') || ('\u0F20' <= c && c <= '\u0F33') || (c == '\u0F00') || (c == '\u0F0D');
     }
     
     @Override
@@ -129,7 +140,7 @@ public final class TibSyllableTokenizer extends Tokenizer {
             final int charCount = Character.charCount(c);
             bufferIndex += charCount;
 
-            if (isTibLetterOrDigit(c)) {  // Token character
+            if (this.isTibLetterOrDigit.test(c)) {  // Token character
                 if (length == 0) {
                     start = offset + bufferIndex - charCount;
                     end = start;

@@ -503,5 +503,9 @@ public class PhoneticsFilterTest {
         checkMatch("Sangwa Düpa" , "gsang ba 'dus pa");
         checkMatch("Pema Bhum" , "pad+ma 'bum");
         checkMatch("Nyandak" , "snyan grags");
+        checkMatch("Düdul Dorje" , "bdud 'dul rdo rje");
+        checkMatch("Dundul Dorje" , "bdud 'dul rdo rje");
+        checkMatch("Duddul Dorje" , "bdud 'dul rdo rje");
+        checkMatch("Chhimé" , "'chi med'");
     }   
 }

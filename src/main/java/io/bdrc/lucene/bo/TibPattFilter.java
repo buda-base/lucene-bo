@@ -126,6 +126,29 @@ public class TibPattFilter {
         public static final String repl = "\u0F97$1";
     }
     
+    /*
+     * This is to be used in the case where we want to keep some shads in the tokens. In that scenario, there are shads that
+     * we don't want: those after the yigo. This filter removes the yigo and subsequent shads
+     */
+    public static class PunctFilter1 extends PatternReplaceCharFilter {
+        public PunctFilter1(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("[\u0f01-\u0f07\u0fd3\u0fd4]+(\\s|[\u0f08-\u0f14])*");
+        public static final String repl = "";
+    }
+    
+    /*
+     * This filter folds all type of shad and repetitions into just one shad, to be used in the case where we want to keep some shads in the tokens
+     */
+    public static class PunctFilter2 extends PatternReplaceCharFilter {
+        public PunctFilter2(Reader in) {
+            super(init, repl, in);
+        }
+        public static final Pattern init = Pattern.compile("([\u0f0d-\u0f14]+\\s*)+");
+        public static final String repl = " \u0f0d "; // surrounded by space so that shad are treated as isolated tokens by the tokenizer
+    }
+    
     public static Reader plugFilters(Reader in) {
         in = new ReorderFilter(in);
         in = new MergedSylFilter1(in);
