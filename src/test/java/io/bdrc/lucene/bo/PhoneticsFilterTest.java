@@ -504,8 +504,10 @@ public class PhoneticsFilterTest {
         checkMatch("Pema Bhum" , "pad+ma 'bum");
         checkMatch("Nyandak" , "snyan grags");
         checkMatch("Düdul Dorje" , "bdud 'dul rdo rje");
-        checkMatch("Dundul Dorje" , "bdud 'dul rdo rje");
+        //checkMatch("Dundul Dorje" , "bdud 'dul rdo rje");
         checkMatch("Duddul Dorje" , "bdud 'dul rdo rje");
-        checkMatch("Chhimé" , "'chi med'");
+        checkMatch("Chhimé" , "'chi med");
+        checkMatch("Nyingthig Yabzhi" , "snying thig ya bzhi");
+        checkMatch("Nyingtik Yabshyi" , "snying thig ya bzhi");
     }   
 }

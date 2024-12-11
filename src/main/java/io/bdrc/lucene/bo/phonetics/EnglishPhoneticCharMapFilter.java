@@ -109,6 +109,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("jh", "c");
         builder.add("tsh", "T");
         builder.add("ts", "T");
+        builder.add("dd", "d");
         builder.add("ph", "b");
         builder.add("p", "b");
         builder.add("bh", "b");
@@ -215,6 +216,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ngondzin", "No Tin");
         builder.add("yabshi", "ya Si");
         builder.add("yabzhi", "ya Si");
+        builder.add("yabshyi", "ya Si");
         builder.add("sabche", "sa ce");
         builder.add("chonjug", "co cug");
         builder.add("kenjug", "ge cug");
