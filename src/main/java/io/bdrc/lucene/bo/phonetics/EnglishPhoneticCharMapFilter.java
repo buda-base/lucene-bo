@@ -45,9 +45,13 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("ae", "e");
         builder.add("ai", "e"); // a'i is sometimes pronounced aï (as in Dalai Lama) or e (more common)
         builder.add("aï", "e");
+        builder.add("oe", "o"); // Damchoe (Bhutanese style)
+        builder.add("ue", "u"); // Tsondue (Bhutanese style)
+        builder.add("aa", "a"); // no need for duplicate vowels
+        builder.add("ii", "i");
+        builder.add("uu", "u");
+        builder.add("oo", "u"); // a bit more ambiguous, English rendering
         builder.add("ee", "i"); // shree
-        builder.add("oe", "o"); // Damchoe
-        builder.add("ue", "u"); // Tsondue
         // remove different diacritics
         builder.add("ü", "u"); // \\uFC
         builder.add("u\u0308", "u"); // decomposed version
@@ -197,6 +201,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("lharjé", "lha ce");
         builder.add("gyantse", "Gel Te");
         builder.add("gyantsé", "Gel Te");
+        builder.add("renda", "re da");
         builder.add("reting", ignoreRetroflex ? "ra deN" : "ra DeN");
         builder.add("lobzang", "lo saN");
         builder.add("lopzang", "lo saN");

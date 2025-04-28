@@ -86,6 +86,20 @@ public final class EnglishPhoneticRegexFilter {
         }
     }
     
+    public static class PhoneticFilter7 extends PatternReplaceCharFilter {
+        public PhoneticFilter7(final Reader in) {
+            super(rCatcherMerged7, repl, in);
+        }
+        // Detect two consecutive identical letters that are either at the end of the string
+        // or followed by a non-letter character
+        public static final Pattern rCatcherMerged7 = Pattern.compile("([bgmn])\\1(?=$|[^a-zA-Z])");
+        public static final String repl = "$1";
+        public final static String normalizeR(final String in) {
+            final Matcher matcher = rCatcherMerged7.matcher(in);
+            return matcher.replaceAll(repl);
+        }
+    }
+    
     public static Reader plugFilters(Reader in) {
         in = new PhoneticFilter1(in);
         in = new PhoneticFilter2(in);
@@ -93,6 +107,7 @@ public final class EnglishPhoneticRegexFilter {
         in = new PhoneticFilter4(in);
         in = new PhoneticFilter5(in);
         in = new PhoneticFilter6(in);
+        in = new PhoneticFilter7(in);
         return in;
     }
 

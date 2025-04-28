@@ -192,6 +192,11 @@ public class PhoneticsFilterTest {
         checkMatch("Kunzang", "kun bzang");
         checkMatch("Umdze", "dbu mdzad");
         checkMatch("Umzé", "dbu mdzad");
+        checkMatch("Renda", "re mda'");
+        checkMatch("poo", "spu");
+        checkMatch("maacig", "ma gcig");
+        //checkMatch("Jabb", "skyabs"); // doesn't work in the current model
+        checkMatch("Kyabb", "skyabs");
         checkMatch("Kelzang", "bkal bzang");
         checkMatch("Kelsang", "bkal bzang");
         checkMatch("Panchen Lama", "paN chen bla ma");
