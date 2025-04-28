@@ -4,7 +4,7 @@
     <groupId>io.bdrc.lucene</groupId>
     <artifactId>lucene-bo</artifactId>
     <packaging>jar</packaging>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <name>lucene-bo</name>
     <description>Tibetan Lucene analyzer and components</description>
     <url>https://github.com/buda-base/lucene-bo</url>
