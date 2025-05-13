@@ -192,6 +192,9 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("chorten", "cho den");
         builder.add("chörten", "cho den");
         builder.add("dorje", "do ce");
+        builder.add("dordje", "do ce");
+        builder.add("dordjé", "do ce");
+        builder.add("dorjé", "do ce");
         builder.add("dorjee", "do ce");
         builder.add("dorji", "do ce");
         builder.add("kumbum", "gu bum");
@@ -234,6 +237,7 @@ public final class EnglishPhoneticCharMapFilter extends MappingCharFilter {
         builder.add("benza", "ba Tra");
         builder.add("bendza", "ba Tra");
         builder.add("evam", "e bam");
+        builder.add("évam", "e bam");
         builder.add("evaṃ", "e bam");
         builder.add("shakya", "Sa gya");
         builder.add("shribhadra", "Sri ba dra");
