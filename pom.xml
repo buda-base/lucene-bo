@@ -29,16 +29,6 @@
             <organizationUrl>https://www.bdrc.io</organizationUrl>
         </developer>
     </developers>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
     <scm>
         <connection>scm:git:git://github.com/buda-base/lucene-bo.git</connection>
         <developerConnection>scm:git:ssh://github.com:buda-base/lucene-bo.git</developerConnection>
@@ -178,6 +168,15 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+              <groupId>org.sonatype.central</groupId>
+              <artifactId>central-publishing-maven-plugin</artifactId>
+              <version>0.8.0</version>
+              <extensions>true</extensions>
+              <configuration>
+                <publishingServerId>central-portal</publishingServerId>
+              </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
