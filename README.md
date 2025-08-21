@@ -1,108 +1,121 @@
-# Lucene Analyzers for Tibetan 
 
-This repository contains Lucene components (analysers, tokenizers and filters) for Tibetan.
+# Lucene Analyzers for Tibetan
 
-Content summary:
+A collection of Lucene components (analyzers, tokenizers, and filters) for processing Tibetan text.
 
-- a convertor from EWTS, DTS or ALALC encodings into Tibetan Unicode
-- a filter to normalize Unicode Tibetan characters
-- a filter to remove obvious affixed particles at the end of syllables (ex: `..འི`)
-- a syllable-based tokenizer, with fallback to stack tokenizer on non-standard syllables to better accomodate Sanskrit
-- a set of phonetic analyzers to allow search in phonetics
+---
 
-## Installation through maven:
+## Features
+
+- **Encoding Conversion:** Convert EWTS, DTS, or ALALC encodings to Tibetan Unicode.
+- **Unicode Normalization:** Normalize Tibetan Unicode characters for consistent search and analysis.
+- **Affixed Particle Removal:** Remove obvious affixed particles at the end of syllables (e.g., `..འི`).
+- **Syllable-Based Tokenization:** Tokenize text into syllables, with fallback to stack tokenization for non-standard syllables (useful for Sanskrit).
+- **Phonetic Analyzers:** Search using phonetic representations, supporting both Tibetan and Latin-script queries.
+
+---
+
+## Installation
+
+Add the following dependency to your Maven `pom.xml`:
 
 ```xml
-    <dependency>
-      <groupId>io.bdrc.lucene</groupId>
-      <artifactId>lucene-bo</artifactId>
-      <version>2.2.0</version>
-    </dependency>
+<dependency>
+  <groupId>io.bdrc.lucene</groupId>
+  <artifactId>lucene-bo</artifactId>
+  <version>2.2.0</version>
+</dependency>
 ```
+
+---
 
 ## Components
 
-#### TibetanAnalyzer
+### TibetanAnalyzer
 
-It tokenizes the input text using *TibSyllableTokenizer*, then applies *TibAffixedFilter* and *StopFilter* with a predefined list of stop words.
+- Tokenizes input using `TibSyllableTokenizer`.
+- Applies `TibAffixedFilter` and `StopFilter` with a predefined stop word list.
 
-#### Old Tibetan normalization
+### Old Tibetan Normalization
 
-The analyzer implements most of the patterns that have been listed in the context of Faggionato, C. & Garrett E., Constraint Grammars for Tibetan Language Processing, https://ep.liu.se/konferensartikel.aspx?series=&issue=168&Article_No=3 . The list of patterns can be found on https://github.com/tibetan-nlp/tibcg3/blob/master/Normalize_Old_Tibetan.txt .
+Implements normalization patterns from Faggionato & Garrett (see [reference](https://ep.liu.se/konferensartikel.aspx?series=&issue=168&Article_No=3)), including:
+- Gigu normalization
+- Dadrag removal
+- Medial འ removal in `TibAffixedFilter`
 
-This mode also normalizes the gigu to just one form, removes the dadrag, and the medial འ in the TibAffixedFilter (see below).
+Patterns are based on [Normalize_Old_Tibetan.txt](https://github.com/tibetan-nlp/tibcg3/blob/master/Normalize_Old_Tibetan.txt).
 
-#### Lenient char normalization
+### Lenient Character Normalization
 
-The lenient normalization normalizes a number of features that are found mostly in Sanskrit text and normalize them to more regular Tibetan features. One of the goals is that the search is less case sensitive in EWTS. This includes:
-- retroflexes are "reversed": ཊ -> ཏ
-- graphical variants are normalized: ཪ (fixed R form) -> ར (regular r)
-- achung are removed
-- gigus are normalized in one direction
+- Normalizes retroflexes (e.g., ཊ → ཏ)
+- Normalizes graphical variants (e.g., ཪ → ར)
+- Removes achung
+- Normalizes gigus
 
-#### TibSyllableTokenizer
+### Tokenizers & Filters
 
-This tokenizer produces syllable tokens (with no tshek) from the input Tibetan text. Optionally, if it detects a syllable that is not following the rules of Classical Tibetan syllable formation, it switches to produce one token per stack instead. This allows better segmentation of Sanskrit passages.
+- **TibSyllableTokenizer:** Produces syllable tokens (without tshek). Falls back to stack tokenization for non-standard syllables.
+- **TibAffixedFilter:** Removes non-ambiguous affixed particles (e.g., འི, འོ, འིའོ, འམ, འང, འིས), preserving འ when necessary.
+- **PaBaFilter:** Normalizes བ and བོ to པ and པོ. Should be used after `TibAffixedFilter`.
 
-#### TibAffixedFilter
+---
 
-This filter removes non-ambiguous affixed particles (འི, འོ, འིའོ, འམ, འང and འིས), leaving the འ if necessary (ex: དགའི -> དགའ, གའི -> ག).
+## Phonetic Analyzers
 
-#### PaBaFilter
+Tibetan has high spelling opacity, leading to many homophones. This package provides:
 
-This filter normalizes བ and བོ into པ and པོ. It does not look into affixed particles and thus should be used after `TibAffixedFilter`.
+- **Index Analyzer:** Converts Tibetan Unicode to an internal phonological notation.
+- **Query Analyzer:** Converts Latin-script phonetic queries to the same internal notation.
 
-## The phonetic analyzers
+**Example:**
 
-Tibetan is a language with a very high spelling opacity (letter-sound and sound-letter consistency), as do most languages where spelling has not been reformed in a long time (other examples are English or French). This leads to a very high number of homophones.
+| Input                | Analyzer         | Output tokens      |
+|----------------------|------------------|--------------------|
+| སྒམ་པོ་པ།         | index            | gam, po, pa        |
+| རྒམ་པོ་པ།         | index            | gam, po, pa        |
+| Gampopa              | query            | gam, po, pa        |
 
-Our solution is to have two analyzers:
-- **indexing**: an analyzer taking a Tibetan Unicode string and produces tokens encoded in an internal phonological notation (see below)
-- **query**: an analyzer taking a typical simplified phonetic rendering in Latin characters and produces tokens encoded in the same internal phonological system
+**Phonetic System:**
+- No voicing distinction (`ka` = `ga`)
+- No aspiration distinction (`ka` = `kha`)
+- No tone distinction
+- Oriented towards Standard Tibetan pronunciation
 
-For instance:
-- `སྒམ་པོ་པ།` -> index analyzer ->  `gam` `po` `pa`
-- `རྒམ་པོ་པ།` -> index analyzer -> `gam` `po` `pa`
-- `Gampopa` -> query analyzer -> `gam` `po` `pa`
+**Caveats:**
+- Some syllables are ambiguous (e.g., བར་ can be `bar` or `war`)
+- Pronunciation exceptions are mapped to normalized forms (e.g., "Khandro" → "khadro")
 
-#### Internal phonetic notation
+---
 
-The system we use is purely internal and thus does not need to follow conventions, but it uses the following simplifications to maximize leniency:
-- no distinction of voicing (`ka` = `ga`)
-- no distinction of aspiration (`ka` = `kha`)
-- no distinction of tone
+## Building
 
-The system is generally oriented towards Standard Tibetan pronounciation, and is not lenient enough to accomodate Khampa, Amdoa pronounciation.
+To build from source:
 
-#### Caveats
+1. Initialize submodules:
+  ```bash
+  git submodule init
+  git submodule update
+  ```
+2. Build the JAR:
+  ```bash
+  mvn clean compile exec:java package
+  ```
 
-Since our analyzer will operate at the syllable level, the prononciation of some syllabes cannot be unambiguously determined. )This is the case for instance for `བར་` which can be pronounced `bar` or `war`. We compensate that with a few regex giving the most likely version.
+**Build Options:**
 
-In our system the pronounciation exceptions are mapped into a normalized form. For instance `Khandro` (for *མཁའ་འདྲོ།*) is pre-processed into `khadro` so that it can easily match syllable by syllable, without having to implement nasalizations in the processing of the Tibetan string, which can be challenging.
+- `-DincludeDeps=true`: Includes `io.bdrc.lucene:stemmer` and `io.bdrc.ewtsconverter:ewts-converter` in the JAR.
+- `-DperformRelease=true`: Signs the JAR with GPG.
 
-
-## Maven Build Options
-
-To sign the `.jar`s before deploying, pass `-DperformRelease=true` ; to include `ewts-converter` and `stemmer` in the built jar, pass `-DincludeDeps=true`.
-
-To build from sources, first make sure the submodule is initialized (`git submodule init`, then `git submodule update` from the root of the repo)
-
-The base command line to build a jar is:
-
-```
-mvn clean compile exec:java package
-```
-
-The following options alter the packaging:
-
-- `-DincludeDeps=true` includes `io.bdrc.lucene:stemmer` and `io.bdrc.ewtsconverter:ewts-converter` in the produced jar file
-- `-DperformRelease=true` signs the jar file with gpg
-
+---
 
 ## Acknowledgements
 
-The code was initially based on [these Lucene analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
+Based on [lucene-analyzers](https://github.com/tibetan-nlp/lucene-analyzers).
+
+---
 
 ## License
 
-The code is Copyright 2017 Buddhist Digital Resource Center, and is provided under [Apache License 2.0](LICENSE).
+Copyright 2017 Buddhist Digital Resource Center  
+Licensed under the [Apache License 2.0](LICENSE).
+
