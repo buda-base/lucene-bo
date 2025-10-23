@@ -91,6 +91,39 @@ public class PhoneticsFilterTest {
         assertTokenStream(stringToTokenStream("གཤན བཤན རྟེན བསྟན ཐེན"), Arrays.asList("Sen", "Sen", "ten", "ten", "ten"));
     }
     
+    static TokenStream tibetanToTokenStream(final String s) throws IOException {
+        final TibSyllableTokenizer tokenizer = new TibSyllableTokenizer();
+        tokenizer.setReader(new StringReader(s));
+        
+        // Create the filter and pass the tokenizer
+        final TokenStream tokenStream = new StandardTibetanPhoneticFilter(tokenizer);
+        tokenStream.reset();
+        return tokenStream;
+    }
+    
+    @Test
+    public void testStandardTibetanPhoneticSameness() throws IOException {
+        // Test that འཕྲིན་ལས and ཕྲིན་ལས give the same tokens
+        final List<String> tokens1 = new ArrayList<String>();
+        final List<String> tokens2 = new ArrayList<String>();
+        
+        TokenStream tokenStream1 = tibetanToTokenStream("འཕྲིན་ལས");
+        CharTermAttribute charTermAttribute1 = tokenStream1.addAttribute(CharTermAttribute.class);
+        while (tokenStream1.incrementToken()) {
+            tokens1.add(charTermAttribute1.toString());
+        }
+        
+        TokenStream tokenStream2 = tibetanToTokenStream("ཕྲིན་ལས");
+        CharTermAttribute charTermAttribute2 = tokenStream2.addAttribute(CharTermAttribute.class);
+        while (tokenStream2.incrementToken()) {
+            tokens2.add(charTermAttribute2.toString());
+        }
+        
+        System.out.println("འཕྲིན་ལས tokens: " + String.join(" ", tokens1));
+        System.out.println("ཕྲིན་ལས tokens: " + String.join(" ", tokens2));
+        assertThat(tokens1, is(tokens2));
+    }
+    
     static TokenStream tokenize(Reader reader, Tokenizer tokenizer) throws IOException {
         tokenizer.close();
         tokenizer.end();
