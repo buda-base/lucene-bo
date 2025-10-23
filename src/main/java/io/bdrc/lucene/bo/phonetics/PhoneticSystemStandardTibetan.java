@@ -33,7 +33,7 @@ public class PhoneticSystemStandardTibetan extends PhoneticSystem {
     public boolean foldAE = true; 
     
     public void addOnset(final String onset, String phonetic, final boolean canbefinal) {
-        if (this.ignoreInitialNasalization && phonetic.startsWith("#"))
+        if (this.ignoreInitialNasalization && phonetic.startsWith("~"))
             phonetic = phonetic.substring(1);
         if (this.ignoreTone)
             phonetic = phonetic.substring(0, phonetic.length()-1);
